@@ -1,0 +1,16 @@
+- Allow OEM Radio on switching with Sound Retorer
+- Configuration Export/Import
+- Check Build.prop what options there is!
+- Give Tasker read_logs
+- Give Dashacka's Standalone Dashboard Read_Logs
+- Hide taskbar (global immersive mode - adb shell settings put global policy_control immersive.full=*, without start show again)
+- Make taskbar smaller https://f30.bimmerpost.com/forums/showthread.php?p=25521166&postcount=1330
+- Change dpi
+- Show demo mode
+- As Threaded as Headset, High Volume warning does lower the volume at boot.
+This can be changed by adding "audio.safemedia.bypass=true" to system/build.prop
+- List all McuEvents to bind to start Intents and Android KeyEvents (lots of work)
+- I would also like to be able to capture the OEM phone button event to map it to the phone icon of FlowUx-synesthesia
+- Start/Stop McuService
+- build.prop editor
+- Persist partition bootanimation delete / remove bootanimation
