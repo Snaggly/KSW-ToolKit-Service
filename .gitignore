@@ -13,3 +13,13 @@
 .externalNativeBuild
 .cxx
 local.properties
+.idea/.gitignore
+.idea/.name
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+app/release/KSW-ToolKit-ViewTest.apk
+app/release/output-metadata.json
+*.gitignore
+.gitignore
