@@ -14,3 +14,4 @@ This can be changed by adding "audio.safemedia.bypass=true" to system/build.prop
 - Start/Stop McuService
 - build.prop editor
 - Persist partition bootanimation delete / remove bootanimation
+- Auto Volume according to speed
