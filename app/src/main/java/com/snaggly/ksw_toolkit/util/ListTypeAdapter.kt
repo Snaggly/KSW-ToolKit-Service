@@ -1,17 +1,15 @@
-package com.snaggly.ksw_toolkit.util.applist
+package com.snaggly.ksw_toolkit.util
 
-import android.content.Context
-import android.database.DataSetObserver
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 
-class AppsListAdapter(private val appsList: ArrayList<AppInfo>, private var selectedApp : Int) : RecyclerView.Adapter<AppsListAdapter.AppsListViewHolder>() {
-
+class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>, private var selectedApp : Int) : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>() {
     class AppsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val appIconView : ImageView = itemView.findViewById(R.id.apps_list_icon)
         val appNameView : TextView = itemView.findViewById(R.id.apps_list_text)

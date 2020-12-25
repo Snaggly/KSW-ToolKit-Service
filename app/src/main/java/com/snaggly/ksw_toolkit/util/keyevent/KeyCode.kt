@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.enums
+package com.snaggly.ksw_toolkit.util.keyevent
 
 enum class KeyCode(val keycode : Int) {
     ASSIST(219),

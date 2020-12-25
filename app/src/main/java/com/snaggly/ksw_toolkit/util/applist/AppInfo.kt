@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.util.applist
 
 import android.graphics.drawable.Drawable
+import com.snaggly.ksw_toolkit.util.ListType
 
-data class AppInfo(val name: String, val packageName: String, val icon: Drawable)
+class AppInfo(appName: String, val packageName: String, appIcon: Drawable) : ListType(appName, appIcon)
