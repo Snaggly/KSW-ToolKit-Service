@@ -15,5 +15,26 @@
     <string name="do_nothing">Do Nothing</string>
     <string name="switch_sound_source">Switch Sound Source</string>
     <string name="init_mcu_volumes">Init Mcu Volumes</string>
+    <string name="unassigned">Unassigned</string>
+    <string name="navigation_button">Navigation Button</string>
+    <string name="options_button">Options Button</string>
+    <string name="back_button">Back Button</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="knob_turn_right">Knob Turn Right</string>
+    <string name="car_radio_buttons">Car Radio Buttons</string>
+    <string name="knob_turn_left">Knob Turn Left</string>
+    <string name="knob_tilt_right">Knob Tilt Right</string>
+    <string name="knob_tilt_left">Knob Tilt Left</string>
+    <string name="knob_tilt_down">Knob Tilt Down</string>
+    <string name="knob_tilt_up">Knob Tilt Up</string>
+    <string name="knob_press">Knob Press</string>
+    <string name="drive_knob_buttons">Drive Knob Buttons</string>
+    <string name="media_pause">Media Pause</string>
+    <string name="media_next">Media Next</string>
+    <string name="media_previous">Media Previous</string>
+    <string name="telephone_button_long_press">Telephone Button Long Press</string>
+    <string name="telephone_button">Telephone Button</string>
+    <string name="voice_command_button">Voice Command Button</string>
+    <string name="steering_wheel_buttons">Steering Wheel Buttons</string>
 
 </resources>

@@ -32,4 +32,9 @@
         <item name="android:padding">10dp</item>
         <item name="thumbTint">@color/switch_selector</item>
     </style>
+
+    <style name="normalButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

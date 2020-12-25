@@ -28,213 +28,230 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Steering Wheel Buttons"
+                    android:text="@string/steering_wheel_buttons"
                     android:textStyle="bold"
                     android:textSize="20sp"/>
                 <TextView/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Voice Command Button"
+                    android:text="@string/voice_command_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/voiceBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Telephone Button"
+                    android:text="@string/telephone_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/telefonBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
-                    android:text="Telephone Button Long Press"/>
+                    android:text="@string/telephone_button_long_press"/>
                 <Button
                     android:id="@+id/telefonLongPressBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Media Previous"
+                    android:text="@string/media_previous"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/mediaPreviousBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Media Next"
+                    android:text="@string/media_next"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/mediaNextBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Media Pause"
+                    android:text="@string/media_pause"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/mediaPauseBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView/><TextView/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Drive Knob Buttons"
+                    android:text="@string/drive_knob_buttons"
                     android:textStyle="bold"
                     android:textSize="20sp"/>
                 <TextView/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Press"
+                    android:text="@string/knob_press"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobPressBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Tilt Up"
+                    android:text="@string/knob_tilt_up"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobTiltUpBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
-                    android:text="Knob Tilt Down"/>
+                    android:text="@string/knob_tilt_down"/>
                 <Button
                     android:id="@+id/knobTiltDownBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Tilt Left"
+                    android:text="@string/knob_tilt_left"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobTiltLeftBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Tilt Right"
+                    android:text="@string/knob_tilt_right"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobTiltRightBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Turn Left"
+                    android:text="@string/knob_turn_left"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobTurnLeftBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Knob Turn Right"
+                    android:text="@string/knob_turn_right"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/knobTurnRightBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView/><TextView/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Car Radio Buttons"
+                    android:text="@string/car_radio_buttons"
                     android:textStyle="bold"
                     android:textSize="20sp"/>
                 <TextView/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Menu Button"
+                    android:text="@string/menu_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/menuButtonBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Back Button"
+                    android:text="@string/back_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/backButtonBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Options Button"
+                    android:text="@string/options_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/optionsButtonBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Navigation Button"
+                    android:text="@string/navigation_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
                 <Button
                     android:id="@+id/navigationButtonBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unassigned"/>
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
             </GridLayout>
         </ScrollView>
 
@@ -242,7 +259,7 @@
             android:id="@+id/eventManagerSelectActionFrame"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="50dp"
+            android:layout_marginStart="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/defaultScrollView"
