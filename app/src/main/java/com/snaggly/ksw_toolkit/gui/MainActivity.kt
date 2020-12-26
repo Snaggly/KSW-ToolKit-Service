@@ -46,11 +46,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBtnClicks() {
-        soundRestorerPane.setOnClickListener(View.OnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) })
-        eventManagerPane.setOnClickListener(View.OnClickListener { switchFragment(mFragManager, eventManagerPane, eventManagerFragment) })
-        systemTweaksPane.setOnClickListener(View.OnClickListener { })
-        adbShellPane.setOnClickListener(View.OnClickListener { })
-        mcuListenerPane.setOnClickListener(View.OnClickListener { })
+        soundRestorerPane.setOnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) }
+        eventManagerPane.setOnClickListener { switchFragment(mFragManager, eventManagerPane, eventManagerFragment) }
+        systemTweaksPane.setOnClickListener { }
+        adbShellPane.setOnClickListener { }
+        mcuListenerPane.setOnClickListener { }
     }
 
     private fun initPaneFragment() {

@@ -15,6 +15,8 @@ class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>,
                                     private val onAppClickListener: OnAppClickListener)
     : RecyclerView.Adapter<ListTypeAdapter<T>.AppsListViewHolder>() {
 
+    private lateinit var purple200 : ColorStateList
+    private lateinit var purple500 : ColorStateList
     private lateinit var previousSelection : AppsListViewHolder
 
     interface OnAppClickListener { fun onAppClick(position: Int)}
@@ -39,13 +41,15 @@ class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>,
 
         override fun onFocusChange(v: View?, hasFocus: Boolean) {
             if (hasFocus)
-                appRadioButtonView.buttonTintList = ColorStateList.valueOf(itemView.context.getColor(R.color.purple_200))
+                appRadioButtonView.buttonTintList = purple200
             else
-                appRadioButtonView.buttonTintList = ColorStateList.valueOf(itemView.context.getColor(R.color.purple_500))
+                appRadioButtonView.buttonTintList = purple500
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppsListViewHolder {
+        purple200 = ColorStateList.valueOf(parent.context.getColor(R.color.purple_200))
+        purple500 = ColorStateList.valueOf(parent.context.getColor(R.color.purple_500))
         return AppsListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.apps_view_list, parent, false), onAppClickListener)
     }
 
