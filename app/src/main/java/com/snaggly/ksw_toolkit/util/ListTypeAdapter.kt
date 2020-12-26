@@ -36,6 +36,7 @@ class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>,
             previousSelection.appRadioButtonView.isChecked = false
             appRadioButtonView.isChecked = true
             previousSelection = this
+            selectedApp = adapterPosition
             onClickListener.onAppClick(adapterPosition)
         }
 
@@ -59,8 +60,10 @@ class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>,
         holder.appNameView.text = currentApp.name
         if (position == selectedApp) {
             holder.appRadioButtonView.isChecked = true
-            holder.itemView.requestFocus()
             previousSelection = holder
+        }
+        else {
+            holder.appRadioButtonView.isChecked = false
         }
     }
 
