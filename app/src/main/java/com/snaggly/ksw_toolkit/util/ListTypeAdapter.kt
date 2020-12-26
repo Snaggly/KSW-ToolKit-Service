@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 
-class ListTypeAdapter<T : ListType>(private val appsList: ArrayList<T>,
+class ListTypeAdapter(private val appsList: ArrayList<out ListType>,
                                     private var selectedApp : Int,
                                     private val onAppClickListener: OnAppClickListener)
-    : RecyclerView.Adapter<ListTypeAdapter<T>.AppsListViewHolder>() {
+    : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>() {
 
     private lateinit var purple200 : ColorStateList
     private lateinit var purple500 : ColorStateList
