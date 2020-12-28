@@ -1,3 +1,12 @@
+To Stop MCU Service:
+am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService
+Keep in mind to keep sending Data to receive! cmdType:68 - data:08-00
+Idle response: cmdType:1C - data:01
+
+Top Start Service:
+am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService
+
+
 - Allow OEM Radio on switching with Sound Retorer
 - Configuration Export/Import
 - Check Build.prop what options there is!

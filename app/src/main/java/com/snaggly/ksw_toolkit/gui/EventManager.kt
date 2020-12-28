@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerViewModel
+import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
 class EventManager : Fragment() {
     private lateinit var mViewModel: EventManagerViewModel
-    private val selectActionFragment: EventManagerSelectAction = EventManagerSelectAction("Empty")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.event_manager_fragment, container, false)
@@ -28,7 +28,7 @@ class EventManager : Fragment() {
             telefonBtn.text = "..."
             childFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.slide_enter_right_left, R.anim.slide_exit_right_left)
-                    .replace(R.id.eventManagerSelectActionFrame, selectActionFragment)
+                    .replace(R.id.eventManagerSelectActionFrame, EventManagerSelectAction(EventManagerTypes.TelephoneButton))
                     .commit()
         }
     }

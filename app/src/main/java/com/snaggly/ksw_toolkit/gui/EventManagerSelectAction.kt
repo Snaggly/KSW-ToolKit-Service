@@ -20,11 +20,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerSelectActionViewModel
+import com.snaggly.ksw_toolkit.util.ListTypeAdapter
+import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
-class EventManagerSelectAction(name: String?) : Fragment() {
+class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment() {
     private lateinit var mViewModel: EventManagerSelectActionViewModel
     private lateinit var listKeyEvents: RecyclerView
     private lateinit var listApps: RecyclerView
+
+    private lateinit var doNothingButton: RadioButton
+    private lateinit var invokeKeyButton: RadioButton
+    private lateinit var startAppButton: RadioButton
 
     private lateinit var leaveToTopAnimation : Animation
     private lateinit var leaveToButtomAnimation : Animation
@@ -41,25 +47,41 @@ class EventManagerSelectAction(name: String?) : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         mViewModel = ViewModelProvider(this).get(EventManagerSelectActionViewModel::class.java)
-
-        loadAnimations(300)
-
+        mViewModel.eventCurType = type
+        initRadioBtns()
         listKeyEvents = requireView().findViewById(R.id.availableKeyEventsListView)
-        listKeyEvents.setHasFixedSize(true)
-        listKeyEvents.layoutManager = LinearLayoutManager(context)
-        listKeyEvents.adapter = context?.let { mViewModel.getListKeyEventsAdapter(it) }
-
         listApps = requireView().findViewById(R.id.availableAppsListView)
-        listApps.setHasFixedSize(true)
-        listApps.layoutManager = LinearLayoutManager(context)
-        listApps.adapter = context?.let { mViewModel.getAvailableAppsAdapter(it) }
-
-        val doNothingButton = requireView().findViewById<RadioButton?>(R.id.unnassignBtn)
-        val invokeKeyButton = requireView().findViewById<RadioButton?>(R.id.invokeKeyeventRadioButton)
-        val startAppButton = requireView().findViewById<RadioButton?>(R.id.startAppRadioButton)
-
+        initRecyclerViews(listKeyEvents, context?.let { mViewModel.getListKeyEventsAdapter(it) }!! )
+        initRecyclerViews(listApps, context?.let { mViewModel.getAvailableAppsAdapter(it) }!!)
+        loadAnimations(300)
+        doButtonEvents()
         doNothingButton.requestFocus()
+    }
 
+    private fun initRadioBtns() {
+        doNothingButton = requireView().findViewById(R.id.unnassignBtn)
+        invokeKeyButton = requireView().findViewById(R.id.invokeKeyeventRadioButton)
+        startAppButton = requireView().findViewById(R.id.startAppRadioButton)
+    }
+
+    private fun loadAnimations(duration: Long) {
+        leaveToTopAnimation = AnimationUtils.loadAnimation(context, R.anim.leave_to_top)
+        leaveToTopAnimation.duration = duration
+        leaveToButtomAnimation = AnimationUtils.loadAnimation(context, R.anim.leave_to_buttom)
+        leaveToButtomAnimation.duration = duration
+        enterFromTopAnimation = AnimationUtils.loadAnimation(context, R.anim.enter_from_top)
+        enterFromTopAnimation.duration = duration
+        enterFromButtomAnimation = AnimationUtils.loadAnimation(context, R.anim.enter_from_buttom)
+        enterFromButtomAnimation.duration = duration
+    }
+
+    private fun initRecyclerViews(rv : RecyclerView, rvAdapterView: RecyclerView.Adapter<out RecyclerView.ViewHolder>) {
+        rv.setHasFixedSize(true)
+        rv.layoutManager = LinearLayoutManager(context)
+        rv.adapter = rvAdapterView
+    }
+
+    private fun doButtonEvents() {
         doNothingButton.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
                 when (mode) {
@@ -119,20 +141,9 @@ class EventManagerSelectAction(name: String?) : Fragment() {
         }
     }
 
-    private fun loadAnimations(duration: Long) {
-        leaveToTopAnimation = AnimationUtils.loadAnimation(context, R.anim.leave_to_top)
-        leaveToTopAnimation.duration = duration
-        leaveToButtomAnimation = AnimationUtils.loadAnimation(context, R.anim.leave_to_buttom)
-        leaveToButtomAnimation.duration = duration
-        enterFromTopAnimation = AnimationUtils.loadAnimation(context, R.anim.enter_from_top)
-        enterFromTopAnimation.duration = duration
-        enterFromButtomAnimation = AnimationUtils.loadAnimation(context, R.anim.enter_from_buttom)
-        enterFromButtomAnimation.duration = duration
-    }
-
     companion object {
-        fun newInstance(name: String?): EventManagerSelectAction? {
-            return EventManagerSelectAction(name)
+        fun newInstance(type: EventManagerTypes): EventManagerSelectAction? {
+            return EventManagerSelectAction(type)
         }
     }
 

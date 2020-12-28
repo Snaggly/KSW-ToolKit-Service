@@ -104,6 +104,18 @@
                     android:layout_height="wrap_content"
                     android:text="@string/unassigned"
                     style="@style/normalButton"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_button"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+                <Button
+                    android:id="@+id/modeBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
                 <TextView/><TextView/>
                 <TextView
                     android:layout_width="wrap_content"

@@ -7,11 +7,14 @@ import com.snaggly.ksw_toolkit.util.ListType
 import com.snaggly.ksw_toolkit.util.ListTypeAdapter
 import com.snaggly.ksw_toolkit.util.applist.AppInfo
 import com.snaggly.ksw_toolkit.util.applist.AppsLister
+import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.keyevent.KeyEvent
 
 class EventManagerSelectActionViewModel : ViewModel() {
     private var listKeyEventsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
     private var availableAppsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
+
+    var eventCurType : EventManagerTypes = EventManagerTypes.Dummy
 
     private fun initKeyEventsAdapter(context: Context, defaultSelection: Int) {
         listKeyEventsAdapter = ListTypeAdapter(KeyEvent.getKeyEventList(context), defaultSelection, onAppClickListener)
@@ -22,7 +25,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
         availableAppsAdapter = ListTypeAdapter(appNames, defaultSelection, onAppClickListener)
     }
 
-    fun getListKeyEventsAdapter(context: Context): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? {
+    fun getListKeyEventsAdapter(context: Context): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
         if (listKeyEventsAdapter == null)
             initKeyEventsAdapter(context, 0)
         return listKeyEventsAdapter!!
