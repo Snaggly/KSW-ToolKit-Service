@@ -12,12 +12,16 @@ class MainActivity : AppCompatActivity() {
     private val soundRestorerFragment: Fragment = SoundRestorer()
     private val eventManagerFragment: Fragment = EventManager()
     private val systemTweaksFragment: Fragment = SystemTwaks()
+    private val adbShellFragment: Fragment = AdbShell()
+    private val mcuListenerFragment: Fragment = McuListener()
+    private val configFragment: Fragment = Config()
     private lateinit var mFragManager: FragmentManager
     private lateinit var soundRestorerPane: Button
     private lateinit var eventManagerPane: Button
     private lateinit var systemTweaksPane: Button
     private lateinit var adbShellPane: Button
     private lateinit var mcuListenerPane: Button
+    private lateinit var configImportExportPane: Button
     private lateinit var previousCallingButton: Button
     private var tabFragmentId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,15 +47,17 @@ class MainActivity : AppCompatActivity() {
         systemTweaksPane = findViewById(R.id.systemTweaksPaneBtn)
         adbShellPane = findViewById(R.id.adbShellPaneBtn)
         mcuListenerPane = findViewById(R.id.mcuListenerPaneBtn)
+        configImportExportPane = findViewById(R.id.configPaneBtn)
         tabFragmentId = R.id.tabFragment
     }
 
     private fun setBtnClicks() {
         soundRestorerPane.setOnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) }
         eventManagerPane.setOnClickListener { switchFragment(mFragManager, eventManagerPane, eventManagerFragment) }
-        systemTweaksPane.setOnClickListener { switchFragment(mFragManager, systemTweaksPane, systemTweaksFragment)}
-        adbShellPane.setOnClickListener { }
-        mcuListenerPane.setOnClickListener { }
+        systemTweaksPane.setOnClickListener { switchFragment(mFragManager, systemTweaksPane, systemTweaksFragment) }
+        adbShellPane.setOnClickListener { switchFragment(mFragManager, adbShellPane, adbShellFragment) }
+        mcuListenerPane.setOnClickListener { switchFragment(mFragManager, mcuListenerPane, mcuListenerFragment) }
+        configImportExportPane.setOnClickListener { switchFragment(mFragManager, configImportExportPane, configFragment) }
     }
 
     private fun initPaneFragment() {
