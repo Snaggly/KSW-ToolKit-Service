@@ -42,7 +42,7 @@ class EventManager : Fragment() {
         mViewModel = ViewModelProvider(this).get(EventManagerViewModel::class.java)
         initBtns()
         initBtnClick()
-        telefonBtn.requestFocus()
+        voiceBtn.requestFocus()
 
     }
 
