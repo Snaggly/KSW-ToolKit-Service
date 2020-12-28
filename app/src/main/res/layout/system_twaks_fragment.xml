@@ -5,60 +5,54 @@
     android:layout_height="match_parent"
     tools:context=".gui.SystemTwaks">
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:columnCount="3">
-        <Button
+        android:layout_marginLeft="30dp"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:text="@string/hide_topbar"
             style="@style/normalButton"/>
-        <Button
+        <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:text="@string/shrink_topbar"
             style="@style/normalButton"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/change_dpi"
+                style="@style/normalButton"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_dark_background"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                android:singleLine="true"
+                android:text="160"/>
+        </LinearLayout>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
-            android:text="@string/restore_topbar"
-            style="@style/normalButton"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
-            android:text="@string/change_dpi"
-            style="@style/normalButton"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
-            android:text="@string/show_demo_mode"
-            style="@style/normalButton"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:text="Bypass High\nVolume Warning"
             style="@style/normalButton"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"
+            android:layout_margin="5dp"
             android:text="Give Tasker\nREAD_LOGS permission"
             style="@style/normalButton"/>
-    </GridLayout>
+    </LinearLayout>
 
 </FrameLayout>
