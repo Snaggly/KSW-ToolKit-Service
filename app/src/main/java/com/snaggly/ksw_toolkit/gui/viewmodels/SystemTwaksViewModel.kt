@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit
+package com.snaggly.ksw_toolkit.gui.viewmodels
 
 import androidx.lifecycle.ViewModel
 

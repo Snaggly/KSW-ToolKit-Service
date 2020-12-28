@@ -3,11 +3,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SystemTwaks">
+    tools:context=".gui.SystemTwaks">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="@string/hide_topbar"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="@string/shrink_topbar"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="@string/restore_topbar"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="@string/change_dpi"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="@string/show_demo_mode"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="Bypass High\nVolume Warning"
+            style="@style/normalButton"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:text="Give Tasker\nREAD_LOGS permission"
+            style="@style/normalButton"/>
+    </GridLayout>
 
 </FrameLayout>

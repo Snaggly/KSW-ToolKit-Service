@@ -11,6 +11,7 @@ import com.snaggly.ksw_toolkit.R
 class MainActivity : AppCompatActivity() {
     private val soundRestorerFragment: Fragment = SoundRestorer()
     private val eventManagerFragment: Fragment = EventManager()
+    private val systemTweaksFragment: Fragment = SystemTwaks()
     private lateinit var mFragManager: FragmentManager
     private lateinit var soundRestorerPane: Button
     private lateinit var eventManagerPane: Button
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private fun setBtnClicks() {
         soundRestorerPane.setOnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) }
         eventManagerPane.setOnClickListener { switchFragment(mFragManager, eventManagerPane, eventManagerFragment) }
-        systemTweaksPane.setOnClickListener { }
+        systemTweaksPane.setOnClickListener { switchFragment(mFragManager, systemTweaksPane, systemTweaksFragment)}
         adbShellPane.setOnClickListener { }
         mcuListenerPane.setOnClickListener { }
     }

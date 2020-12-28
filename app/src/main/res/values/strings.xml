@@ -37,5 +37,11 @@
     <string name="voice_command_button">Voice Command Button</string>
     <string name="steering_wheel_buttons">Steering Wheel Buttons</string>
     <string name="mode_button">Mode Button</string>
+    <string name="hide_topbar">Hide Topbar</string>
+    <string name="show_topbar">Show Topbar</string>
+    <string name="shrink_topbar">Shrink Topbar</string>
+    <string name="restore_topbar">Restore Topbar</string>
+    <string name="change_dpi">Change DPI</string>
+    <string name="show_demo_mode">Show Demo mode</string>
 
 </resources>

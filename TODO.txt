@@ -6,6 +6,9 @@ Idle response: cmdType:1C - data:01
 Top Start Service:
 am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService
 
+Check if running:
+dumpsys activity services McuService
+
 
 - Allow OEM Radio on switching with Sound Retorer
 - Configuration Export/Import

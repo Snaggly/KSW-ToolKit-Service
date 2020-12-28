@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit
+package com.snaggly.ksw_toolkit.gui
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.gui.viewmodels.SystemTwaksViewModel
 
 class SystemTwaks : Fragment() {
 
