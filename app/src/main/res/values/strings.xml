@@ -43,5 +43,6 @@
     <string name="restore_topbar">Restore Topbar</string>
     <string name="change_dpi">Change DPI</string>
     <string name="show_demo_mode">Show Demo mode</string>
+    <string name="enter_command">Enter Command</string>
 
 </resources>
