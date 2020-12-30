@@ -44,5 +44,8 @@
     <string name="change_dpi">Change DPI</string>
     <string name="show_demo_mode">Show Demo mode</string>
     <string name="enter_command">Enter Command</string>
+    <string name="source">Source:</string>
+    <string name="stop_ksw_on_boot">Stop KSW on boot</string>
+    <string name="ksw_service">KSW Service</string>
 
 </resources>
