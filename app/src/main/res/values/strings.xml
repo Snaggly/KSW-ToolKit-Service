@@ -47,5 +47,8 @@
     <string name="source">Source:</string>
     <string name="stop_ksw_on_boot">Stop KSW on boot</string>
     <string name="ksw_service">KSW Service</string>
+    <string name="import_config">Import Config</string>
+    <string name="export_config">Export Config</string>
+    <string name="restart_system">Restart System</string>
 
 </resources>
