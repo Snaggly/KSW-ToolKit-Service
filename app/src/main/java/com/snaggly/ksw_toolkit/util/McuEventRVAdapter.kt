@@ -7,23 +7,43 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 
-class McuEventRVAdapter : RecyclerView.Adapter<McuEventRVAdapter.McuEventViewHolder>() {
+class McuEventRVAdapter : RecyclerView.Adapter<McuEventRVAdapter.ParentViewHolder>() {
+    private var names = ArrayList<String>(arrayListOf(""))
+    private var datas = ArrayList<String>(arrayListOf(""))
 
-    inner class McuEventViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val eventName : TextView = itemView.findViewById(R.id.mcuEventName)
-        val dataString : TextView = itemView.findViewById(R.id.mcuDataString)
+    open inner class ParentViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
+        open val eventName : TextView? = null
+        open val dataString : TextView? = null
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): McuEventRVAdapter.McuEventViewHolder {
-        return McuEventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mcu_event, parent, false))
+    inner class McuEventViewHolder (itemView: View) : ParentViewHolder(itemView) {
+        override val eventName : TextView = itemView.findViewById(R.id.mcuEventName)
+        override val dataString : TextView = itemView.findViewById(R.id.mcuDataString)
     }
 
-    override fun onBindViewHolder(holder: McuEventRVAdapter.McuEventViewHolder, position: Int) {
-        holder.eventName.text = "Received Can Data"
-        holder.dataString.text = "A1-1C-31-D1-31-76-72-91-00-12-B6-80-14-41-21-31"
+    override fun getItemViewType(position: Int): Int {
+        return if (position > 0) 1
+        else 0
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): McuEventRVAdapter.ParentViewHolder {
+        if (viewType > 0)
+            return McuEventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mcu_event, parent, false))
+        return ParentViewHolder(LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: McuEventRVAdapter.ParentViewHolder, position: Int) {
+        holder.eventName?.text = names[position]
+        holder.dataString?.text = datas[position]
     }
 
     override fun getItemCount(): Int {
-        return 5;
+        return names.size;
+    }
+
+    fun addNewEntry(name: String, dataString: String) {
+        names.add(1, name)
+        datas.add(1, dataString)
+        notifyItemInserted(1)
     }
 }

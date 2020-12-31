@@ -21,6 +21,7 @@ class McuListener : Fragment() {
     private lateinit var viewModel: McuListenerViewModel
     private lateinit var sourceSpinner: Spinner
     private lateinit var mcuEventRV: RecyclerView
+    private var threadRunning: Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -30,8 +31,13 @@ class McuListener : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(McuListenerViewModel::class.java)
-
+        threadRunning = true
         initElements()
+    }
+
+    override fun onStop() {
+        threadRunning = false
+        super.onStop()
     }
 
     private fun initElements() {
@@ -42,6 +48,16 @@ class McuListener : Fragment() {
         mcuEventRV = requireView().findViewById(R.id.McuEventsRV);
         mcuEventRV.layoutManager = LinearLayoutManager(context)
         mcuEventRV.adapter = viewModel.getMcuEventAdapter()
+
+        Thread {
+            var counter = 1
+            while(threadRunning) {
+                requireActivity().runOnUiThread {
+                    viewModel.addEntryToAdapter("Test Event ${counter++}", "A1-1C-23-21-BA-13-F2-2D-32-13-76-13-65-F2-A4-13-42-13")
+                }
+                Thread.sleep(1000)
+            }
+        }.start()
     }
 
 }
