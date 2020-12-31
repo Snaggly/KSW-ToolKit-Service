@@ -1,18 +1,12 @@
 package com.snaggly.ksw_toolkit.gui
 
-import android.animation.ObjectAnimator
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.ScaleAnimation
-import android.view.animation.TranslateAnimation
-import android.widget.AdapterView
 import android.widget.CompoundButton
-import android.widget.ListView
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerSelectActionViewModel
-import com.snaggly.ksw_toolkit.util.ListTypeAdapter
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
 class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment() {

@@ -2,10 +2,6 @@ package com.snaggly.ksw_toolkit.util.applist
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 
 @SuppressLint("QueryPermissionsNeeded")
 class AppsLister (context: Context) {

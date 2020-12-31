@@ -3,9 +3,7 @@ package com.snaggly.ksw_toolkit.gui.viewmodels
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
-import com.snaggly.ksw_toolkit.util.ListType
 import com.snaggly.ksw_toolkit.util.ListTypeAdapter
-import com.snaggly.ksw_toolkit.util.applist.AppInfo
 import com.snaggly.ksw_toolkit.util.applist.AppsLister
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.keyevent.KeyEvent

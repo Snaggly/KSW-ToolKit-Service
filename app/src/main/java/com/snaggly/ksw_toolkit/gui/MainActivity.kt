@@ -1,7 +1,6 @@
 package com.snaggly.ksw_toolkit.gui
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -31,14 +30,6 @@ class MainActivity : AppCompatActivity() {
         initViewElements()
         setBtnClicks()
         initPaneFragment()
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     private fun initViewElements() {

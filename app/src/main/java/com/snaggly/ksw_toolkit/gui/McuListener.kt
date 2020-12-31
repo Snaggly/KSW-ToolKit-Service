@@ -30,12 +30,7 @@ class McuListener : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(McuListenerViewModel::class.java)
-        viewModel.setView(this)
         initElements()
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     private fun initElements() {
@@ -47,7 +42,7 @@ class McuListener : Fragment() {
         mcuEventRV.layoutManager = LinearLayoutManager(context)
         mcuEventRV.adapter = viewModel.getMcuEventAdapter()
 
-        viewModel.testRV()
+        viewModel.testRV(requireActivity())
     }
 
 }
