@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:text="Mcu Event Name"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -30,7 +29,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mcuEventName"
             android:layout_alignParentStart="true"
-            android:text="A1-1C-23-12-41"
             android:textSize="14sp" />
 
     </RelativeLayout>
