@@ -1,2 +1,3 @@
 include ':app'
+include ':McuCommunicator'
 rootProject.name = "KSW-ToolKit"
