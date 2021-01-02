@@ -1,13 +1,16 @@
 package com.snaggly.ksw_toolkit.gui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.service.McuService
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mcuServiceIntent : Intent
     private val soundRestorerFragment: Fragment = SoundRestorer()
     private val eventManagerFragment: Fragment = EventManager()
     private val systemTweaksFragment: Fragment = SystemTwaks()
@@ -30,6 +33,17 @@ class MainActivity : AppCompatActivity() {
         initViewElements()
         setBtnClicks()
         initPaneFragment()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mcuServiceIntent = Intent(this, McuService::class.java)
+        startService(mcuServiceIntent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopService(mcuServiceIntent)
     }
 
     private fun initViewElements() {

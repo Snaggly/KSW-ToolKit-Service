@@ -41,8 +41,6 @@ class McuListener : Fragment() {
         mcuEventRV = requireView().findViewById(R.id.McuEventsRV);
         mcuEventRV.layoutManager = LinearLayoutManager(context)
         mcuEventRV.adapter = viewModel.getMcuEventAdapter()
-
-        viewModel.testRV(requireActivity())
     }
 
 }
