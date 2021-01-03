@@ -48,7 +48,6 @@ class SoundRestorer : Fragment() {
         startOnBootBtn.requestFocus()
         val initSourceBtn = requireView().findViewById<Button>(R.id.initSourceBtn)
         initSourceBtn.setOnClickListener {
-            Log.d("Snaggle SoundRestorer", "Current Counter: " + mcuService.counter)
         }
     }
 
