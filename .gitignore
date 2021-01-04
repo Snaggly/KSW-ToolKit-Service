@@ -19,8 +19,8 @@ local.properties
 .idea/gradle.xml
 .idea/jarRepositories.xml
 .idea/misc.xml
-app/release/KSW-ToolKit-ViewTest.apk
-app/release/output-metadata.json
+app/release/*
 *.gitignore
 .gitignore
 .idea/
+app/debug/*

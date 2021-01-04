@@ -24,7 +24,7 @@ class AdbManager {
     }
 
     @Throws(AdbConnectionException::class)
-    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived): AdbStream {
+    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived) {
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -57,7 +57,6 @@ class AdbManager {
             }
         }.start()
         isConnected = true
-        return shellStream
     }
 
     fun disconnect() {
@@ -67,6 +66,14 @@ class AdbManager {
             socket.close()
         }
         isConnected = false
+    }
+
+    fun sendCommand(command: String) {
+        if (isConnected) {
+            Thread {
+                shellStream.write(command + "\n")
+            }.start()
+        }
     }
 
     @Throws(NoSuchAlgorithmException::class, IOException::class)
