@@ -23,8 +23,8 @@ class AdbManager {
         fun onDataReceived(text: String)
     }
 
-    @Throws (AdbConnectionException::class)
-    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived): AdbStream{
+    @Throws(AdbConnectionException::class)
+    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived): AdbStream {
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -36,15 +36,14 @@ class AdbManager {
                 adbConnection = AdbConnection.create(socket, adbCrypto)
                 adbConnection.connect()
                 shellStream = adbConnection.open(destination)
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 outerException = e
             }
         }
         setup.start()
         setup.join()
 
-        if (outerException!=null) {
+        if (outerException != null) {
             throw AdbConnectionException(outerException!!)
         }
 

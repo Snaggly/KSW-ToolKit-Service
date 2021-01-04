@@ -2,6 +2,7 @@ package com.snaggly.ksw_toolkit.core.service
 
 import android.app.AlertDialog
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
@@ -29,7 +30,7 @@ class McuService : Service() {
 
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
-    private lateinit var adbShell : AdbStream
+    private lateinit var adbShell: AdbStream
 
     override fun onCreate() {
         super.onCreate()
@@ -40,9 +41,11 @@ class McuService : Service() {
                         listener.update(text)
                 }
             })
-        }
-        catch (e : Exception) {
-            Log.d("KSW-ToolKit-McuService", e.localizedMessage)
+        } catch (e: Exception) {
+            Log.d("KSW-ToolKit-McuService", e.localizedMessage!!)
+            var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
+            alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            alert.show()
         }
     }
 

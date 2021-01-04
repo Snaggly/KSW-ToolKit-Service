@@ -1,16 +1,22 @@
 package com.snaggly.ksw_toolkit.gui
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
+import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mcuServiceIntent : Intent
+    private lateinit var mcuServiceIntent: Intent
     private val soundRestorerFragment: Fragment = SoundRestorer()
     private val eventManagerFragment: Fragment = EventManager()
     private val systemTweaksFragment: Fragment = SystemTwaks()
@@ -28,11 +34,9 @@ class MainActivity : AppCompatActivity() {
     private var tabFragmentId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        mFragManager = supportFragmentManager
-        initViewElements()
-        setBtnClicks()
-        initPaneFragment()
+        if (checkPermissions()) {
+            startApp()
+        }
     }
 
     override fun onStart() {
@@ -44,6 +48,27 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         stopService(mcuServiceIntent)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        checkPermissions()
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (!Settings.canDrawOverlays(this)) {
+            startActivityForResult(Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION", Uri.parse("package:$packageName")), 5469)
+            return false
+        }
+        return true
+    }
+
+    private fun startApp() {
+        setContentView(R.layout.activity_main)
+        mFragManager = supportFragmentManager
+        initViewElements()
+        setBtnClicks()
+        initPaneFragment()
     }
 
     private fun initViewElements() {
