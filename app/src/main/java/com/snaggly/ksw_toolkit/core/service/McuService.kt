@@ -77,7 +77,7 @@ class McuService : Service() {
 
     private fun checkPermission() {
         if (applicationContext.checkSelfPermission("android.permission.READ_LOGS") != PackageManager.PERMISSION_GRANTED) {
-            adbManager.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
+            sendAdbCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Granted READ_LOGS permission.\nPlease restart the app for effects to take in place").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
@@ -86,21 +86,16 @@ class McuService : Service() {
 
     private fun startMcuReader() {
         mcuReader = LogcatReader()
-        LogcatReader().startReading(McuListenerEvent())
+        LogcatReader().startReading { cmdType, data ->
+            for (mcuEventListener in mcuEventListeners)
+                mcuEventListener.update(eventLogic.getMcuEvent(cmdType, data), cmdType, data)
+            Log.d("Snaggly", "Notifying new McuEvent $cmdType")
+        }
         Log.d("Snaggly", "Started McuServiceReader")
     }
 
-    private fun notifyMcuEventListeners(eventType: McuEvent?, cmdType: Int, data: ByteArray) {
-        for (mcuEventListener in mcuEventListeners)
-            mcuEventListener.update(eventType, cmdType, data)
-    }
-
-    inner class McuListenerEvent : McuCommunicator.McuAction {
-        override fun update(cmdType: Int, data: ByteArray) {
-            notifyMcuEventListeners(eventLogic.getMcuEvent(cmdType, data), cmdType, data)
-            Log.d("Snaggly", "Notifying new McuEvent $cmdType")
-        }
-
+    fun sendAdbCommand(command : String) {
+        adbManager.sendCommand(command)
     }
 
     fun registerShellListener(listener: ShellObserver) {

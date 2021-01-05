@@ -16,7 +16,7 @@
             android:id="@+id/adbShellStdoutListView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/editText"
+            app:layout_constraintBottom_toTopOf="@+id/adbEditText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,10 +28,10 @@
             android:text="adb shell"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/editText" />
+            app:layout_constraintTop_toTopOf="@+id/adbEditText" />
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText"
+            android:id="@+id/adbEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTintMode="add"
@@ -40,18 +40,18 @@
             android:textColor="@color/white"
             android:textColorHint="@color/cardview_dark_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintEnd_toStartOf="@+id/adbSend"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/textView2" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/adbSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/editText" />
+            app:layout_constraintTop_toTopOf="@+id/adbEditText" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

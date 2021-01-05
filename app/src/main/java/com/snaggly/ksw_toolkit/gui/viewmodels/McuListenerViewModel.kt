@@ -58,10 +58,9 @@ class McuListenerViewModel : ViewModel() {
 
     val mcuObserver = object : McuService.McuEventObserver {
         override fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray) {
-            var eventName = eventType?.name ?: "Unknown Event"
-            eventName += " $cmdType"
+            val eventName = eventType?.name ?: "Unknown Event"
             parentActivity?.runOnUiThread {
-                addEntryToAdapter(eventName, dataBytesToString(data))
+                addEntryToAdapter("$eventName - $cmdType", dataBytesToString(data))
             }
         }
 
