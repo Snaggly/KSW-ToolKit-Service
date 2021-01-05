@@ -25,20 +25,15 @@ class AdbShell : Fragment() {
     private lateinit var mcuService: McuService
 
     private val connection = object : ServiceConnection {
-        private var registeredAt : Int = 0
-
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mcuService = (service as McuService.McuServiceBinder).getService()
-            registeredAt = mcuService.registerShellListener(adbShellObserver)
+            mcuService.registerShellListener(adbShellObserver)
             isBound = true
-            Log.d("Snaggly", "AdbShell connected to Service at $registeredAt")
             initList()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            mcuService.unregisterShellListener(registeredAt)
-            isBound = false
-            Log.d("Snaggly", "AdbShell disconnected from Service at $registeredAt")
+            unbindService()
         }
     }
 
@@ -82,6 +77,7 @@ class AdbShell : Fragment() {
     override fun onStop() {
         super.onStop()
         requireActivity().unbindService(connection)
+        unbindService()
         Log.d("Snaggly", "AdbShell unbinding from Service")
     }
 
@@ -106,5 +102,10 @@ class AdbShell : Fragment() {
                 textInput.setText("")
             }
         }
+    }
+
+    private fun unbindService() {
+        mcuService.unregisterShellListener(adbShellObserver)
+        isBound = false
     }
 }

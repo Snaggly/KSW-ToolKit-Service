@@ -100,23 +100,19 @@ class McuService : Service() {
         adbManager.sendCommand(command)
     }
 
-    fun registerShellListener(listener: ShellObserver): Int {
-        val result = adbShellListeners.size
-        adbShellListeners.add(result, listener)
-        return result
+    fun registerShellListener(listener: ShellObserver) {
+        adbShellListeners.add(listener)
     }
 
-    fun unregisterShellListener(listenerAt: Int) {
-        adbShellListeners.removeAt(listenerAt)
+    fun unregisterShellListener(listener: ShellObserver) {
+        adbShellListeners.remove(listener)
     }
 
-    fun registerMcuEventListener(listener: McuEventObserver): Int {
-        val result = mcuEventListeners.size
-        mcuEventListeners.add(result, listener)
-        return result
+    fun registerMcuEventListener(listener: McuEventObserver) {
+        mcuEventListeners.add(listener)
     }
 
-    fun unregisterMcuEventListener(listenerAt: Int) {
-        mcuEventListeners.removeAt(listenerAt)
+    fun unregisterMcuEventListener(listener: McuEventObserver) {
+        mcuEventListeners.remove(listener)
     }
 }
