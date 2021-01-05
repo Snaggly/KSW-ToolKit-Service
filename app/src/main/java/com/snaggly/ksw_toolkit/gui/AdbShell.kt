@@ -25,25 +25,26 @@ class AdbShell : Fragment() {
     private lateinit var mcuService: McuService
 
     private val connection = object : ServiceConnection {
+        private var registeredAt : Int = 0
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mcuService = (service as McuService.McuServiceBinder).getService()
-            mcuService.registerShellListener(adbShellObserver)
+            registeredAt = mcuService.registerShellListener(adbShellObserver)
             isBound = true
-            Log.d("Snaggly", "AdbShell connected to Service")
+            Log.d("Snaggly", "AdbShell connected to Service at $registeredAt")
+            initList()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            mcuService.unregisterShellListener(adbShellObserver)
+            mcuService.unregisterShellListener(registeredAt)
             isBound = false
-            Log.d("Snaggly", "AdbShell disconnected from Service")
+            Log.d("Snaggly", "AdbShell disconnected from Service at $registeredAt")
         }
     }
 
     val adbShellObserver = object : McuService.ShellObserver {
-        override fun update(text: String) {
+        override fun update() {
             requireActivity().runOnUiThread {
-                stdOuts.add(text)
                 listAdapter.notifyDataSetChanged()
             }
         }
@@ -57,7 +58,6 @@ class AdbShell : Fragment() {
     private lateinit var textInput: TextInputEditText
     private lateinit var sendButton: Button
     private lateinit var listAdapter: ArrayAdapter<String>
-    private val stdOuts = ArrayList<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,7 +67,6 @@ class AdbShell : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initElements()
-        initList()
         initClickEvent()
     }
 
@@ -93,17 +92,17 @@ class AdbShell : Fragment() {
     }
 
     private fun initList() {
-        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_activated_1, stdOuts)
+        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, mcuService.adbLines)
         shellListView.adapter = listAdapter
     }
 
     private fun initClickEvent() {
         sendButton.setOnClickListener {
             if (!isBound) {
-                AlertDialog.Builder(requireContext()).setTitle("KSW-ToolKit AdbShell").setMessage("This fragment was not bound to the Core Service.\nOperation failed!")
+                AlertDialog.Builder(requireContext()).setTitle("KSW-ToolKit AdbShell").setMessage("This fragment was not bound to the Core Service.\nOperation failed!").show()
             } else {
                 mcuService.sendAdbCommand(textInput.text.toString())
-                Log.d("Snaggly", "Sending Adb command: ${textInput.text.toString()}")
+                Log.d("Snaggly", "Sent Adb command: ${textInput.text.toString()}")
                 textInput.setText("")
             }
         }

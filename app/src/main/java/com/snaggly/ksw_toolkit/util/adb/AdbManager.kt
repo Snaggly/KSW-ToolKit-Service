@@ -49,6 +49,7 @@ class AdbManager {
 
         Thread {
             while (!shellStream.isClosed) {
+                Thread.sleep(1000)
                 var shellText = String(shellStream.read(), Charsets.US_ASCII)
                 if (shellText != previousShellText) {
                     previousShellText = shellText
@@ -71,7 +72,7 @@ class AdbManager {
     fun sendCommand(command: String) {
         if (isConnected) {
             Thread {
-                shellStream.write(command + "\n")
+                shellStream.write(" $command\n")
             }.start()
         }
     }

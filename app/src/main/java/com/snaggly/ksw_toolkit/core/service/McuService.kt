@@ -30,7 +30,7 @@ class McuService : Service() {
     }
 
     interface ShellObserver {
-        fun update(text: String)
+        fun update()
     }
 
     interface McuEventObserver {
@@ -41,6 +41,7 @@ class McuService : Service() {
     private val eventLogic = McuEventLogicImpl()
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
+    val adbLines = ArrayList<String>()
 
     private var mcuReader: McuCommunicator.Reader? = null
 
@@ -49,8 +50,10 @@ class McuService : Service() {
         try {
             adbManager.connect(applicationContext, "shell:", object : AdbManager.OnAdbShellDataReceived {
                 override fun onDataReceived(text: String) {
+                    adbLines.add(text)
+                    Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size}")
                     for (listener in adbShellListeners)
-                        listener.update(text)
+                        listener.update()
                 }
             })
         } catch (e: Exception) {
@@ -89,30 +92,31 @@ class McuService : Service() {
         LogcatReader().startReading { cmdType, data ->
             for (mcuEventListener in mcuEventListeners)
                 mcuEventListener.update(eventLogic.getMcuEvent(cmdType, data), cmdType, data)
-            Log.d("Snaggly", "Notifying new McuEvent $cmdType")
         }
         Log.d("Snaggly", "Started McuServiceReader")
     }
 
-    fun sendAdbCommand(command : String) {
+    fun sendAdbCommand(command: String) {
         adbManager.sendCommand(command)
     }
 
-    fun registerShellListener(listener: ShellObserver) {
-        adbShellListeners.add(listener)
+    fun registerShellListener(listener: ShellObserver): Int {
+        val result = adbShellListeners.size
+        adbShellListeners.add(result, listener)
+        return result
     }
 
-    fun unregisterShellListener(listener: ShellObserver) {
-        adbShellListeners.remove(listener)
+    fun unregisterShellListener(listenerAt: Int) {
+        adbShellListeners.removeAt(listenerAt)
     }
 
-    fun registerMcuEventListener(listener: McuEventObserver) {
-        mcuEventListeners.add(listener)
-        Log.d("Snaggly", "Added new McuEventObserver")
+    fun registerMcuEventListener(listener: McuEventObserver): Int {
+        val result = mcuEventListeners.size
+        mcuEventListeners.add(result, listener)
+        return result
     }
 
-    fun unregisterMcuEventListener(listener: McuEventObserver) {
-        mcuEventListeners.remove(listener)
-        Log.d("Snaggly", "Removed one McuEventObserver")
+    fun unregisterMcuEventListener(listenerAt: Int) {
+        mcuEventListeners.removeAt(listenerAt)
     }
 }

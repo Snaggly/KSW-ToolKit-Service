@@ -25,18 +25,19 @@ class McuListener : Fragment() {
     private lateinit var mcuService: McuService
 
     private val connection = object : ServiceConnection {
+        private var registeredAt: Int = 0
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mcuService = (service as McuService.McuServiceBinder).getService()
-            mcuService.registerMcuEventListener(viewModel.mcuObserver)
+            registeredAt = mcuService.registerMcuEventListener(viewModel.mcuObserver)
             isBound = true
-            Log.d("Snaggly", "McuListener connected to Service")
+            Log.d("Snaggly", "McuListener connected to Service at $registeredAt")
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            mcuService.unregisterMcuEventListener(viewModel.mcuObserver)
+            mcuService.unregisterMcuEventListener(registeredAt)
             isBound = false
-            Log.d("Snaggly", "McuListener disconnected from Service")
+            Log.d("Snaggly", "McuListener disconnected from Service at $registeredAt")
         }
     }
 
