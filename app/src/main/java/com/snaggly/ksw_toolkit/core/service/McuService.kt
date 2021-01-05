@@ -47,10 +47,13 @@ class McuService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        adbLines.add("")
+        var atLine = 0
         try {
             adbManager.connect(applicationContext, "shell:", object : AdbManager.OnAdbShellDataReceived {
                 override fun onDataReceived(text: String) {
-                    adbLines.add(text)
+                    adbLines[atLine] += text
+                    var size = adbShellListeners.size
                     Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size}")
                     for (listener in adbShellListeners)
                         listener.update()
