@@ -36,14 +36,20 @@ class McuService : Service() {
     interface McuEventObserver {
         fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray)
     }
-
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val eventLogic = McuEventLogicImpl()
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
     val adbLines = ArrayList<String>()
+    var bindable = true
+        private set
+    private var counter = 0;
 
     private var mcuReader: McuCommunicator.Reader? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -54,13 +60,14 @@ class McuService : Service() {
                 override fun onDataReceived(text: String) {
                     adbLines[atLine] += text
                     var size = adbShellListeners.size
-                    Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size}")
+                    Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size} - Counter: ${counter++}")
                     for (listener in adbShellListeners)
                         listener.update()
                 }
             })
         } catch (e: Exception) {
             Log.d("KSW-ToolKit-McuService", e.localizedMessage!!)
+            bindable = false
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()

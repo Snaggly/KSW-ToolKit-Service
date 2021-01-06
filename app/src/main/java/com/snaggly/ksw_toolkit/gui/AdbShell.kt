@@ -76,7 +76,6 @@ class AdbShell : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        requireActivity().unbindService(connection)
         unbindService()
         Log.d("Snaggly", "AdbShell unbinding from Service")
     }
@@ -107,5 +106,6 @@ class AdbShell : Fragment() {
     private fun unbindService() {
         mcuService.unregisterShellListener(adbShellObserver)
         isBound = false
+        requireContext().unbindService(connection)
     }
 }

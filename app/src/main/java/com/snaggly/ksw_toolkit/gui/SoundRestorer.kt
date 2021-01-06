@@ -28,6 +28,8 @@ class SoundRestorer : Fragment() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mcuService = (service as McuService.McuServiceBinder).getService()
             isBound = true
+            if (!mcuService.bindable)
+                unbindService()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -47,8 +49,7 @@ class SoundRestorer : Fragment() {
         val startOnBootBtn = requireView().findViewById<SwitchCompat>(R.id.startOnBootSwitch)
         startOnBootBtn.requestFocus()
         val initSourceBtn = requireView().findViewById<Button>(R.id.initSourceBtn)
-        initSourceBtn.setOnClickListener {
-        }
+        initSourceBtn.setOnClickListener { }
     }
 
     override fun onStart() {
@@ -60,7 +61,14 @@ class SoundRestorer : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        requireActivity().unbindService(connection)
+        unbindService()
+    }
+
+    private fun unbindService() {
+        if (isBound) {
+            isBound = false
+            requireActivity().unbindService(connection)
+        }
     }
 
     companion object {
