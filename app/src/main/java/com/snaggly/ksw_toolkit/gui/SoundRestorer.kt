@@ -13,30 +13,29 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
+import com.snaggly.ksw_toolkit.core.service.helper.McuServiceConnector
 import com.snaggly.ksw_toolkit.gui.viewmodels.SoundRestorerViewModel
 
 class SoundRestorer : Fragment() {
     private var mViewModel: SoundRestorerViewModel? = null
     private var isBound = false
-    private lateinit var mcuService: McuService
+    private var mcuService: McuService? = null
 
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mcuService = (service as McuService.McuServiceBinder).getService()
             isBound = true
-            if (!mcuService.bindable)
-                unbindService()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             isBound = false
         }
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -54,9 +53,14 @@ class SoundRestorer : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Intent(requireContext(), McuService::class.java).also { intent ->
-            requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
+        //Intent(requireContext(), McuService::class.java).also { intent ->
+            //requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        //}
+        val connector = McuServiceConnector(requireContext(), requireActivity())
+        connector.getService().observe(this, { newData ->
+            mcuService = newData
+        })
+        connector.connectToService()
     }
 
     override fun onStop() {

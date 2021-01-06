@@ -13,12 +13,12 @@ import com.snaggly.ksw_toolkit.core.service.McuService
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mcuServiceIntent: Intent
-    private val soundRestorerFragment: Fragment = SoundRestorer()
-    private val eventManagerFragment: Fragment = EventManager()
-    private val systemTweaksFragment: Fragment = SystemTwaks()
-    private val adbShellFragment: Fragment = AdbShell()
-    private val mcuListenerFragment: Fragment = McuListener()
-    private val configFragment: Fragment = Config()
+    private var soundRestorerFragment: Fragment = SoundRestorer()
+    private var eventManagerFragment: Fragment = EventManager()
+    private var systemTweaksFragment: Fragment = SystemTwaks()
+    private var adbShellFragment: Fragment = AdbShell()
+    private var mcuListenerFragment: Fragment = McuListener()
+    private var configFragment: Fragment = Config()
     private lateinit var mFragManager: FragmentManager
     private lateinit var soundRestorerPane: Button
     private lateinit var eventManagerPane: Button
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         mcuServiceIntent = Intent(this, McuService::class.java)
-        startService(mcuServiceIntent)
+        startForegroundService(mcuServiceIntent)
     }
 
     override fun onResume() {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        stopService(mcuServiceIntent)
+        //stopService(mcuServiceIntent)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

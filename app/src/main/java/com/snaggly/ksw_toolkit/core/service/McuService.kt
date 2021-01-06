@@ -1,25 +1,52 @@
 package com.snaggly.ksw_toolkit.core.service
 
-import android.app.AlertDialog
-import android.app.Service
+import android.R
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.snaggly.ksw_toolkit.BuildConfig
 import com.snaggly.ksw_toolkit.util.adb.AdbManager
-import projekt.auto.mcu.adb.lib.AdbStream
 import projekt.auto.mcu.ksw.serial.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.McuEvent
-import projekt.auto.mcu.ksw.serial.SerialReader
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class McuService : Service() {
+    companion object {
+        var bindable = false
+            private set
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun startMyOwnForeground() {
+        val notificationChannelId = BuildConfig.APPLICATION_ID
+        val channelName = "McuListenerService"
+        val chan = NotificationChannel(notificationChannelId, channelName, NotificationManager.IMPORTANCE_NONE)
+        chan.lightColor = Color.BLACK
+        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+        manager.createNotificationChannel(chan)
+        val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
+        val notification: Notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.sym_def_app_icon)
+                .setContentTitle("KSW-Toolkit running in background...")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build()
+        startForeground(2, notification)
+    }
+
     inner class McuServiceBinder : Binder() {
         fun getService(): McuService = this@McuService
     }
@@ -36,30 +63,24 @@ class McuService : Service() {
     interface McuEventObserver {
         fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray)
     }
+
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val eventLogic = McuEventLogicImpl()
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
     val adbLines = ArrayList<String>()
-    var bindable = true
-        private set
     private var counter = 0;
 
     private var mcuReader: McuCommunicator.Reader? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
-    }
-
-    override fun onCreate() {
-        super.onCreate()
+        startMyOwnForeground()
         adbLines.add("")
         var atLine = 0
         try {
             adbManager.connect(applicationContext, "shell:", object : AdbManager.OnAdbShellDataReceived {
                 override fun onDataReceived(text: String) {
                     adbLines[atLine] += text
-                    var size = adbShellListeners.size
                     Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size} - Counter: ${counter++}")
                     for (listener in adbShellListeners)
                         listener.update()
@@ -71,13 +92,18 @@ class McuService : Service() {
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
-            stopSelf()
-            return
+            //stopSelf()
+            return START_NOT_STICKY
         }
-
         checkPermission()
         startMcuReader()
+        bindable = true
         Log.d("Snaggly", "Started McuService")
+        return START_STICKY
+    }
+
+    override fun onCreate() {
+        super.onCreate()
     }
 
     override fun onDestroy() {

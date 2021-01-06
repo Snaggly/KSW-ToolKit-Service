@@ -23,8 +23,16 @@ class AdbManager {
         fun onDataReceived(text: String)
     }
 
+    private var test = true
+
     @Throws(AdbConnectionException::class)
     fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived) {
+        Thread {
+            while (test) {
+                callback.onDataReceived("Hii I'm alive\n")
+                Thread.sleep(1000)
+            }
+        }.start()
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -61,6 +69,7 @@ class AdbManager {
     }
 
     fun disconnect() {
+        test = false
         if (isConnected) {
             shellStream.close()
             adbConnection.close()
