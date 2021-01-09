@@ -23,11 +23,6 @@ import kotlin.collections.ArrayList
 
 
 class McuService : Service() {
-    companion object {
-        var bindable = false
-            private set
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     private fun startMyOwnForeground() {
         val notificationChannelId = BuildConfig.APPLICATION_ID
@@ -88,7 +83,6 @@ class McuService : Service() {
             })
         } catch (e: Exception) {
             Log.d("KSW-ToolKit-McuService", e.localizedMessage!!)
-            bindable = false
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
@@ -97,7 +91,6 @@ class McuService : Service() {
         }
         checkPermission()
         startMcuReader()
-        bindable = true
         Log.d("Snaggly", "Started McuService")
         return START_STICKY
     }

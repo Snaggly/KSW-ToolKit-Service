@@ -1,41 +1,26 @@
 package com.snaggly.ksw_toolkit.gui
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
-import com.snaggly.ksw_toolkit.core.service.helper.McuServiceConnector
 import com.snaggly.ksw_toolkit.gui.viewmodels.SoundRestorerViewModel
 
-class SoundRestorer : Fragment() {
-    private var mViewModel: SoundRestorerViewModel? = null
-    private var isBound = false
-    private var mcuService: McuService? = null
+class SoundRestorer(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
 
-    private val connection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            mcuService = (service as McuService.McuServiceBinder).getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            isBound = false
-        }
+    init {
+        mcuServiceObserver.observe(this, { mcuServiceObj ->
+            mcuService = mcuServiceObj
+        })
     }
+
+    private var mViewModel: SoundRestorerViewModel? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,31 +38,13 @@ class SoundRestorer : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        //Intent(requireContext(), McuService::class.java).also { intent ->
-            //requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        //}
-        val connector = McuServiceConnector(requireContext(), requireActivity())
-        connector.getService().observe(this, { newData ->
-            mcuService = newData
-        })
-        connector.connectToService()
     }
 
     override fun onStop() {
         super.onStop()
-        unbindService()
-    }
-
-    private fun unbindService() {
-        if (isBound) {
-            isBound = false
-            requireActivity().unbindService(connection)
-        }
     }
 
     companion object {
-        fun newInstance(): SoundRestorer? {
-            return SoundRestorer()
-        }
+        fun newInstance(mcuService: LiveData<McuService?>) = SoundRestorer(mcuService)
     }
 }

@@ -1,43 +1,29 @@
 package com.snaggly.ksw_toolkit.gui
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
 import com.snaggly.ksw_toolkit.gui.viewmodels.McuListenerViewModel
 
-class McuListener : Fragment() {
-    private var isBound = false
-    private lateinit var mcuService: McuService
+class McuListener(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            mcuService = (service as McuService.McuServiceBinder).getService()
-            mcuService.registerMcuEventListener(viewModel.mcuObserver)
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            unbindService()
-        }
+    init {
+        mcuServiceObserver.observe(this, { mcuServiceObj ->
+            mcuService = mcuServiceObj
+        })
     }
 
     companion object {
-        fun newInstance() = McuListener()
+        fun newInstance(mcuServiceObserver: LiveData<McuService?>) = McuListener(mcuServiceObserver)
     }
 
     private lateinit var viewModel: McuListenerViewModel
@@ -60,18 +46,13 @@ class McuListener : Fragment() {
     override fun onStart() {
         super.onStart()
         viewModel.parentActivity = requireActivity()
-        Intent(requireContext(), McuService::class.java).also { intent ->
-            requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-        Log.d("Snaggly", "McuListener binding to Service")
         stopKswServiceSwitch.requestFocus()
+        mcuService?.registerMcuEventListener(viewModel.mcuObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        requireActivity().unbindService(connection)
-        unbindService()
-        Log.d("Snaggly", "McuListener unbinding from Service")
+        mcuService?.unregisterMcuEventListener(viewModel.mcuObserver)
     }
 
     private fun initElements() {
@@ -85,10 +66,5 @@ class McuListener : Fragment() {
 
         stopKswServiceSwitch = requireView().findViewById(R.id.startStopKSWServiceSwitch)
         stopKswServiceOnBootSwitch = requireView().findViewById(R.id.startStopKSWServiceOnBootSwitch)
-    }
-
-    private fun unbindService() {
-        mcuService.unregisterMcuEventListener(viewModel.mcuObserver)
-        isBound = false
     }
 }

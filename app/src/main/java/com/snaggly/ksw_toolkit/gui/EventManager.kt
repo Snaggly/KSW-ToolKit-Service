@@ -5,13 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.service.McuService
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerViewModel
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
-class EventManager : Fragment() {
+class EventManager(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
+
+    init {
+        mcuServiceObserver.observe(this, { mcuServiceObj ->
+            mcuService = mcuServiceObj
+        })
+    }
+
     private lateinit var telefonBtn : Button
     private lateinit var telefonLongBtn : Button
     private lateinit var voiceBtn : Button
@@ -99,8 +107,8 @@ class EventManager : Fragment() {
     }
 
     companion object {
-        fun newInstance(): EventManager? {
-            return EventManager()
+        fun newInstance(mcuServiceObserver: LiveData<McuService?>): EventManager {
+            return EventManager(mcuServiceObserver)
         }
     }
 }

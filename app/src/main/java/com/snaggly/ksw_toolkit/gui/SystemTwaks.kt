@@ -2,17 +2,24 @@ package com.snaggly.ksw_toolkit.gui
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.service.McuService
 import com.snaggly.ksw_toolkit.gui.viewmodels.SystemTwaksViewModel
 
-class SystemTwaks : Fragment() {
+class SystemTwaks(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
+
+    init {
+        mcuServiceObserver.observe(this, { mcuServiceObj ->
+            mcuService = mcuServiceObj
+        })
+    }
 
     companion object {
-        fun newInstance() = SystemTwaks()
+        fun newInstance(mcuServiceObserver: LiveData<McuService?>) = SystemTwaks(mcuServiceObserver)
     }
 
     private lateinit var viewModel: SystemTwaksViewModel

@@ -10,12 +10,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.snaggly.ksw_toolkit.core.service.McuService
 
-class McuServiceConnector(private val context: Context, private val activity: Activity) {
+class McuServiceConnector(private val context: Context) {
     private val mService = MutableLiveData<McuService?>()
-
-    fun getService(): LiveData<McuService?> {
-        return mService
-    }
 
     private val serviceConnector = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -27,11 +23,14 @@ class McuServiceConnector(private val context: Context, private val activity: Ac
         }
     }
 
-    fun connectToService() {
-        if (McuService.bindable) {
-            Intent(context, McuService::class.java).also { intent ->
-                activity.bindService(intent, serviceConnector, Context.BIND_AUTO_CREATE)
-            }
+    fun connectToService() : LiveData<McuService?>{
+        Intent(context, McuService::class.java).also { intent ->
+            context.bindService(intent, serviceConnector, Context.BIND_AUTO_CREATE)
         }
+        return mService
+    }
+
+    fun disconnectFromService() {
+        context.unbindService(serviceConnector)
     }
 }
