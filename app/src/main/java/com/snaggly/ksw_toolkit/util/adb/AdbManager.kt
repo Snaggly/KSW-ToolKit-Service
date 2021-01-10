@@ -50,11 +50,17 @@ class AdbManager {
 
         Thread {
             while (!shellStream.isClosed) {
-                Thread.sleep(1000)
-                var shellText = String(shellStream.read(), Charsets.US_ASCII)
-                if (shellText != previousShellText) {
-                    previousShellText = shellText
-                    callback.onDataReceived(shellText)
+                try {
+                    Thread.sleep(1000)
+                    var shellText = String(shellStream.read(), Charsets.US_ASCII)
+                    if (shellText != previousShellText) {
+                        previousShellText = shellText
+                        callback.onDataReceived(shellText)
+                    }
+                }
+                catch (e : Exception) {
+                    isConnected = false
+                    e.printStackTrace()
                 }
             }
         }.start()
