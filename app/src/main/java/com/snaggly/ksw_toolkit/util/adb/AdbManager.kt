@@ -13,7 +13,7 @@ import java.net.Socket
 import java.security.NoSuchAlgorithmException
 
 class AdbManager {
-    private val socket = Socket()
+    private lateinit var socket : Socket
     private var isConnected = false
     private lateinit var adbConnection: AdbConnection
     private lateinit var shellStream: AdbStream
@@ -23,16 +23,8 @@ class AdbManager {
         fun onDataReceived(text: String)
     }
 
-    private var test = true
-
     @Throws(AdbConnectionException::class)
     fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived) {
-        Thread {
-            while (test) {
-                callback.onDataReceived("Hii I'm alive\n")
-                Thread.sleep(1000)
-            }
-        }.start()
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -40,6 +32,7 @@ class AdbManager {
             try {
                 TrafficStats.setThreadStatsTag(Thread.currentThread().id.toInt())
                 val adbCrypto = setupCrypto(context.filesDir)
+                socket = Socket()
                 socket.connect(InetSocketAddress("localhost", 5555), 5000)
                 adbConnection = AdbConnection.create(socket, adbCrypto)
                 adbConnection.connect()
@@ -69,7 +62,6 @@ class AdbManager {
     }
 
     fun disconnect() {
-        test = false
         if (isConnected) {
             shellStream.close()
             adbConnection.close()

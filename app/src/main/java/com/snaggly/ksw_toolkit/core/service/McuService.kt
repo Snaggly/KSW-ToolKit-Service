@@ -64,7 +64,6 @@ class McuService : Service() {
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
     val adbLines = ArrayList<String>()
-    private var counter = 0;
 
     private var mcuReader: McuCommunicator.Reader? = null
 
@@ -76,7 +75,7 @@ class McuService : Service() {
             adbManager.connect(applicationContext, "shell:", object : AdbManager.OnAdbShellDataReceived {
                 override fun onDataReceived(text: String) {
                     adbLines[atLine] += text
-                    Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size} - Counter: ${counter++}")
+                    Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size}")
                     for (listener in adbShellListeners)
                         listener.update()
                 }
@@ -85,7 +84,7 @@ class McuService : Service() {
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
-            stopSelf()
+            //stopSelf()
             return START_NOT_STICKY
         }
         checkPermission()

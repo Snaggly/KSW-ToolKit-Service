@@ -33,14 +33,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         if (!checkPermissions())
             finish()
-        else
+        else {
+            startService()
             startApp()
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        mainViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-        mainViewModel.startService()
     }
 
     override fun onResume() {
@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    private fun startService() {
+        mainViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        mainViewModel.startService()
     }
 
     private fun startApp() {
