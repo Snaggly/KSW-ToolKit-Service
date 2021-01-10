@@ -1,6 +1,5 @@
 package com.snaggly.ksw_toolkit.gui
 
-import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,13 +8,12 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.McuService
-import com.snaggly.ksw_toolkit.core.service.helper.McuServiceConnector
+import com.snaggly.ksw_toolkit.gui.viewmodels.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mcuServiceIntent: Intent
+    private lateinit var mainViewModel: MainActivityViewModel
     private lateinit var soundRestorerFragment: Fragment
     private var eventManagerFragment: Fragment? = null
     private var systemTweaksFragment: Fragment? = null
@@ -30,31 +28,29 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mcuListenerPane: Button
     private lateinit var configImportExportPane: Button
     private lateinit var previousCallingButton: Button
-    private lateinit var mcuServiceConnector: McuServiceConnector
-    private lateinit var mcuService: LiveData<McuService?>
     private var tabFragmentId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!checkPermissions())
             finish()
+        else
+            startApp()
     }
 
     override fun onStart() {
         super.onStart()
-        mcuServiceIntent = Intent(this, McuService::class.java)
-        startForegroundService(mcuServiceIntent)
-        mcuServiceConnector = McuServiceConnector(this)
-        mcuService = mcuServiceConnector.connectToService()
+        mainViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        mainViewModel.startService()
     }
 
     override fun onResume() {
         super.onResume()
-        startApp()
+        mainViewModel.bindToMcuService()
     }
 
     override fun onStop() {
         super.onStop()
-        mcuServiceConnector.disconnectFromService()
+        mainViewModel.unbindFromMcuService()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -92,33 +88,33 @@ class MainActivity : AppCompatActivity() {
         soundRestorerPane.setOnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) }
         eventManagerPane.setOnClickListener {
             if (eventManagerFragment == null)
-                eventManagerFragment = EventManager(mcuService)
+                eventManagerFragment = EventManager()
             switchFragment(mFragManager, eventManagerPane, eventManagerFragment!!)
         }
         systemTweaksPane.setOnClickListener {
             if (systemTweaksFragment == null)
-                systemTweaksFragment = SystemTwaks(mcuService)
+                systemTweaksFragment = SystemTwaks()
             switchFragment(mFragManager, systemTweaksPane, systemTweaksFragment!!)
         }
         adbShellPane.setOnClickListener {
             if (adbShellFragment == null)
-                adbShellFragment = AdbShell(mcuService)
+                adbShellFragment = AdbShell()
             switchFragment(mFragManager, adbShellPane, adbShellFragment!!)
         }
         mcuListenerPane.setOnClickListener {
             if (mcuListenerFragment == null)
-                mcuListenerFragment = McuListener(mcuService)
+                mcuListenerFragment = McuListener()
             switchFragment(mFragManager, mcuListenerPane, mcuListenerFragment!!)
         }
         configImportExportPane.setOnClickListener {
             if (configFragment == null)
-                configFragment = Config(mcuService)
+                configFragment = Config()
             switchFragment(mFragManager, configImportExportPane, configFragment!!)
         }
     }
 
     private fun initPaneFragment() {
-        soundRestorerFragment = SoundRestorer(mcuService)
+        soundRestorerFragment = SoundRestorer()
         previousCallingButton = soundRestorerPane
         switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment)
         soundRestorerPane.requestFocus()

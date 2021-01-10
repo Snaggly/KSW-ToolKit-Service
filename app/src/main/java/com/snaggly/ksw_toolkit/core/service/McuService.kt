@@ -82,16 +82,14 @@ class McuService : Service() {
                 }
             })
         } catch (e: Exception) {
-            Log.d("KSW-ToolKit-McuService", e.localizedMessage!!)
             var alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
-            //stopSelf()
+            stopSelf()
             return START_NOT_STICKY
         }
         checkPermission()
         startMcuReader()
-        Log.d("Snaggly", "Started McuService")
         return START_STICKY
     }
 
@@ -103,7 +101,6 @@ class McuService : Service() {
         super.onDestroy()
         mcuReader?.stopReading()
         adbManager.disconnect()
-        Log.d("Snaggly", "Stopped McuService")
     }
 
 
@@ -122,7 +119,6 @@ class McuService : Service() {
             for (mcuEventListener in mcuEventListeners)
                 mcuEventListener.update(eventLogic.getMcuEvent(cmdType, data), cmdType, data)
         }
-        Log.d("Snaggly", "Started McuServiceReader")
     }
 
     fun sendAdbCommand(command: String) {

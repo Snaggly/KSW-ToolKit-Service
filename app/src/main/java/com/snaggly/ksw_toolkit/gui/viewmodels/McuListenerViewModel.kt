@@ -3,14 +3,14 @@ package com.snaggly.ksw_toolkit.gui.viewmodels
 import android.app.Activity
 import android.content.Context
 import android.widget.ArrayAdapter
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
+import com.snaggly.ksw_toolkit.core.service.helper.McuServiceClient
 import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
 import projekt.auto.mcu.ksw.serial.McuEvent
 
-class McuListenerViewModel : ViewModel() {
+class McuListenerViewModel : McuServiceClient() {
 
     private var mcuEventRVAdapter: McuEventRVAdapter = McuEventRVAdapter()
     private var spinnerAdapter: ArrayAdapter<String>? = null
@@ -65,17 +65,4 @@ class McuListenerViewModel : ViewModel() {
         }
 
     }
-
-    var counter = 1
-    fun testRV(parentActivity: Activity) {
-        Thread {
-            while (isShowing) {
-                parentActivity.runOnUiThread {
-                    addEntryToAdapter("Test Event ${counter++}", "A1-1C-23-21-BA-13-F2-2D-32-13-76-13-65-F2-A4-13-42-13")
-                }
-                Thread.sleep(1000)
-            }
-        }.start()
-    }
-
 }

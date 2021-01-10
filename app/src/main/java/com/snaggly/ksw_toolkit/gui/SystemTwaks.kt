@@ -5,21 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
+import androidx.fragment.app.Fragment
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.McuService
 import com.snaggly.ksw_toolkit.gui.viewmodels.SystemTwaksViewModel
 
-class SystemTwaks(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
-
-    init {
-        mcuServiceObserver.observe(this, { mcuServiceObj ->
-            mcuService = mcuServiceObj
-        })
-    }
+class SystemTwaks : Fragment() {
 
     companion object {
-        fun newInstance(mcuServiceObserver: LiveData<McuService?>) = SystemTwaks(mcuServiceObserver)
+        fun newInstance() = SystemTwaks()
     }
 
     private lateinit var viewModel: SystemTwaksViewModel

@@ -1,7 +1,7 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
-import androidx.lifecycle.ViewModel
+import com.snaggly.ksw_toolkit.core.service.helper.McuServiceClient
 
-class SystemTwaksViewModel : ViewModel() {
+class SystemTwaksViewModel : McuServiceClient() {
     // TODO: Implement the ViewModel
 }

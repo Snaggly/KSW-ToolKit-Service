@@ -6,21 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.LiveData
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.McuService
 import com.snaggly.ksw_toolkit.gui.viewmodels.SoundRestorerViewModel
 
-class SoundRestorer(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
+class SoundRestorer : Fragment() {
 
-    init {
-        mcuServiceObserver.observe(this, { mcuServiceObj ->
-            mcuService = mcuServiceObj
-        })
-    }
-
-    private var mViewModel: SoundRestorerViewModel? = null
+    private lateinit var mViewModel: SoundRestorerViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,7 +26,9 @@ class SoundRestorer(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServ
         val startOnBootBtn = requireView().findViewById<SwitchCompat>(R.id.startOnBootSwitch)
         startOnBootBtn.requestFocus()
         val initSourceBtn = requireView().findViewById<Button>(R.id.initSourceBtn)
-        initSourceBtn.setOnClickListener { }
+        initSourceBtn.setOnClickListener {
+
+        }
     }
 
     override fun onStart() {
@@ -45,6 +40,6 @@ class SoundRestorer(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServ
     }
 
     companion object {
-        fun newInstance(mcuService: LiveData<McuService?>) = SoundRestorer(mcuService)
+        fun newInstance() = SoundRestorer()
     }
 }

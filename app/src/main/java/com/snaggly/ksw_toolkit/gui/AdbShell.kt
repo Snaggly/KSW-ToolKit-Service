@@ -8,18 +8,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
-import androidx.lifecycle.LiveData
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.McuService
+import com.snaggly.ksw_toolkit.gui.viewmodels.AdbShellViewModel
 
-class AdbShell(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceView(mcuServiceObserver) {
-
-    init {
-        mcuServiceObserver.observe(this, { mcuServiceObj ->
-            mcuService = mcuServiceObj
-        })
-    }
+class AdbShell : Fragment() {
 
     private val adbShellObserver = object : McuService.ShellObserver {
         override fun update() {
@@ -30,9 +26,10 @@ class AdbShell(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceVi
     }
 
     companion object {
-        fun newInstance(mcuService: LiveData<McuService?>) = AdbShell(mcuService)
+        fun newInstance(mcuService: McuService?) = AdbShell()
     }
 
+    private lateinit var viewModel: AdbShellViewModel
     private lateinit var shellListView: ListView
     private lateinit var textInput: TextInputEditText
     private lateinit var sendButton: Button
@@ -45,6 +42,7 @@ class AdbShell(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceVi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(AdbShellViewModel::class.java)
         initElements()
         initClickEvent()
     }
@@ -52,12 +50,13 @@ class AdbShell(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceVi
     override fun onStart() {
         super.onStart()
         sendButton.requestFocus()
-        mcuService?.registerShellListener(adbShellObserver)
+        initList()
+        viewModel.mcuService?.registerShellListener(adbShellObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        mcuService?.unregisterShellListener(adbShellObserver)
+        viewModel.mcuService?.unregisterShellListener(adbShellObserver)
     }
 
     private fun initElements() {
@@ -67,13 +66,13 @@ class AdbShell(mcuServiceObserver: LiveData<McuService?>) : FragmentMcuServiceVi
     }
 
     private fun initList() {
-        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, mcuService?.adbLines!!)
+        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.mcuService?.adbLines!!)
         shellListView.adapter = listAdapter
     }
 
     private fun initClickEvent() {
         sendButton.setOnClickListener {
-            mcuService?.sendAdbCommand(textInput.text.toString())
+            viewModel.mcuService?.sendAdbCommand(textInput.text.toString())
             Log.d("Snaggly", "Sent Adb command: ${textInput.text.toString()}")
             textInput.setText("")
         }
