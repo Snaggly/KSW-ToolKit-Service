@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KSWToolKit">
-        <service android:name=".core.service.McuService" android:enabled="true" android:exported="false" />
+        <service android:name=".core.service.CoreService" android:enabled="true" android:exported="false" />
 
         <activity android:name=".gui.MainActivity" android:screenOrientation="landscape">
             <intent-filter>

@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class McuService : Service() {
+class CoreService : Service() {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private fun startMyOwnForeground() {
         val notificationChannelId = BuildConfig.APPLICATION_ID
@@ -43,7 +43,7 @@ class McuService : Service() {
     }
 
     inner class McuServiceBinder : Binder() {
-        fun getService(): McuService = this@McuService
+        fun getService(): CoreService = this@CoreService
     }
 
     private val binder = McuServiceBinder()
@@ -60,7 +60,7 @@ class McuService : Service() {
     }
 
     private val mcuEventListeners = ArrayList<McuEventObserver>()
-    private val eventLogic = McuEventLogicImpl()
+    private val eventLogic = CoreEventLogicImpl()
     private val adbManager = AdbManager()
     private val adbShellListeners = ArrayList<ShellObserver>()
     val adbLines = ArrayList<String>()

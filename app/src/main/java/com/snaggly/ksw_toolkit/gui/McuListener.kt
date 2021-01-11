@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.gui.viewmodels.McuListenerViewModel
+import com.snaggly.ksw_toolkit.gui.viewmodels.CoreListenerViewModel
 
 class McuListener : Fragment() {
 
@@ -19,7 +19,7 @@ class McuListener : Fragment() {
         fun newInstance() = McuListener()
     }
 
-    private lateinit var viewModel: McuListenerViewModel
+    private lateinit var viewModel: CoreListenerViewModel
     private lateinit var sourceSpinner: Spinner
     private lateinit var mcuEventRV: RecyclerView
     private lateinit var stopKswServiceSwitch: SwitchCompat
@@ -32,7 +32,7 @@ class McuListener : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(McuListenerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CoreListenerViewModel::class.java)
         initElements()
     }
 
@@ -40,12 +40,12 @@ class McuListener : Fragment() {
         super.onStart()
         viewModel.parentActivity = requireActivity()
         stopKswServiceSwitch.requestFocus()
-        viewModel.mcuService?.registerMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.registerMcuEventListener(viewModel.mcuObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.mcuService?.unregisterMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.unregisterMcuEventListener(viewModel.mcuObserver)
     }
 
     private fun initElements() {

@@ -12,12 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.McuService
+import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.gui.viewmodels.AdbShellViewModel
 
 class AdbShell : Fragment() {
 
-    private val adbShellObserver = object : McuService.ShellObserver {
+    private val adbShellObserver = object : CoreService.ShellObserver {
         override fun update() {
             requireActivity().runOnUiThread {
                 listAdapter.notifyDataSetChanged()
@@ -26,7 +26,7 @@ class AdbShell : Fragment() {
     }
 
     companion object {
-        fun newInstance(mcuService: McuService?) = AdbShell()
+        fun newInstance(coreService: CoreService?) = AdbShell()
     }
 
     private lateinit var viewModel: AdbShellViewModel
@@ -51,12 +51,12 @@ class AdbShell : Fragment() {
         super.onStart()
         sendButton.requestFocus()
         initList()
-        viewModel.mcuService?.registerShellListener(adbShellObserver)
+        viewModel.coreService?.registerShellListener(adbShellObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.mcuService?.unregisterShellListener(adbShellObserver)
+        viewModel.coreService?.unregisterShellListener(adbShellObserver)
     }
 
     private fun initElements() {
@@ -66,13 +66,13 @@ class AdbShell : Fragment() {
     }
 
     private fun initList() {
-        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.mcuService?.adbLines!!)
+        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.coreService?.adbLines!!)
         shellListView.adapter = listAdapter
     }
 
     private fun initClickEvent() {
         sendButton.setOnClickListener {
-            viewModel.mcuService?.sendAdbCommand(textInput.text.toString())
+            viewModel.coreService?.sendAdbCommand(textInput.text.toString())
             Log.d("Snaggly", "Sent Adb command: ${textInput.text.toString()}")
             textInput.setText("")
         }

@@ -5,22 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.snaggly.ksw_toolkit.core.service.McuService
+import com.snaggly.ksw_toolkit.core.service.CoreService
 
-class McuServiceConnector(private val context: Context) {
+class CoreServiceConnector(private val context: Context) {
 
     private val serviceConnector = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            McuServiceClient.mcuService = (service as McuService.McuServiceBinder).getService()
+            CoreServiceClient.coreService = (service as CoreService.McuServiceBinder).getService()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            McuServiceClient.mcuService = null
+            CoreServiceClient.coreService = null
         }
     }
 
     fun connectToService() {
-        Intent(context, McuService::class.java).also { intent ->
+        Intent(context, CoreService::class.java).also { intent ->
             context.bindService(intent, serviceConnector, Context.BIND_AUTO_CREATE)
         }
     }

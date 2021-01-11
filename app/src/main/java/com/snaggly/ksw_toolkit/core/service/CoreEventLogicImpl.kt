@@ -2,7 +2,7 @@ package com.snaggly.ksw_toolkit.core.service
 
 import projekt.auto.mcu.ksw.serial.McuEvent
 
-class McuEventLogicImpl {
+class CoreEventLogicImpl {
     fun getMcuEvent(cmdType: Int, data: ByteArray) : McuEvent? {
         if (cmdType == 0x1C) {
             if (data[0] == 0x1.toByte()) return McuEvent.Idle
