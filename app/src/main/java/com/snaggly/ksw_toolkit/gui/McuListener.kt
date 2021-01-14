@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.gui.viewmodels.CoreListenerViewModel
+import com.snaggly.ksw_toolkit.gui.viewmodels.McuListenerViewModel
 
 class McuListener : Fragment() {
 
@@ -19,7 +19,7 @@ class McuListener : Fragment() {
         fun newInstance() = McuListener()
     }
 
-    private lateinit var viewModel: CoreListenerViewModel
+    private lateinit var viewModel: McuListenerViewModel
     private lateinit var sourceSpinner: Spinner
     private lateinit var mcuEventRV: RecyclerView
     private lateinit var stopKswServiceSwitch: SwitchCompat
@@ -32,7 +32,7 @@ class McuListener : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CoreListenerViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(McuListenerViewModel::class.java)
         initElements()
     }
 
@@ -51,7 +51,7 @@ class McuListener : Fragment() {
     private fun initElements() {
         sourceSpinner = requireView().findViewById(R.id.mcuSourceSpinner)
         sourceSpinner.adapter = viewModel.getSpinnerAdapter(requireContext())
-        sourceSpinner.setSelection(1)
+        sourceSpinner.setSelection(0)
 
         mcuEventRV = requireView().findViewById(R.id.McuEventsRV);
         mcuEventRV.layoutManager = LinearLayoutManager(context)

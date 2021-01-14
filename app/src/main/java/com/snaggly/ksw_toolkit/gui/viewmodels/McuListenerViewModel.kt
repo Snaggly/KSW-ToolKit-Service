@@ -10,12 +10,13 @@ import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
 import projekt.auto.mcu.ksw.serial.McuEvent
 
-class CoreListenerViewModel : CoreServiceClient() {
+class McuListenerViewModel : CoreServiceClient() {
 
     private var mcuEventRVAdapter: McuEventRVAdapter = McuEventRVAdapter()
     private var spinnerAdapter: ArrayAdapter<String>? = null
     private var isShowing = true
     private var sources: Array<String> = arrayOf(
+            "KSW-Logcat",
             "/dev/ttyMSM0",
             "/dev/ttyMSM1",
             "/dev/ttyS0",

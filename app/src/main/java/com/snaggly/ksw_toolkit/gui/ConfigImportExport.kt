@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.gui.viewmodels.ConfigViewModel
+import com.snaggly.ksw_toolkit.gui.viewmodels.ConfigImportExportViewModel
 
-class Config : Fragment() {
+class ConfigImportExport : Fragment() {
 
     companion object {
-        fun newInstance() = Config()
+        fun newInstance() = ConfigImportExport()
     }
 
-    private lateinit var viewModel: ConfigViewModel
+    private lateinit var importExportViewModel: ConfigImportExportViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -24,7 +24,7 @@ class Config : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ConfigViewModel::class.java)
+        importExportViewModel = ViewModelProvider(this).get(ConfigImportExportViewModel::class.java)
         // TODO: Use the ViewModel
     }
 

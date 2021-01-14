@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
         configImportExportPane.setOnClickListener {
             if (configFragment == null)
-                configFragment = Config()
+                configFragment = ConfigImportExport()
             switchFragment(mFragManager, configImportExportPane, configFragment!!)
         }
     }
