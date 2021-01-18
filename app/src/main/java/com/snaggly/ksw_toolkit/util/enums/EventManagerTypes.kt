@@ -19,5 +19,10 @@ enum class EventManagerTypes {
     BackButton,
     OptionsButton,
     NavigationButton,
-    Dummy
+    Dummy;
+
+    companion object {
+        private val types = EventManagerTypes.values().associateBy { it.name }
+        fun findByName(value: String) = types[value]
+    }
 }

@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.gui.viewmodels.SoundRestorerViewModel
 
 class SoundRestorer : Fragment() {
