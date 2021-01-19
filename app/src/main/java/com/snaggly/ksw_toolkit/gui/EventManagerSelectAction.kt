@@ -77,19 +77,17 @@ class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment()
     private fun doButtonEvents() {
         doNothingButton.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
-                when (mode) {
-                    ActionMode.InvokeKeyEvent -> {
-                        invokeKeyButton.isChecked = false
-                        listKeyEvents.clearAnimation()
-                        listKeyEvents.startAnimation(leaveToTopAnimation)
-                        listKeyEvents.visibility = View.GONE
+                if (mode == ActionMode.InvokeKeyEvent) {
+                    invokeKeyButton.isChecked = false
+                    listKeyEvents.clearAnimation()
+                    listKeyEvents.startAnimation(leaveToTopAnimation)
+                    listKeyEvents.visibility = View.GONE
                     }
-                    ActionMode.StartApp -> {
-                        startAppButton.isChecked = false
-                        listApps.clearAnimation()
-                        listApps.startAnimation((leaveToTopAnimation))
-                        listApps.visibility = View.GONE
-                    }
+                else if (mode == ActionMode.StartApp) {
+                    startAppButton.isChecked = false
+                    listApps.clearAnimation()
+                    listApps.startAnimation((leaveToTopAnimation))
+                    listApps.visibility = View.GONE
                 }
                 mode = ActionMode.DoNothing
             }

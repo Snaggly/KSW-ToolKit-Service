@@ -17,7 +17,7 @@ class ListTypeAdapter(private val appsList: ArrayList<out ListType>,
 
     private lateinit var purple200 : ColorStateList
     private lateinit var purple500 : ColorStateList
-    private lateinit var previousSelection : AppsListViewHolder
+    private var previousSelection : AppsListViewHolder? = null
 
     interface OnAppClickListener { fun onAppClick(position: Int)}
 
@@ -33,7 +33,7 @@ class ListTypeAdapter(private val appsList: ArrayList<out ListType>,
         }
 
         override fun onClick(v: View?) {
-            previousSelection.appRadioButtonView.isChecked = false
+            previousSelection?.appRadioButtonView?.isChecked = false
             appRadioButtonView.isChecked = true
             previousSelection = this
             selectedApp = adapterPosition

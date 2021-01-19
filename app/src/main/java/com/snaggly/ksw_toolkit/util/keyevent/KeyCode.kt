@@ -1,5 +1,7 @@
 package com.snaggly.ksw_toolkit.util.keyevent
 
+import com.snaggly.ksw_toolkit.util.enums.EventMode
+
 enum class KeyCode(val keycode : Int) {
     ASSIST(219),
     BACK(4),
@@ -25,5 +27,10 @@ enum class KeyCode(val keycode : Int) {
     VOICE_ASSIST(231),
     VOLUME_DOWN(25),
     VOLUME_MUTE(164),
-    VOLUME_UP(24)
+    VOLUME_UP(24);
+
+    companion object {
+        private val typeNames = EventMode.values().associateBy { it.name }
+        fun findByName(name: String) = typeNames[name]
+    }
 }
