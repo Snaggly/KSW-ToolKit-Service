@@ -16,7 +16,7 @@ import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerSelectActionViewModel
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
-class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment() {
+class EventManagerSelectAction(private val type: EventManagerTypes, private val actionEvent: EventManager.OnActionResult) : Fragment() {
     private lateinit var mViewModel: EventManagerSelectActionViewModel
     private lateinit var listKeyEvents: RecyclerView
     private lateinit var listApps: RecyclerView
@@ -90,6 +90,8 @@ class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment()
                     listApps.visibility = View.GONE
                 }
                 mode = ActionMode.DoNothing
+                mViewModel.resetEvent()
+                actionEvent.notifyView()
             }
         }
         invokeKeyButton.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -133,8 +135,8 @@ class EventManagerSelectAction(private val type: EventManagerTypes) : Fragment()
     }
 
     companion object {
-        fun newInstance(type: EventManagerTypes): EventManagerSelectAction? {
-            return EventManagerSelectAction(type)
+        fun newInstance(type: EventManagerTypes, actionEvent: EventManager.OnActionResult): EventManagerSelectAction? {
+            return EventManagerSelectAction(type, actionEvent)
         }
     }
 

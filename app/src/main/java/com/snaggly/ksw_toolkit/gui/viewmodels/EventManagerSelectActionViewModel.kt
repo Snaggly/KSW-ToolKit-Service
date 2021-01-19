@@ -67,16 +67,24 @@ class EventManagerSelectActionViewModel : ViewModel() {
         return availableAppsAdapter!!
     }
 
+    fun resetEvent() {
+        config?.eventMode = EventMode.NoAssignment
+        config?.keyCode!!.data = -1
+        config?.appName!!.data = ""
+    }
+
     private val onKeyCodeClickListener = object : ListTypeAdapter.OnAppClickListener {
         override fun onAppClick(position: Int) {
             config?.eventMode = EventMode.KeyEvent
             config?.keyCode!!.data = keyEvents?.get(position)!!.code
+            config?.appName!!.data = ""
         }
     }
 
     private val onAppClickListener = object : ListTypeAdapter.OnAppClickListener {
         override fun onAppClick(position: Int) {
             config?.eventMode = EventMode.StartApp
+            config?.keyCode!!.data = -1
             config?.appName!!.data = appsList?.get(position)!!.packageName
         }
     }

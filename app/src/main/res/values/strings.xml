@@ -50,5 +50,6 @@
     <string name="import_config">Import Config</string>
     <string name="export_config">Export Config</string>
     <string name="restart_system">Restart System</string>
+    <string name="assigned">Assigned</string>
 
 </resources>

@@ -13,7 +13,7 @@ class EventManager(eventMode: EventMode, keyCode: Int, appName: String, configMa
 
     companion object {
         fun initEventManager(configMaster: IConfigBean) : EventManager{
-            return EventManager(EventMode.NoAssignment, 0, "", configMaster)
+            return EventManager(EventMode.NoAssignment, -1, "", configMaster)
         }
     }
 }
