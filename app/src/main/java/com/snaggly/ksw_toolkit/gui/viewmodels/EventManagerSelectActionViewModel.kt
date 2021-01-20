@@ -18,9 +18,11 @@ class EventManagerSelectActionViewModel : ViewModel() {
 
     private var keyEvents: ArrayList<KeyEvent>? = null
     private var appsList: ArrayList<AppInfo>? = null
-    private var config : EventManager? = null
+    var config : EventManager? = null
 
     var eventCurType : EventManagerTypes = EventManagerTypes.Dummy
+
+    lateinit var actionEvent: com.snaggly.ksw_toolkit.gui.EventManager.OnActionResult
 
     private fun initConfig(context: Context) {
         if (config == null)
@@ -78,6 +80,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.KeyEvent
             config?.keyCode!!.data = keyEvents?.get(position)!!.code
             config?.appName!!.data = ""
+            actionEvent.notifyView()
         }
     }
 
@@ -86,6 +89,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.StartApp
             config?.keyCode!!.data = -1
             config?.appName!!.data = appsList?.get(position)!!.packageName
+            actionEvent.notifyView()
         }
     }
 }

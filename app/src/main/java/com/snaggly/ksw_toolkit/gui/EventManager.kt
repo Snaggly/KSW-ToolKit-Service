@@ -10,11 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerViewModel
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.enums.EventMode
 
 class EventManager : Fragment() {
+    private var previousBtn : Button? = null
+    private var previousTypes: EventManagerTypes? = null
 
-    private lateinit var telefonBtn : Button
-    private lateinit var telefonLongBtn : Button
+    private lateinit var telephoneBtn : Button
+    private lateinit var telephoneLongBtn : Button
     private lateinit var voiceBtn : Button
     private lateinit var mediaPreviousBtn : Button
     private lateinit var mediaNextBtn : Button
@@ -33,8 +36,10 @@ class EventManager : Fragment() {
     private lateinit var naviBtn : Button
 
     private lateinit var activeFragment: EventManagerSelectAction
-
     private lateinit var mViewModel: EventManagerViewModel
+
+    private var hasOpenedSelectAction = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.event_manager_fragment, container, false)
@@ -46,12 +51,11 @@ class EventManager : Fragment() {
         initBtns()
         initBtnClick()
         voiceBtn.requestFocus()
-
     }
 
     private fun initBtns() {
-        telefonBtn = requireView().findViewById(R.id.telefonBtn)
-        telefonLongBtn = requireView().findViewById(R.id.telefonLongPressBtn)
+        telephoneBtn = requireView().findViewById(R.id.telefonBtn)
+        telephoneLongBtn = requireView().findViewById(R.id.telefonLongPressBtn)
         voiceBtn = requireView().findViewById(R.id.voiceBtn)
         mediaPreviousBtn = requireView().findViewById(R.id.mediaPreviousBtn)
         mediaNextBtn = requireView().findViewById(R.id.mediaNextBtn)
@@ -71,8 +75,8 @@ class EventManager : Fragment() {
     }
 
     private fun initBtnClick() {
-        setOnClickEvent(telefonBtn, EventManagerTypes.TelephoneButton)
-        setOnClickEvent(telefonLongBtn, EventManagerTypes.TelephoneButtonLongPress)
+        setOnClickEvent(telephoneBtn, EventManagerTypes.TelephoneButton)
+        setOnClickEvent(telephoneLongBtn, EventManagerTypes.TelephoneButtonLongPress)
         setOnClickEvent(voiceBtn, EventManagerTypes.VoiceCommandButton)
         setOnClickEvent(mediaPreviousBtn, EventManagerTypes.MediaPrevious)
         setOnClickEvent(mediaNextBtn, EventManagerTypes.MediaNext)
@@ -91,15 +95,29 @@ class EventManager : Fragment() {
         setOnClickEvent(naviBtn, EventManagerTypes.NavigationButton)
     }
 
+    private fun setBtnLabel(button: Button, eventManagerTypes: EventManagerTypes) {
+        if (mViewModel.getConfig(requireContext())[eventManagerTypes]?.eventMode != EventMode.NoAssignment)
+            button.text = getString(R.string.assigned)
+        else
+            button.text = getString(R.string.unassigned)
+    }
+
     private fun setOnClickEvent(button: Button, types: EventManagerTypes) {
+        setBtnLabel(button, types)
         button.setOnClickListener {
+            if (hasOpenedSelectAction)
+                previousBtn?.let { setBtnLabel(it, previousTypes!!) }
+            previousBtn = button
+            previousTypes = types
+            hasOpenedSelectAction = true
             activeFragment = EventManagerSelectAction(types, object : OnActionResult {
                 override fun notifyView() {
-                    button.text = getString(R.string.assigned)
+                    setBtnLabel(button, types)
                     childFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.slide_enter_right_left, R.anim.slide_exit_right_left)
                             .remove(activeFragment)
                             .commit()
+                    hasOpenedSelectAction = false
                 }
             })
             button.text = "..."

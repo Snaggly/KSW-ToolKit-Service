@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerSelectActionViewModel
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.enums.EventMode
 
 class EventManagerSelectAction(private val type: EventManagerTypes, private val actionEvent: EventManager.OnActionResult) : Fragment() {
     private lateinit var mViewModel: EventManagerSelectActionViewModel
@@ -41,6 +42,7 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         super.onActivityCreated(savedInstanceState)
         mViewModel = ViewModelProvider(this).get(EventManagerSelectActionViewModel::class.java)
         mViewModel.eventCurType = type
+        mViewModel.actionEvent = actionEvent
         initRadioBtns()
         listKeyEvents = requireView().findViewById(R.id.availableKeyEventsListView)
         listApps = requireView().findViewById(R.id.availableAppsListView)
@@ -48,6 +50,7 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         initRecyclerViews(listApps, context?.let { mViewModel.getAvailableAppsAdapter(it) }!!)
         loadAnimations(300)
         doButtonEvents()
+        preselectEvent()
         doNothingButton.requestFocus()
     }
 
@@ -131,6 +134,14 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
                 listApps.requestFocus()
                 mode = ActionMode.StartApp
             }
+        }
+    }
+
+    private fun preselectEvent() {
+        when(mViewModel.config?.eventMode){
+            EventMode.NoAssignment -> doNothingButton.isChecked = true
+            EventMode.KeyEvent -> invokeKeyButton.isChecked = true
+            EventMode.StartApp -> startAppButton.isChecked = true
         }
     }
 
