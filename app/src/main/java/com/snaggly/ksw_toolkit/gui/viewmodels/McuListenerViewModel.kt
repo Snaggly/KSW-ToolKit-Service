@@ -5,6 +5,8 @@ import android.content.Context
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.config.ConfigManager
+import com.snaggly.ksw_toolkit.core.config.beans.McuListener
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
 import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
@@ -13,25 +15,19 @@ import projekt.auto.mcu.ksw.serial.McuEvent
 class McuListenerViewModel : CoreServiceClient() {
 
     private var mcuEventRVAdapter: McuEventRVAdapter = McuEventRVAdapter()
-    private var spinnerAdapter: ArrayAdapter<String>? = null
+    private var spinnerAdapter: ArrayAdapter<CharSequence>? = null
     private var isShowing = true
-    private var sources: Array<String> = arrayOf(
-            "KSW-Logcat",
-            "/dev/ttyMSM0",
-            "/dev/ttyMSM1",
-            "/dev/ttyS0",
-            "/dev/ttyS1",
-            "/dev/ttyS2",
-            "/dev/ttyS3")
+    var config: McuListener? = null
 
     override fun onCleared() {
         isShowing = false
         super.onCleared()
     }
 
-    fun getSpinnerAdapter(context: Context): ArrayAdapter<String> {
+    fun getSpinnerAdapter(context: Context): ArrayAdapter<CharSequence> {
         if (spinnerAdapter == null) {
-            spinnerAdapter = ArrayAdapter<String>(context, R.layout.spinner_layout, sources)
+            config = ConfigManager.getConfig(context.filesDir.absolutePath).mcuListener
+            spinnerAdapter = ArrayAdapter.createFromResource(context, R.array.mcuSourcesList, R.layout.spinner_layout)
             spinnerAdapter!!.setDropDownViewResource(R.layout.spinner_dropdown_layout)
         }
         return spinnerAdapter!!
@@ -55,6 +51,14 @@ class McuListenerViewModel : CoreServiceClient() {
         return result
     }
 
+    fun startKsw() {
+        coreService?.adbConnection!!.sendCommand("am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
+    }
+
+    fun stopKsw() {
+        coreService?.adbConnection!!.sendCommand("am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
+    }
+
     var parentActivity: Activity? = null
 
     val mcuObserver = object : McuEventObserver {
@@ -64,6 +68,5 @@ class McuListenerViewModel : CoreServiceClient() {
                 addEntryToAdapter("$eventName - $cmdType", dataBytesToString(data))
             }
         }
-
     }
 }

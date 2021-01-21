@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.CompoundButton
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
@@ -34,24 +36,25 @@ class McuListener : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(McuListenerViewModel::class.java)
         initElements()
+        initButtonClickEvents()
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.parentActivity = requireActivity()
         stopKswServiceSwitch.requestFocus()
-        viewModel.coreService?.mcuReader!!.registerMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReader?.registerMcuEventListener(viewModel.mcuObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.coreService?.mcuReader!!.unregisterMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReader?.unregisterMcuEventListener(viewModel.mcuObserver)
     }
 
     private fun initElements() {
         sourceSpinner = requireView().findViewById(R.id.mcuSourceSpinner)
         sourceSpinner.adapter = viewModel.getSpinnerAdapter(requireContext())
-        sourceSpinner.setSelection(0)
+        sourceSpinner.setSelection(viewModel.config?.mcuSource!!.data)
 
         mcuEventRV = requireView().findViewById(R.id.McuEventsRV);
         mcuEventRV.layoutManager = LinearLayoutManager(context)
@@ -59,5 +62,26 @@ class McuListener : Fragment() {
 
         stopKswServiceSwitch = requireView().findViewById(R.id.startStopKSWServiceSwitch)
         stopKswServiceOnBootSwitch = requireView().findViewById(R.id.startStopKSWServiceOnBootSwitch)
+    }
+
+    private fun initButtonClickEvents() {
+        sourceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.config?.mcuSource!!.data = position
+                viewModel.coreService?.mcuReader?.restartReader()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
+        }
+
+        stopKswServiceSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
+            if (b)
+                viewModel.startKsw()
+            else
+                viewModel.stopKsw()
+        }
+
+        stopKswServiceOnBootSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
+            viewModel.config?.stopKswServiceOnBoot!!.data = b
+        }
     }
 }

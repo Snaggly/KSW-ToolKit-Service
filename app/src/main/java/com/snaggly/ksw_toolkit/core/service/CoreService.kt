@@ -48,7 +48,7 @@ class CoreService : Service() {
     }
 
     val adbConnection = AdbConnection()
-    val mcuReader = McuReader()
+    var mcuReader : McuReader? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startMyOwnForeground()
@@ -58,11 +58,12 @@ class CoreService : Service() {
             val alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Could not connect to Adb!\n\n${e.localizedMessage}").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
-            //stopSelf()
+            stopSelf()
             return START_NOT_STICKY
         }
         checkPermission()
-        mcuReader.startMcuReader()
+        mcuReader = McuReader(applicationContext)
+        mcuReader!!.startMcuReader()
         return START_STICKY
     }
 
@@ -72,7 +73,7 @@ class CoreService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mcuReader.stopReader()
+        mcuReader?.stopReader()
         adbConnection.disconnect()
     }
 
