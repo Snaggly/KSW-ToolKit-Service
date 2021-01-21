@@ -40,12 +40,12 @@ class McuListener : Fragment() {
         super.onStart()
         viewModel.parentActivity = requireActivity()
         stopKswServiceSwitch.requestFocus()
-        viewModel.coreService?.registerMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReader!!.registerMcuEventListener(viewModel.mcuObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.coreService?.unregisterMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReader!!.unregisterMcuEventListener(viewModel.mcuObserver)
     }
 
     private fun initElements() {

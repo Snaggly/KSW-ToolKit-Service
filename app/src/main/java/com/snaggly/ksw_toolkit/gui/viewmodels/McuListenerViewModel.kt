@@ -5,8 +5,8 @@ import android.content.Context
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
+import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
 import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
 import projekt.auto.mcu.ksw.serial.McuEvent
 
@@ -57,7 +57,7 @@ class McuListenerViewModel : CoreServiceClient() {
 
     var parentActivity: Activity? = null
 
-    val mcuObserver = object : CoreService.McuEventObserver {
+    val mcuObserver = object : McuEventObserver {
         override fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray) {
             val eventName = eventType?.name ?: "Unknown Event"
             parentActivity?.runOnUiThread {

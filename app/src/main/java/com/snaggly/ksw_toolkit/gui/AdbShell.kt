@@ -13,11 +13,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.CoreService
+import com.snaggly.ksw_toolkit.core.service.adb.ShellObserver
 import com.snaggly.ksw_toolkit.gui.viewmodels.AdbShellViewModel
 
 class AdbShell : Fragment() {
 
-    private val adbShellObserver = object : CoreService.ShellObserver {
+    private val adbShellObserver = object : ShellObserver {
         override fun update() {
             requireActivity().runOnUiThread {
                 listAdapter.notifyDataSetChanged()
@@ -51,12 +52,12 @@ class AdbShell : Fragment() {
         super.onStart()
         sendButton.requestFocus()
         initList()
-        viewModel.coreService?.registerShellListener(adbShellObserver)
+        viewModel.coreService?.adbConnection!!.registerShellListener(adbShellObserver)
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.coreService?.unregisterShellListener(adbShellObserver)
+        viewModel.coreService?.adbConnection!!.unregisterShellListener(adbShellObserver)
     }
 
     private fun initElements() {
@@ -66,13 +67,13 @@ class AdbShell : Fragment() {
     }
 
     private fun initList() {
-        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.coreService?.adbLines!!)
+        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.coreService?.adbConnection!!.adbLines)
         shellListView.adapter = listAdapter
     }
 
     private fun initClickEvent() {
         sendButton.setOnClickListener {
-            viewModel.coreService?.sendAdbCommand(textInput.text.toString())
+            viewModel.coreService?.adbConnection!!.sendCommand(textInput.text.toString())
             Log.d("Snaggly", "Sent Adb command: ${textInput.text.toString()}")
             textInput.setText("")
         }
