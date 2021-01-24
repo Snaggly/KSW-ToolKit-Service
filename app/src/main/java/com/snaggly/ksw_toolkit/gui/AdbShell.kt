@@ -19,8 +19,9 @@ import com.snaggly.ksw_toolkit.gui.viewmodels.AdbShellViewModel
 class AdbShell : Fragment() {
 
     private val adbShellObserver = object : ShellObserver {
-        override fun update() {
+        override fun update(newLine: String) {
             requireActivity().runOnUiThread {
+                adbLines[0] += newLine
                 listAdapter.notifyDataSetChanged()
             }
         }
@@ -35,6 +36,7 @@ class AdbShell : Fragment() {
     private lateinit var textInput: TextInputEditText
     private lateinit var sendButton: Button
     private lateinit var listAdapter: ArrayAdapter<String>
+    private val adbLines : ArrayList<String> = arrayListOf("")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,7 +69,7 @@ class AdbShell : Fragment() {
     }
 
     private fun initList() {
-        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewModel.coreService?.adbConnection!!.adbLines)
+        listAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, adbLines)
         shellListView.adapter = listAdapter
     }
 

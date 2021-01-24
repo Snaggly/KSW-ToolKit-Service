@@ -16,9 +16,9 @@ class McuReader(val context: Context, private val adb : AdbConnection) {
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
 
     private val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
-
+        val event = eventLogic.getMcuEvent(cmdType, data)
         for (mcuEventListener in mcuEventListeners)
-            mcuEventListener.update(eventLogic.getMcuEvent(cmdType, data), cmdType, data)
+            mcuEventListener.update(event, cmdType, data)
     }
 
     fun startMcuReader() {
