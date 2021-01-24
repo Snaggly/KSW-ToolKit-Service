@@ -19,6 +19,9 @@ enum class EventManagerTypes {
     BackButton,
     OptionsButton,
     NavigationButton,
+    Idle,
+    SWITCHED_TO_ARM,
+    SWITCHED_TO_OEM,
     Dummy;
 
     companion object {

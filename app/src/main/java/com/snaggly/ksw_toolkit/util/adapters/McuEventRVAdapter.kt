@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util
+package com.snaggly.ksw_toolkit.util.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -21,14 +21,14 @@ class McuEventRVAdapter : RecyclerView.Adapter<McuEventRVAdapter.McuEventViewHol
         else 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): McuEventRVAdapter.McuEventViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): McuEventViewHolder {
         return when (viewType) {
             1 -> McuEventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mcu_event, parent, false))
             else -> McuEventViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.dummy_list, parent, false))
         }
     }
 
-    override fun onBindViewHolder(holder: McuEventRVAdapter.McuEventViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: McuEventViewHolder, position: Int) {
         holder.eventName.text = names[position]
         holder.dataString.text = datas[position]
     }

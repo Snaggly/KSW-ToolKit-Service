@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util
+package com.snaggly.ksw_toolkit.util.adapters
 
 import android.content.Context
 import com.snaggly.ksw_toolkit.R

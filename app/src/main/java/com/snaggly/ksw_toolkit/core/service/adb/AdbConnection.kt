@@ -35,6 +35,14 @@ class AdbConnection {
         hasShutKsw = false
     }
 
+    fun sendKeyEvent(code: Int) {
+        sendCommand("input keyevent $code")
+    }
+
+    fun startApp(appId: String) {
+        sendCommand("monkey -p $appId -c android.intent.category.LAUNCHER 1")
+    }
+
     fun registerShellListener(listener: ShellObserver) {
         adbShellListeners.add(listener)
     }

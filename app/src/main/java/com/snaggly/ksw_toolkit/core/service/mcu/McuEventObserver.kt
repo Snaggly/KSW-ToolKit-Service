@@ -1,7 +1,7 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
-import projekt.auto.mcu.ksw.serial.collection.McuEvent
+import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 
 interface McuEventObserver {
-    fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray)
+    fun update(eventType: EventManagerTypes?, cmdType: Int, data: ByteArray)
 }

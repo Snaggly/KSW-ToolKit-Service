@@ -9,7 +9,8 @@ import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.McuListener
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
-import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
+import com.snaggly.ksw_toolkit.util.adapters.McuEventRVAdapter
+import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import projekt.auto.mcu.ksw.serial.collection.McuEvent
 
 class McuListenerViewModel : CoreServiceClient() {
@@ -54,7 +55,7 @@ class McuListenerViewModel : CoreServiceClient() {
     var parentActivity: Activity? = null
 
     val mcuObserver = object : McuEventObserver {
-        override fun update(eventType: McuEvent?, cmdType: Int, data: ByteArray) {
+        override fun update(eventType: EventManagerTypes?, cmdType: Int, data: ByteArray) {
             val eventName = eventType?.name ?: "Unknown Event"
             parentActivity?.runOnUiThread {
                 addEntryToAdapter("$eventName - $cmdType", dataBytesToString(data))

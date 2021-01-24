@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
-import com.snaggly.ksw_toolkit.util.ListTypeAdapter
+import com.snaggly.ksw_toolkit.util.adapters.ListTypeAdapter
 import com.snaggly.ksw_toolkit.util.applist.AppInfo
 import com.snaggly.ksw_toolkit.util.applist.AppsLister
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes

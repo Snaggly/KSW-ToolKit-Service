@@ -3,7 +3,8 @@ package com.snaggly.ksw_toolkit.core.service.mcu
 import android.content.Context
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
-import com.snaggly.ksw_toolkit.util.McuSourceAdapter
+import com.snaggly.ksw_toolkit.util.adapters.McuSourceAdapter
+import com.snaggly.ksw_toolkit.util.enums.EventMode
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
@@ -17,6 +18,15 @@ class McuReader(val context: Context, private val adb : AdbConnection) {
 
     private val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
         val event = eventLogic.getMcuEvent(cmdType, data)
+        val eventConfig = config.eventManagers[event]
+        if (eventConfig != null) {
+            if (eventConfig.eventMode == EventMode.KeyEvent) {
+                adb.sendKeyEvent(eventConfig.keyCode.data)
+            }
+            else if (eventConfig.eventMode == EventMode.StartApp) {
+                adb.startApp(eventConfig.appName.data)
+            }
+        }
         for (mcuEventListener in mcuEventListeners)
             mcuEventListener.update(event, cmdType, data)
     }

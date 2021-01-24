@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util
+package com.snaggly.ksw_toolkit.util.adapters
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -9,10 +9,11 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.util.ListType
 
 class ListTypeAdapter(private val appsList: ArrayList<out ListType>,
-                                    private var selectedApp : Int,
-                                    private val onAppClickListener: OnAppClickListener)
+                      private var selectedApp : Int,
+                      private val onAppClickListener: OnAppClickListener)
     : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>() {
 
     private lateinit var purple200 : ColorStateList
