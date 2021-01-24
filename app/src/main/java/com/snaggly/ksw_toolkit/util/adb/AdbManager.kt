@@ -51,7 +51,7 @@ class AdbManager {
         Thread {
             while (!shellStream.isClosed) {
                 try {
-                    Thread.sleep(1000)
+                    Thread.sleep(100)
                     var shellText = String(shellStream.read(), Charsets.US_ASCII)
                     if (shellText != previousShellText) {
                         previousShellText = shellText

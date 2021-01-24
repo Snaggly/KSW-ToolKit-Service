@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private var tabFragmentId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mainViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         if (!checkPermissions())
             finish()
         else {
@@ -67,7 +68,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startService() {
-        mainViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         mainViewModel.startService()
     }
 
