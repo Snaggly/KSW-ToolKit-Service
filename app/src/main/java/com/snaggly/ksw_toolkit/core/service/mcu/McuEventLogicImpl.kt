@@ -1,9 +1,9 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
-import projekt.auto.mcu.ksw.serial.McuEvent
-import projekt.auto.mcu.ksw.serial.McuEventLogic
+import projekt.auto.mcu.ksw.serial.collection.McuEvent
+import projekt.auto.mcu.ksw.serial.collection.McuEventLogic
 
-class McuEventLogicImpl : McuEventLogic{
+class McuEventLogicImpl : McuEventLogic {
     override fun getMcuEvent(cmdType: Int, data: ByteArray) : McuEvent? {
         if (cmdType == 0x1C) {
             if (data[0] == 0x1.toByte()) return McuEvent.Idle
