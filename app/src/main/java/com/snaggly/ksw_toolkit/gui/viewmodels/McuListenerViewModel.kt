@@ -10,7 +10,7 @@ import com.snaggly.ksw_toolkit.core.config.beans.McuListener
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
 import com.snaggly.ksw_toolkit.util.McuEventRVAdapter
-import projekt.auto.mcu.ksw.serial.McuEvent
+import projekt.auto.mcu.ksw.serial.collection.McuEvent
 
 class McuListenerViewModel : CoreServiceClient() {
 
@@ -49,14 +49,6 @@ class McuListenerViewModel : CoreServiceClient() {
         result += data[data.size - 1].toString(16)
 
         return result
-    }
-
-    fun startKsw() {
-        coreService?.adbConnection!!.sendCommand("am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
-    }
-
-    fun stopKsw() {
-        coreService?.adbConnection!!.sendCommand("am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
     }
 
     var parentActivity: Activity? = null

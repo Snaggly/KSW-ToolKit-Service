@@ -1,10 +1,12 @@
 package com.snaggly.ksw_toolkit.gui
 
+import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.CompoundButton
 import android.widget.Spinner
@@ -68,16 +70,17 @@ class McuListener : Fragment() {
         sourceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.config?.mcuSource!!.data = position
-                viewModel.coreService?.mcuReader?.restartReader()
+                stopKswServiceSwitch.isChecked = position == 0
+                try {
+                    viewModel.coreService?.mcuReader?.restartReader()
+                } catch (exception: Exception) {
+                    val alert = AlertDialog.Builder(requireContext()).setTitle("KSW-ToolKit-McuListener")
+                            .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                    alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                    alert.show()
+                }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) { }
-        }
-
-        stopKswServiceSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
-            if (b)
-                viewModel.startKsw()
-            else
-                viewModel.stopKsw()
         }
 
         stopKswServiceOnBootSwitch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->

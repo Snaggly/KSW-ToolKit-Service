@@ -1,19 +1,18 @@
 package com.snaggly.ksw_toolkit.core.service.adb
 
 import android.content.Context
-import android.util.Log
 import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
 class AdbConnection {
     private val adbShellListeners = ArrayList<ShellObserver>()
     private val adbManager = AdbManager()
     val adbLines : ArrayList<String> = arrayListOf("")
+    var hasShutKsw = false
 
     fun connect(context: Context) {
         adbManager.connect(context, "shell:", object : AdbManager.OnAdbShellDataReceived {
             override fun onDataReceived(text: String) {
                 adbLines[0] += text
-                Log.d("Snaggly", "McuService adbShell OnDataReceived - Text: $text - ListenersSize: ${adbShellListeners.size}")
                 for (listener in adbShellListeners)
                     listener.update()
             }
@@ -26,6 +25,16 @@ class AdbConnection {
 
     fun sendCommand(command: String) {
         adbManager.sendCommand(command)
+    }
+
+    fun stopKsw() {
+        sendCommand("am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
+        hasShutKsw = true
+    }
+
+    fun startKsw() {
+        sendCommand("am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService")
+        hasShutKsw = false
     }
 
     fun registerShellListener(listener: ShellObserver) {
