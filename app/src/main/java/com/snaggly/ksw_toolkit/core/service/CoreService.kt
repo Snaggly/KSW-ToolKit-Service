@@ -2,7 +2,6 @@ package com.snaggly.ksw_toolkit.core.service
 
 import android.app.*
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -84,7 +83,8 @@ class CoreService : Service() {
     private fun checkPermission() {
         if (applicationContext.checkSelfPermission("android.permission.READ_LOGS") != PackageManager.PERMISSION_GRANTED) {
             adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
-            val alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Granted READ_LOGS permission.\nPlease restart the app for effects to take in place").create()
+            adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.INJECT_EVENTS")
+            val alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Granted system permissions.\nPlease restart the app for effects to take in place").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.setButton(AlertDialog.BUTTON_POSITIVE, "Close") { _, _ -> exitProcess(0) }
             alert.show()
