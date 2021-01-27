@@ -34,15 +34,13 @@ class McuReader(val context: Context, private val adb : AdbConnection) {
     }
 
     fun startMcuReader() {
-        val currentSource = config.mcuListener.mcuSource.data
-        val mcuSource = McuSourceAdapter(context).getSourceString(currentSource)
-        if (currentSource == 0) {
+        if (config.mcuListener.enableKsw.data) {
             adb.startKsw()
             communicator = McuCommunicator(SerialWriter(), LogcatReader())
             communicator!!.mcuReader.startReading(onMcuEventAction)
         } else {
             adb.stopKsw()
-            communicator = McuCommunicator(SerialWriter(mcuSource), SerialReader(mcuSource))
+            communicator = McuCommunicator(SerialWriter(), SerialReader())
             communicator!!.startBeat()
             communicator!!.mcuReader!!.startReading(onMcuEventAction)
         }
