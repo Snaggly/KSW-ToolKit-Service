@@ -17,7 +17,7 @@ class SystemTwaksViewModel : CoreServiceClient() {
     fun restartMcuReader(isKswChecked : Boolean, context: Context) {
         config?.mcuListener!!.enableKsw.data = isKswChecked
         try {
-            coreService?.mcuReader?.restartReader()
+            coreService?.mcuReaderHandler?.restartReader()
         } catch (exception: Exception) {
             val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-McuListener")
                     .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()

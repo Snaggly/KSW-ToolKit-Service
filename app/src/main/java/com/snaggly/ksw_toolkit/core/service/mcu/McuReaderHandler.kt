@@ -12,7 +12,7 @@ import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
-class McuReader(val context: Context, private val adb : AdbConnection) {
+class McuReaderHandler(val context: Context, private val adb : AdbConnection) {
     private var communicator : McuCommunicator? = null
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val eventLogic = McuEventLogicImpl()
