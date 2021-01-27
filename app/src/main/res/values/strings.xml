@@ -51,5 +51,10 @@
     <string name="export_config">Export Config</string>
     <string name="restart_system">Restart System</string>
     <string name="assigned">Assigned</string>
+    <string name="set_max_volume_at_boot">Max Volume at Boot</string>
+    <string name="auto_volume">Auto Volume</string>
+    <string name="start_at_boot">Start at Boot</string>
+    <string name="clear_boot_animation">Clear Boot Animation</string>
+    <string name="default_dpi_val">160</string>
 
 </resources>
