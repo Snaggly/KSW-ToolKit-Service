@@ -12,53 +12,16 @@
         android:paddingHorizontal="30dp"
         android:paddingVertical="15dp">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/startStopKSWServiceSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:checked="true"
-            android:text="@string/ksw_service"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/startStopKSWServiceOnBootSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/stop_ksw_on_boot"
-            app:layout_constraintStart_toEndOf="@+id/startStopKSWServiceSwitch"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/source"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/startStopKSWServiceOnBootSwitch"
-            app:layout_constraintEnd_toStartOf="@+id/mcuSourceSpinner"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/mcuSourceSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:background="@color/spinner_color"
-            app:layout_constraintBottom_toBottomOf="@+id/startStopKSWServiceOnBootSwitch"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/McuEventsRV"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scrollbars="vertical"
             android:focusable="false"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startStopKSWServiceOnBootSwitch" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

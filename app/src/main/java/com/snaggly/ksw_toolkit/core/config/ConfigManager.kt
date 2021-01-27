@@ -31,8 +31,7 @@ class ConfigManager private constructor() : IConfigBean {
         dataOutputStream.writeBoolean(systemTweaks.hideTopBar.data)
         dataOutputStream.writeBoolean(systemTweaks.shrinkTopBar.data)
 
-        dataOutputStream.writeBoolean(mcuListener.stopKswServiceOnBoot.data)
-        dataOutputStream.writeInt(mcuListener.mcuSource.data)
+        dataOutputStream.writeBoolean(mcuListener.enableKsw.data)
 
         for ((key, eventManager) in eventManagers) {
             dataOutputStream.writeUTF(key.name)
@@ -62,7 +61,6 @@ class ConfigManager private constructor() : IConfigBean {
 
         mcuListener = McuListener(
                 dataInputStream.readBoolean(),
-                dataInputStream.readInt(),
                 this
         )
 
@@ -87,7 +85,7 @@ class ConfigManager private constructor() : IConfigBean {
             try {
                 config.readConfig()
             }
-            catch (ioe: IOException) {
+            catch (ioe: Exception) {
                 config.initBeans()
             }
             return config
