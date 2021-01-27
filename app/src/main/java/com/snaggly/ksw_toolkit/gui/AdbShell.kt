@@ -28,7 +28,7 @@ class AdbShell : Fragment() {
     }
 
     companion object {
-        fun newInstance(coreService: CoreService?) = AdbShell()
+        fun newInstance() = AdbShell()
     }
 
     private lateinit var viewModel: AdbShellViewModel

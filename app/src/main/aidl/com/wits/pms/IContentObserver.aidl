@@ -1,4 +1,4 @@
-package com.wits.pms.IContentObserver;
+package com.wits.pms;
 
 interface IContentObserver {
     void onChange();

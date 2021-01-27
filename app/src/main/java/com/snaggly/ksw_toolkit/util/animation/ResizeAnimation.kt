@@ -19,7 +19,7 @@ class ResizeAnimation(private val view: View?, private val startWidth: Int, endW
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
         if (interpolatedTime.toDouble() == 1.0 && !fillEnabled) {
             view!!.layoutParams.height = originalHeight
-            view!!.layoutParams.width = originalWidth
+            view.layoutParams.width = originalWidth
         } else {
             if (deltaHeight != 0) view!!.layoutParams.height = (startHeight + deltaHeight * interpolatedTime).toInt()
             if (deltaWidth != 0) view!!.layoutParams.width = (startWidth + deltaWidth * interpolatedTime).toInt()
