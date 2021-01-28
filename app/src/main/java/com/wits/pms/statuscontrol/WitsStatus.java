@@ -45,20 +45,14 @@ public class WitsStatus {
     }
 
     public static McuStatus.CarData getCarDataStatus() throws RemoteException {
-        String test = PowerManagerApp.getManager().getStatusString("carData");
-        Log.d("Snaggly", "carData: " + test);
-        return new Gson().fromJson(test, McuStatus.CarData.class);
+        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("carData"), McuStatus.CarData.class);
     }
 
     public static McuStatus.BenzData getBenzDataStatus() throws RemoteException {
-        String test = PowerManagerApp.getManager().getStatusString("benzData");
-        Log.d("Snaggly", "benzData: " + test);
-        return new Gson().fromJson(test, McuStatus.BenzData.class);
+        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("benzData"), McuStatus.BenzData.class);
     }
 
     public static McuStatus.ACData getACDataStatus() throws RemoteException {
-        String test = PowerManagerApp.getManager().getStatusString("acData");
-        Log.d("Snaggly", "acData: " + test);
-        return new Gson().fromJson(test, McuStatus.ACData.class);
+        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("acData"), McuStatus.ACData.class);
     }
 }
