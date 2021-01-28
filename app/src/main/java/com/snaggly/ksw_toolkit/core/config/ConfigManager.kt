@@ -26,6 +26,7 @@ class ConfigManager private constructor() : IConfigBean {
         dataOutputStream.writeBoolean(systemTweaks.maxVolume.data)
         dataOutputStream.writeBoolean(systemTweaks.hideTopBar.data)
         dataOutputStream.writeBoolean(systemTweaks.shrinkTopBar.data)
+        dataOutputStream.writeInt(systemTweaks.dpi.data)
 
         for ((key, eventManager) in eventManagers) {
             dataOutputStream.writeUTF(key.name)
@@ -47,6 +48,7 @@ class ConfigManager private constructor() : IConfigBean {
                 dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
+                dataInputStream.readInt(),
                 this
         )
 

@@ -34,7 +34,7 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection) {
     }
 
     fun startMcuReader() {
-        if (config.mcuListener.enableKsw.data) {
+        if (config.systemTweaks.kswService.data) {
             adb.startKsw()
             communicator = McuCommunicator(SerialWriter(), LogcatReader())
             communicator!!.mcuReader.startReading(onMcuEventAction)
