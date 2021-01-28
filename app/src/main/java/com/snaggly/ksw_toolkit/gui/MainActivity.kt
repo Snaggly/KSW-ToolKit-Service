@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var mcuListenerFragment: Fragment? = null
     private var configFragment: Fragment? = null
     private lateinit var mFragManager: FragmentManager
-    private lateinit var soundRestorerPane: Button
+    private lateinit var toolKitPane: Button
     private lateinit var eventManagerPane: Button
     private lateinit var systemTweaksPane: Button
     private lateinit var adbShellPane: Button
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViewElements() {
-        soundRestorerPane = findViewById(R.id.soundRestorerPaneBtn)
+        toolKitPane = findViewById(R.id.soundRestorerPaneBtn)
         eventManagerPane = findViewById(R.id.eventManagerPaneBtn)
         systemTweaksPane = findViewById(R.id.systemTweaksPaneBtn)
         adbShellPane = findViewById(R.id.adbShellPaneBtn)
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBtnClicks() {
-        soundRestorerPane.setOnClickListener { switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment) }
+        toolKitPane.setOnClickListener { switchFragment(mFragManager, toolKitPane, soundRestorerFragment) }
         eventManagerPane.setOnClickListener {
             if (eventManagerFragment == null)
                 eventManagerFragment = EventManager()
@@ -119,10 +119,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initPaneFragment() {
-        soundRestorerFragment = SoundRestorer()
-        previousCallingButton = soundRestorerPane
-        switchFragment(mFragManager, soundRestorerPane, soundRestorerFragment)
-        soundRestorerPane.requestFocus()
+        soundRestorerFragment = ToolKit()
+        previousCallingButton = toolKitPane
+        switchFragment(mFragManager, toolKitPane, soundRestorerFragment)
+        toolKitPane.requestFocus()
     }
 
     private fun switchFragment(manager: FragmentManager, callingButton: Button, fragment: Fragment) {

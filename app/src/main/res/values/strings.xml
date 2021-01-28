@@ -56,5 +56,7 @@
     <string name="start_at_boot">Start at Boot</string>
     <string name="clear_boot_animation">Clear Boot Animation</string>
     <string name="default_dpi_val">160</string>
+    <string name="toolkit">ToolKit</string>
+    <string name="import_export_config">Import/Export Config</string>
 
 </resources>

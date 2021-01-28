@@ -67,7 +67,7 @@
                 android:layout_height="69dp"
                 android:background="@drawable/btn_selector"
                 android:focusedByDefault="true"
-                android:text="@string/sound_restorer_btntext" />
+                android:text="@string/toolkit" />
 
             <Button
                 android:id="@+id/eventManagerPaneBtn"
@@ -102,7 +102,7 @@
                 android:layout_width="370dp"
                 android:layout_height="69dp"
                 android:background="@drawable/btn_selector"
-                android:text="Import/Export Config" />
+                android:text="@string/import_export_config" />
         </LinearLayout>
     </ScrollView>
 

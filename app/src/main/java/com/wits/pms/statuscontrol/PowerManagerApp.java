@@ -109,7 +109,7 @@ public class PowerManagerApp {
         }
     }
 
-    public static List<String> getDataListFromJsonKey(String key) {
+    public static List getDataListFromJsonKey(String key) {
         return (List) new Gson().fromJson(Settings.System.getString(context.getContentResolver(), key), new TypeToken<ArrayList<String>>() {
         }.getType());
     }
