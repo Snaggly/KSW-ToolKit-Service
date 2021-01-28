@@ -15,7 +15,7 @@ class SystemTwaksViewModel : CoreServiceClient() {
     }
 
     fun restartMcuReader(isKswChecked : Boolean, context: Context) {
-        config?.mcuListener!!.enableKsw.data = isKswChecked
+        config?.systemTweaks!!.kswService.data = isKswChecked
         try {
             coreService?.mcuReaderHandler?.restartReader()
         } catch (exception: Exception) {

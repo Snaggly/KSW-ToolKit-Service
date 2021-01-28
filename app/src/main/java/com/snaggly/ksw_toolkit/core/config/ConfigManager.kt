@@ -7,15 +7,11 @@ import java.io.*
 
 class ConfigManager private constructor() : IConfigBean {
     private lateinit var configFile: File
-    lateinit var soundRestorer: SoundRestorer private set
     lateinit var systemTweaks: SystemTweaks private set
-    lateinit var mcuListener: McuListener private set
     val eventManagers = HashMap<EventManagerTypes, EventManager>()
 
     fun initBeans() {
-        soundRestorer = SoundRestorer.initSoundRestorer(this)
         systemTweaks = SystemTweaks.initSystemTweaks(this)
-        mcuListener = McuListener.initMcuListener(this)
         for (type in EventManagerTypes.values()) {
             eventManagers[type] = EventManager.initEventManager(this)
         }
@@ -23,15 +19,13 @@ class ConfigManager private constructor() : IConfigBean {
 
     override fun saveConfig() {
         val dataOutputStream = DataOutputStream(configFile.outputStream())
-        dataOutputStream.writeBoolean(soundRestorer.startOnBoot.data)
-        dataOutputStream.writeBoolean(soundRestorer.initVolumesAtBoot.data)
-        dataOutputStream.writeBoolean(soundRestorer.keepOEMRadio.data)
-        dataOutputStream.writeBoolean(soundRestorer.forceSoundInOEM.data)
 
+        dataOutputStream.writeBoolean(systemTweaks.startAtBoot.data)
+        dataOutputStream.writeBoolean(systemTweaks.kswService.data)
+        dataOutputStream.writeBoolean(systemTweaks.autoVolume.data)
+        dataOutputStream.writeBoolean(systemTweaks.maxVolume.data)
         dataOutputStream.writeBoolean(systemTweaks.hideTopBar.data)
         dataOutputStream.writeBoolean(systemTweaks.shrinkTopBar.data)
-
-        dataOutputStream.writeBoolean(mcuListener.enableKsw.data)
 
         for ((key, eventManager) in eventManagers) {
             dataOutputStream.writeUTF(key.name)
@@ -45,21 +39,13 @@ class ConfigManager private constructor() : IConfigBean {
 
     override fun readConfig() {
         val dataInputStream = DataInputStream(configFile.inputStream())
-        soundRestorer = SoundRestorer(
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                this
-        )
 
         systemTweaks = SystemTweaks(
                 dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
-                this
-        )
-
-        mcuListener = McuListener(
+                dataInputStream.readBoolean(),
+                dataInputStream.readBoolean(),
+                dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
                 this
         )
