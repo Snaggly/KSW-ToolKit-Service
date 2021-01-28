@@ -117,6 +117,7 @@ class EventManager : Fragment() {
                             .setCustomAnimations(R.anim.slide_enter_right_left, R.anim.slide_exit_right_left)
                             .remove(activeFragment)
                             .commit()
+                    button.requestFocus()
                     hasOpenedSelectAction = false
                 }
             })
