@@ -1,6 +1,7 @@
 package com.snaggly.ksw_toolkit.gui
 
 import android.app.AlertDialog
+import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +11,7 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
-import com.snaggly.ksw_toolkit.BuildConfig
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.SystemTwaksViewModel
 
@@ -68,7 +67,9 @@ class SystemTwaks : Fragment() {
         maxVolumeOnBootSwitch.isChecked = viewModel.config?.systemTweaks!!.maxVolume.data
         hideTopBarSwitch.isChecked = viewModel.config?.systemTweaks!!.hideTopBar.data
         shrinkTopBarSwitch.isChecked = viewModel.config?.systemTweaks!!.shrinkTopBar.data
-        dpiInputField.setText((viewModel.config?.systemTweaks!!.dpi.data).toString())
+        val actualDpi = requireView().resources.displayMetrics.densityDpi
+        viewModel.config?.systemTweaks!!.dpi.data = actualDpi
+        dpiInputField.setText(actualDpi.toString())
     }
 
     private fun initButtonClickEvents() {
@@ -85,21 +86,41 @@ class SystemTwaks : Fragment() {
         }
 
         stopKswServiceSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.config?.systemTweaks!!.kswService.data = isChecked
+
             if (!isChecked) {
-                val alert = AlertDialog.Builder(requireContext()).setTitle("KSW-ToolKit-McuListener")
+                val alert = AlertDialog.Builder(requireContext(), R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("You are about to shut down the built in KSW McuService. This could lead to unaccounted issues. Are you sure you still want to proceed?").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, "Yes!") { _, _ ->
-                    try {
-                        viewModel.config?.systemTweaks!!.kswService.data = isChecked
-                        viewModel.restartMcuReader()
+                    viewModel.config?.systemTweaks!!.kswService.data = isChecked
+                    val enableLoggingDialog = AlertDialog.Builder(requireContext(), R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                            .setMessage("Enable CarData logging for 3rd party Dashboard-Apps?").create()
+                    enableLoggingDialog.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                    enableLoggingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
+                        viewModel.config?.systemTweaks!!.carDataLogging.data = true
+                        try {
+                            viewModel.restartMcuReader()
+                        } catch (exception: Exception) {
+                            val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                                    .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                            alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                            alertExc.show()
+                        }
                     }
-                    catch (exception: Exception) {
-                        val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
-                                .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
-                        alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-                        alert.show()
+                    enableLoggingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
+                        viewModel.config?.systemTweaks!!.carDataLogging.data = false
+                        try {
+                            viewModel.restartMcuReader()
+                        } catch (exception: Exception) {
+                            val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                                    .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                            alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                            alertExc.show()
+                        }
+
                     }
+                    enableLoggingDialog.show()
                 }
                 alert.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
                     stopKswServiceSwitch.isChecked = true
@@ -107,16 +128,15 @@ class SystemTwaks : Fragment() {
                 alert.show()
             } else {
                 try {
-                    viewModel.config?.systemTweaks!!.kswService.data = isChecked
                     viewModel.restartMcuReader()
-                }
-                catch (exception: Exception) {
-                    val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
+                } catch (exception: Exception) {
+                    val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                             .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
                     alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     alert.show()
                 }
             }
+
         }
 
         hideTopBarSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -128,9 +148,8 @@ class SystemTwaks : Fragment() {
                     viewModel.showTopBar()
                 }
                 viewModel.config?.systemTweaks!!.hideTopBar.data = isChecked
-            }
-            catch (exception: Exception) {
-                val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
+            } catch (exception: Exception) {
+                val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
@@ -146,9 +165,8 @@ class SystemTwaks : Fragment() {
                     viewModel.restoreTopBar()
                 }
                 viewModel.config?.systemTweaks!!.shrinkTopBar.data = isChecked
-            }
-            catch (exception: Exception) {
-                val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
+            } catch (exception: Exception) {
+                val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
@@ -160,9 +178,8 @@ class SystemTwaks : Fragment() {
                 val newDPI = Integer.parseInt(dpiInputField.text.toString())
                 viewModel.config?.systemTweaks?.dpi!!.data = newDPI
                 viewModel.changeDPI(newDPI)
-            }
-            catch (exception: Exception) {
-                val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
+            } catch (exception: Exception) {
+                val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Exception Saving DPI!\n\n${exception.localizedMessage}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
@@ -172,9 +189,8 @@ class SystemTwaks : Fragment() {
         giveTaskerLogcatPermBtn.setOnClickListener {
             try {
                 viewModel.coreService?.adbConnection!!.sendCommand("pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS")
-            }
-            catch (exception: Exception) {
-                val alert = AlertDialog.Builder(context).setTitle("KSW-ToolKit-SystemTweaks")
+            } catch (exception: Exception) {
+                val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to give Tasker Logcat Permission!\n\n${exception.localizedMessage}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()

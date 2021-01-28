@@ -20,8 +20,8 @@ enum class EventManagerTypes {
     OptionsButton,
     NavigationButton,
     Idle,
-    SWITCHED_TO_ARM,
-    SWITCHED_TO_OEM,
+    CarData,
+    BenzData,
     Dummy;
 
     companion object {

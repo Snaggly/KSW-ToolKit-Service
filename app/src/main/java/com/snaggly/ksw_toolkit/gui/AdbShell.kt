@@ -76,7 +76,6 @@ class AdbShell : Fragment() {
     private fun initClickEvent() {
         sendButton.setOnClickListener {
             viewModel.coreService?.adbConnection!!.sendCommand(textInput.text.toString())
-            Log.d("Snaggly", "Sent Adb command: ${textInput.text.toString()}")
             textInput.setText("")
         }
     }

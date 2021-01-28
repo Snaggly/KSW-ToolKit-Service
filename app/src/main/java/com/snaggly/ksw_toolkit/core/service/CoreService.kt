@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.snaggly.ksw_toolkit.BuildConfig
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
+import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import java.util.*
 
@@ -47,13 +48,14 @@ class CoreService : Service() {
     }
 
     val adbConnection = AdbConnection()
+    val eventLogic = McuEventLogicImpl()
     var mcuReaderHandler : McuReaderHandler? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startMyOwnForeground()
 
         try {
-            mcuReaderHandler = McuReaderHandler(applicationContext, adbConnection)
+            mcuReaderHandler = McuReaderHandler(applicationContext, adbConnection, eventLogic)
             mcuReaderHandler!!.startMcuReader()
         } catch (e: Exception) {
             return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")
@@ -85,14 +87,14 @@ class CoreService : Service() {
         if (applicationContext.checkSelfPermission("android.permission.READ_LOGS") != PackageManager.PERMISSION_GRANTED) {
             adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
             adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.INJECT_EVENTS")
-            val alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-McuService").setMessage("Granted system permissions.\nPlease restart the app for effects to take in place").create()
+            val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-McuService").setMessage("Granted system permissions.\nPlease restart the app for effects to take in place").create()
             alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             alert.show()
         }
     }
 
     private fun crashOut(message: String) : Int {
-        val alert = AlertDialog.Builder(this).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
+        val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
         alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         alert.show()
         stopSelf()

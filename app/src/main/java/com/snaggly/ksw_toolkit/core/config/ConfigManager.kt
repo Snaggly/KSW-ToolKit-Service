@@ -22,6 +22,7 @@ class ConfigManager private constructor() : IConfigBean {
 
         dataOutputStream.writeBoolean(systemTweaks.startAtBoot.data)
         dataOutputStream.writeBoolean(systemTweaks.kswService.data)
+        dataOutputStream.writeBoolean(systemTweaks.carDataLogging.data)
         dataOutputStream.writeBoolean(systemTweaks.autoVolume.data)
         dataOutputStream.writeBoolean(systemTweaks.maxVolume.data)
         dataOutputStream.writeBoolean(systemTweaks.hideTopBar.data)
@@ -42,6 +43,7 @@ class ConfigManager private constructor() : IConfigBean {
         val dataInputStream = DataInputStream(configFile.inputStream())
 
         systemTweaks = SystemTweaks(
+                dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
                 dataInputStream.readBoolean(),
