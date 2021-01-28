@@ -28,7 +28,7 @@ class SystemTwaksViewModel : CoreServiceClient() {
     }
 
     fun restoreTopBar() {
-        coreService?.adbConnection?.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.systemTweaks?.dpi!!.data+2}")
+        coreService?.adbConnection?.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.systemTweaks?.dpi!!.data}")
     }
 
     fun showTopBar() {
