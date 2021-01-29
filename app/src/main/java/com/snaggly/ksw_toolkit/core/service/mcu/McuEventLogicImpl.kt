@@ -1,11 +1,14 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
+import android.media.AudioManager
+import android.util.Log
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.collection.McuEvent
+import kotlin.math.roundToInt
 
 class McuEventLogicImpl {
     //Lib
@@ -14,10 +17,13 @@ class McuEventLogicImpl {
 
     //Intern
     private var isLogging = true
+    private var autoVolume = false
     var senderInterval: Long = 1000
 
     //Param
     var hasNoOEMScreen = false
+    var speedMaxVolume = 80
+    var minVolume = 0.75f
 
     init {
         try{
@@ -41,6 +47,25 @@ class McuEventLogicImpl {
 
     fun stopSendingCarData() {
         isLogging = false
+    }
+
+    fun startAutoVolume(audioManager: AudioManager) {
+        val minVol = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)
+        val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val volDiffTo = (minVol+maxVol)*minVolume
+        val volDiffLe = (minVol+maxVol)*(1-minVolume) / speedMaxVolume
+        Thread {
+            while(autoVolume) {
+                val speedRate = (mcuStat.carData.speed*volDiffLe + volDiffTo).roundToInt().coerceIn(minVol, maxVol)
+                Log.d("Snaggly", "$speedRate")
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, speedRate, 0)
+                Thread.sleep(senderInterval)
+            }
+        }.start()
+    }
+
+    fun stopAutoVolume() {
+        autoVolume = false
     }
 
     fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes? {

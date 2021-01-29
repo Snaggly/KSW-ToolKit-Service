@@ -79,6 +79,14 @@ class SystemTwaks : Fragment() {
 
         autoVolumeSwitch.setOnCheckedChangeListener { _, isChecked ->
             viewModel.config?.systemTweaks!!.autoVolume.data = isChecked
+            try {
+                viewModel.restartMcuReader()
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
         }
 
         maxVolumeOnBootSwitch.setOnCheckedChangeListener { _, isChecked ->

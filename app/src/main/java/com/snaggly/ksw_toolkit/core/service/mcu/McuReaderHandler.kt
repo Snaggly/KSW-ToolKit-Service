@@ -1,6 +1,7 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.content.Context
+import android.media.AudioManager
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
 import com.snaggly.ksw_toolkit.util.applist.AppStarter
@@ -38,6 +39,7 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
         } catch (exc: Exception) {
             eventLogic.hasNoOEMScreen = false
         }
+
         if (config.systemTweaks.kswService.data) {
             adb.startKsw()
             eventLogic.stopSendingCarData()
@@ -51,9 +53,15 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
             eventLogic.mcuCommunicator!!.startBeat()
             eventLogic.mcuCommunicator!!.mcuReader!!.startReading(onMcuEventAction)
         }
+
+        if (config.systemTweaks.autoVolume.data) {
+            eventLogic.startAutoVolume(context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
+        }
     }
 
     fun stopReader() {
+        eventLogic.stopAutoVolume()
+        eventLogic.stopSendingCarData()
         eventLogic.mcuCommunicator?.stopBeat()
         eventLogic.mcuCommunicator?.mcuReader?.stopReading()
     }
