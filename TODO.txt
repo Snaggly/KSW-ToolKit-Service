@@ -35,3 +35,7 @@ Note: To disable OEM Voice Assistant:
 I can confirm setting SVS_EIN_AUS in HU or COMBOX (if you have one) to nicht_active disables OEM voice assistant on F series
 [07:55]
 And MULF should be COMBOX for E series if I understand right
+
+
+FullBrightness:     --Mcu toString-----[ cmdType:6C - data:01-64 ]
+LowestBrightness:   --Mcu toString-----[ cmdType:6C - data:01-00 ]

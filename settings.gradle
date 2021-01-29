@@ -1,3 +1,5 @@
-include ':app'
 include ':McuCommunicator'
+include ':library'
+include ':app'
+project(':library').projectDir = new File(rootDir, 'McuCommunicator/library/')
 rootProject.name = "KSW-ToolKit"
