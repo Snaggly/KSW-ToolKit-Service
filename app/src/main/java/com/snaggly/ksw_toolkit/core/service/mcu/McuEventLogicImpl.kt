@@ -50,14 +50,16 @@ class McuEventLogicImpl {
     }
 
     fun startAutoVolume(audioManager: AudioManager) {
+        if (autoVolume)
+            return
         val minVol = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)
         val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val volDiffTo = (minVol+maxVol)*minVolume
         val volDiffLe = (minVol+maxVol)*(1-minVolume) / speedMaxVolume
+        autoVolume = true
         Thread {
             while(autoVolume) {
                 val speedRate = (mcuStat.carData.speed*volDiffLe + volDiffTo).roundToInt().coerceIn(minVol, maxVol)
-                Log.d("Snaggly", "$speedRate")
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, speedRate, 0)
                 Thread.sleep(senderInterval)
             }

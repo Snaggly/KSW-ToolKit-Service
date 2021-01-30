@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/black"
     android:background="@drawable/id7_sys_factory_bg"
     android:focusable="false"
     tools:context=".gui.MainActivity">

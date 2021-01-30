@@ -34,12 +34,7 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
     }
 
     fun startMcuReader() {
-        try {
-            eventLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
-        } catch (exc: Exception) {
-            eventLogic.hasNoOEMScreen = false
-        }
-
+        eventLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
         if (config.systemTweaks.kswService.data) {
             adb.startKsw()
             eventLogic.stopSendingCarData()
