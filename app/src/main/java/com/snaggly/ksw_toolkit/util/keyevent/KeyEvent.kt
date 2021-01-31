@@ -20,6 +20,7 @@ class KeyEvent(name: String, icon: Drawable, val code: Int) : ListType(name, ico
             result.add(KeyEvent(KeyCode.DPAD_LEFT.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_keyboard_arrow_left_36)!!, KeyCode.DPAD_LEFT.keycode))
             result.add(KeyEvent(KeyCode.DPAD_RIGHT.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_keyboard_arrow_right_36)!!, KeyCode.DPAD_RIGHT.keycode))
             result.add(KeyEvent(KeyCode.DPAD_UP.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_keyboard_arrow_up_36)!!, KeyCode.DPAD_UP.keycode))
+            result.add(KeyEvent(KeyCode.ENTER.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_filter_center_focus_24)!!, KeyCode.ENTER.keycode))
             result.add(KeyEvent(KeyCode.ENVELOPE.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_email_36)!!, KeyCode.ENVELOPE.keycode))
             result.add(KeyEvent(KeyCode.EXPLORER.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_file_copy_36)!!, KeyCode.EXPLORER.keycode))
             result.add(KeyEvent(KeyCode.HOME.name,  ContextCompat.getDrawable(context, R.drawable.ic_baseline_home_24)!!, KeyCode.HOME.keycode))
