@@ -56,7 +56,18 @@
     <string name="start_at_boot">Start at Boot</string>
     <string name="clear_boot_animation">Clear Boot Animation</string>
     <string name="default_dpi_val">160</string>
-    <string name="toolkit">ToolKit</string>
+    <string name="toolkit">Main Menu</string>
     <string name="import_export_config">Import/Export Config</string>
+    <string name="brightness">Brightness:</string>
+    <string name="car_info">Car-Info</string>
+    <string name="radio">Radio</string>
+    <string name="aux">AUX</string>
+    <string name="dvr">DVR</string>
+    <string name="dvd">DVD</string>
+    <string name="front_cam">Front Cam</string>
+    <string name="open_source">Open Source:</string>
+    <string name="frontcam">frontCam</string>
+    <string name="screen_off">Screen Off</string>
+    <string name="dtv">DTV</string>
 
 </resources>
