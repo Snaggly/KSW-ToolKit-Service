@@ -48,14 +48,14 @@ class CoreService : Service() {
     }
 
     val adbConnection = AdbConnection()
-    val eventLogic = McuEventLogicImpl()
+    val mcuLogic = McuEventLogicImpl()
     var mcuReaderHandler : McuReaderHandler? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startMyOwnForeground()
 
         try {
-            mcuReaderHandler = McuReaderHandler(applicationContext, adbConnection, eventLogic)
+            mcuReaderHandler = McuReaderHandler(applicationContext, adbConnection, mcuLogic)
             mcuReaderHandler!!.startMcuReader()
         } catch (e: Exception) {
             return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")

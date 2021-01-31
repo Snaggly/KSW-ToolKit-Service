@@ -69,5 +69,6 @@
     <string name="frontcam">frontCam</string>
     <string name="screen_off">Screen Off</string>
     <string name="dtv">DTV</string>
+    <string name="turn_screen_off">Turn Screen Off</string>
 
 </resources>

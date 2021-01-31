@@ -7,7 +7,7 @@
     android:theme="@style/Theme.KSWToolKit"
     tools:context=".gui.ToolKit">
 
-    <RelativeLayout
+    <!--RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -32,7 +32,7 @@
                 android:background="@drawable/ic_baseline_web_asset_off_64"
                 android:contentDescription="@string/screen_off" />
         </LinearLayout>
-    </RelativeLayout>
+    </RelativeLayout-->
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -51,6 +51,7 @@
             android:layout_height="wrap_content"
             android:gravity="center">
             <LinearLayout
+                android:id="@+id/carInfoBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -72,6 +73,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/radioBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -93,6 +95,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/frontCamBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -114,6 +117,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/auxBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -135,6 +139,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/dvrBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -156,6 +161,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/dvdBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -177,6 +183,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/dtvBtn"
                 android:background="@drawable/border_selector"
                 android:focusable="true"
                 android:clickable="true"
@@ -201,7 +208,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="20dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -209,6 +217,7 @@
                 android:text="@string/brightness"/>
 
             <SeekBar
+                android:id="@+id/brightnessSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"
@@ -216,6 +225,14 @@
                 android:padding="20dp"
                 android:progress="100" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/screenOffBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/turn_screen_off"/>
+
 
     </LinearLayout>
 
