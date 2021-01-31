@@ -21,28 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <ImageView
-        android:id="@+id/topDownloadIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_baseline_cloud_download_24"
-        app:layout_constraintBottom_toBottomOf="@+id/topUploadIcon"
-        app:layout_constraintEnd_toStartOf="@+id/topUploadIcon"
-        app:layout_constraintTop_toTopOf="@+id/topUploadIcon"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/topUploadIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:src="@drawable/ic_baseline_cloud_upload_24"
-        app:layout_constraintBottom_toTopOf="@+id/tabFragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
         android:id="@+id/topMenuTabs"
         android:layout_width="wrap_content"

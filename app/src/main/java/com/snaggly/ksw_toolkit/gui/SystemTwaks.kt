@@ -39,15 +39,18 @@ class SystemTwaks : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        initElements()
+        initButtonClickEvents()
         startAtBoot.requestFocus()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(SystemTwaksViewModel::class.java)
-        viewModel.initConfig(requireContext())
-        initElements()
-        initButtonClickEvents()
     }
 
     private fun initElements() {
@@ -61,24 +64,24 @@ class SystemTwaks : Fragment() {
         giveTaskerLogcatPermBtn = requireView().findViewById(R.id.giveTaskerLogcat)
         dpiInputField = requireView().findViewById(R.id.dpiTxtInput)
 
-        startAtBoot.isChecked = viewModel.config?.systemTweaks!!.startAtBoot.data
-        stopKswServiceSwitch.isChecked = viewModel.config?.systemTweaks!!.kswService.data
-        autoVolumeSwitch.isChecked = viewModel.config?.systemTweaks!!.autoVolume.data
-        maxVolumeOnBootSwitch.isChecked = viewModel.config?.systemTweaks!!.maxVolume.data
-        hideTopBarSwitch.isChecked = viewModel.config?.systemTweaks!!.hideTopBar.data
-        shrinkTopBarSwitch.isChecked = viewModel.config?.systemTweaks!!.shrinkTopBar.data
+        startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
+        stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
+        autoVolumeSwitch.isChecked = viewModel.getConfig(requireContext()).autoVolume.data
+        maxVolumeOnBootSwitch.isChecked = viewModel.getConfig(requireContext()).maxVolume.data
+        hideTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).hideTopBar.data
+        shrinkTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).shrinkTopBar.data
         val actualDpi = requireView().resources.displayMetrics.densityDpi
-        viewModel.config?.systemTweaks!!.dpi.data = actualDpi
+        viewModel.getConfig(requireContext()).dpi.data = actualDpi
         dpiInputField.setText(actualDpi.toString())
     }
 
     private fun initButtonClickEvents() {
         startAtBoot.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.config?.systemTweaks!!.startAtBoot.data = isChecked
+            viewModel.getConfig(requireContext()).startAtBoot.data = isChecked
         }
 
         autoVolumeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.config?.systemTweaks!!.autoVolume.data = isChecked
+            viewModel.getConfig(requireContext()).autoVolume.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
@@ -90,23 +93,23 @@ class SystemTwaks : Fragment() {
         }
 
         maxVolumeOnBootSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.config?.systemTweaks!!.maxVolume.data = isChecked
+            viewModel.getConfig(requireContext()).maxVolume.data = isChecked
         }
 
         stopKswServiceSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.config?.systemTweaks!!.kswService.data = isChecked
+            viewModel.getConfig(requireContext()).kswService.data = isChecked
 
             if (!isChecked) {
                 val alert = AlertDialog.Builder(requireContext(), R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("You are about to shut down the built in KSW McuService. This could lead to unaccounted issues. Are you sure you still want to proceed?").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, "Yes!") { _, _ ->
-                    viewModel.config?.systemTweaks!!.kswService.data = isChecked
+                    viewModel.getConfig(requireContext()).kswService.data = isChecked
                     val enableLoggingDialog = AlertDialog.Builder(requireContext(), R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                             .setMessage("Enable CarData logging for 3rd party Dashboard-Apps?").create()
                     enableLoggingDialog.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     enableLoggingDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
-                        viewModel.config?.systemTweaks!!.carDataLogging.data = true
+                        viewModel.getConfig(requireContext()).carDataLogging.data = true
                         try {
                             viewModel.restartMcuReader()
                         } catch (exception: Exception) {
@@ -117,7 +120,7 @@ class SystemTwaks : Fragment() {
                         }
                     }
                     enableLoggingDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
-                        viewModel.config?.systemTweaks!!.carDataLogging.data = false
+                        viewModel.getConfig(requireContext()).carDataLogging.data = false
                         try {
                             viewModel.restartMcuReader()
                         } catch (exception: Exception) {
@@ -155,7 +158,7 @@ class SystemTwaks : Fragment() {
                 } else {
                     viewModel.showTopBar()
                 }
-                viewModel.config?.systemTweaks!!.hideTopBar.data = isChecked
+                viewModel.getConfig(requireContext()).hideTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
@@ -172,7 +175,7 @@ class SystemTwaks : Fragment() {
                 } else {
                     viewModel.restoreTopBar()
                 }
-                viewModel.config?.systemTweaks!!.shrinkTopBar.data = isChecked
+                viewModel.getConfig(requireContext()).shrinkTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
@@ -184,7 +187,7 @@ class SystemTwaks : Fragment() {
         changeDPIButton.setOnClickListener {
             try {
                 val newDPI = Integer.parseInt(dpiInputField.text.toString())
-                viewModel.config?.systemTweaks?.dpi!!.data = newDPI
+                viewModel.getConfig(requireContext()).dpi.data = newDPI
                 viewModel.changeDPI(newDPI)
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")

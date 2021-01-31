@@ -6,7 +6,7 @@ import com.snaggly.ksw_toolkit.util.enums.EventMode
 import java.io.*
 
 class ConfigManager private constructor() : IConfigBean {
-    private lateinit var configFile: File
+    private var configFile: File? = null
     lateinit var systemTweaks: SystemTweaks private set
     val eventManagers = HashMap<EventManagerTypes, EventManager>()
 
@@ -18,7 +18,7 @@ class ConfigManager private constructor() : IConfigBean {
     }
 
     override fun saveConfig() {
-        val dataOutputStream = DataOutputStream(configFile.outputStream())
+        val dataOutputStream = DataOutputStream(configFile!!.outputStream())
 
         dataOutputStream.writeBoolean(systemTweaks.startAtBoot.data)
         dataOutputStream.writeBoolean(systemTweaks.kswService.data)
@@ -40,7 +40,7 @@ class ConfigManager private constructor() : IConfigBean {
     }
 
     override fun readConfig() {
-        val dataInputStream = DataInputStream(configFile.inputStream())
+        val dataInputStream = DataInputStream(configFile!!.inputStream())
 
         systemTweaks = SystemTweaks(
                 dataInputStream.readBoolean(),
@@ -69,9 +69,12 @@ class ConfigManager private constructor() : IConfigBean {
         private val config = ConfigManager()
 
         fun getConfig(filePath: String) : ConfigManager{
+            if (config.configFile != null) {
+                return config
+            }
             config.configFile = File("$filePath/$fileName")
-            if (!config.configFile.isFile)
-                config.configFile.createNewFile()
+            if (!config.configFile!!.isFile)
+                config.configFile!!.createNewFile()
             try {
                 config.readConfig()
             }
@@ -87,13 +90,15 @@ class ConfigManager private constructor() : IConfigBean {
             if (inputFile.readUTF() != header)
                 throw UnsupportedEncodingException("Header mismatch!")
             inputFile.copyTo(File("$applicationFilePath/$fileName").outputStream())
-            return getConfig(applicationFilePath)
+            config.configFile = null
+            getConfig(applicationFilePath)
+            return config
         }
 
-        fun exportConfig(filePath: String, config: ConfigManager) {
+        fun exportConfig(filePath: String) {
             val outputFile = DataOutputStream(File(filePath).outputStream())
             outputFile.writeUTF(header)
-            config.configFile.inputStream().copyTo(outputFile)
+            config.configFile!!.inputStream().copyTo(outputFile)
             outputFile.close()
         }
     }

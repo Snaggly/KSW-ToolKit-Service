@@ -2,15 +2,17 @@ package com.snaggly.ksw_toolkit.gui.viewmodels
 
 import android.content.Context
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
+import com.snaggly.ksw_toolkit.core.config.beans.SystemTweaks
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 
 class SystemTwaksViewModel : CoreServiceClient() {
 
-    var config: ConfigManager? = null
+    private var config: SystemTweaks? = null
 
-    fun initConfig(context: Context) {
+    fun getConfig(context: Context) : SystemTweaks {
         if (config == null)
-            config = ConfigManager.getConfig(context.filesDir.absolutePath)
+            config = ConfigManager.getConfig(context.filesDir.absolutePath).systemTweaks
+        return config!!
     }
 
     fun restartMcuReader() {
@@ -22,11 +24,11 @@ class SystemTwaksViewModel : CoreServiceClient() {
     }
 
     fun shrinkTopBar() {
-        coreService?.adbConnection!!.sendCommand("wm overscan 0,-9,0,0\nwm density ${config?.systemTweaks?.dpi!!.data-2}")
+        coreService?.adbConnection!!.sendCommand("wm overscan 0,-9,0,0\nwm density ${config?.dpi!!.data-2}")
     }
 
     fun restoreTopBar() {
-        coreService?.adbConnection!!.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.systemTweaks?.dpi!!.data}")
+        coreService?.adbConnection!!.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.dpi!!.data}")
     }
 
     fun showTopBar() {
