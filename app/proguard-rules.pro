@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.wits.pms.* {*;}
+-keep class com.wits.pms.statuscontrol.* {*;}
+-keep class projekt.auto.mcu.** {*;}
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
