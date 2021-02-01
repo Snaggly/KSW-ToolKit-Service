@@ -80,9 +80,9 @@ class McuEventLogicImpl {
                 if (data[1] == 0x4.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobTiltRight
                 if (data[1] == 0x1.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobTiltUp
                 if (data[1] == 0x5.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobPress
-                if (data[1] == 0x19.toByte() && data[2] == 0x0.toByte()) return EventManagerTypes.MediaPlayPause
-                if (data[1] == 0x18.toByte() && data[2] == 0x0.toByte()) return EventManagerTypes.MediaNext
-                if (data[1] == 0x17.toByte() && data[2] == 0x0.toByte()) return EventManagerTypes.MediaPrevious
+                if (data[1] == 0x19.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.MediaPlayPause
+                if (data[1] == 0x18.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.MediaNext
+                if (data[1] == 0x17.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.MediaPrevious
                 if (data[1] == 0x14.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.VoiceCommandButton
                 if (data[1] == 0x10.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.ModeButton
                 if (data[1] == 0x8.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.MenuButton

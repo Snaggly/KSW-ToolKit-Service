@@ -33,6 +33,9 @@ class McuListenerViewModel : CoreServiceClient() {
 
     val mcuObserver = object : McuEventObserver {
         override fun update(eventType: EventManagerTypes?, cmdType: Int, data: ByteArray) {
+            if (data.size > 2)
+                if (cmdType == 0xA1 && data[0] == 0x17.toByte() && data[2] == 0x0.toByte())
+                        return
             val eventName = eventType?.name ?: "Unknown Event"
             parentActivity?.runOnUiThread {
                 addEntryToAdapter("$eventName - $cmdType", dataBytesToString(data))
