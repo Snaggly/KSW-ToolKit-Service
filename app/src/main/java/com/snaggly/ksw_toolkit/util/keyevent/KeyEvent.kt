@@ -34,6 +34,8 @@ class KeyEvent(name: String, icon: Drawable, val code: Int) : ListType(name, ico
             result.add(KeyEvent(KeyCode.VOLUME_DOWN.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_volume_down_36)!!, KeyCode.VOLUME_DOWN.keycode))
             result.add(KeyEvent(KeyCode.VOLUME_MUTE.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_volume_off_36)!!, KeyCode.VOLUME_MUTE.keycode))
             result.add(KeyEvent(KeyCode.VOLUME_UP.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_volume_up_36)!!, KeyCode.VOLUME_UP.keycode))
+            result.add(KeyEvent(KeyCode.KEYCODE_0.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_code_36)!!, KeyCode.KEYCODE_0.keycode))
+            result.add(KeyEvent(KeyCode.KEYCODE_1.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_code_36)!!, KeyCode.KEYCODE_1.keycode))
 
             return result
         }
