@@ -34,15 +34,12 @@ class McuEventLogicImpl {
         catch (exc : Exception) {}
     }
 
+    private fun sendCarData() {
+        WitsStatus.logMcuStatus(mcuStat)
+    }
+
     fun startSendingCarData() {
         isLogging = true
-        Thread {
-            while (isLogging) {
-                //WitsStatus.sendOutMcuStatus(mcuStat) CS overwrites immediately!
-                WitsStatus.logMcuStatus(mcuStat)
-                Thread.sleep(senderInterval)
-            }
-        }.start()
     }
 
     fun stopSendingCarData() {
@@ -90,26 +87,38 @@ class McuEventLogicImpl {
                 if (data[1] == 0xe.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.NavigationButton
                 if (data[1] == 0xd.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.OptionsButton
                 if (data[1] == 0x11.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButton
-                if (data[1] == 0xb.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonLongPress
+                if (data[1] == 0x1f.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonHangUp
             } else if (data[0] == 0x1A.toByte() && hasNoOEMScreen) {
                 if (data[1] == 0x1.toByte()) {
                     mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_ON)
                 } else if (data[1] == 0x2.toByte()) {
                     mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_OFF)
                 }
-            } else if (data[0] == 0x19.toByte()) {
-                mcuStat.carData.parseFromCarDataEvent(data)
-            }  else if (data[0] == 0x10.toByte()) {
-                mcuStat.carData.parseFromBrakeBeltEvent(data)
-            } else if (data[0] == 0x12.toByte()) {
-                mcuStat.carData.parseFromDoorEvent(data)
-            } else if (data[0] == 0x1C.toByte()) {
-                mcuStat.acData.parseFromACDataEvent(data)
+            } else if (isLogging) {
+                when {
+                    data[0] == 0x19.toByte() -> {
+                        mcuStat.carData.parseFromCarDataEvent(data)
+                    }
+                    data[0] == 0x10.toByte() -> {
+                        mcuStat.carData.parseFromBrakeBeltEvent(data)
+                    }
+                    data[0] == 0x12.toByte() -> {
+                        mcuStat.carData.parseFromDoorEvent(data)
+                    }
+                    data[0] == 0x1C.toByte() -> {
+                        mcuStat.acData.parseFromACDataEvent(data)
+                    }
+                }
+
+                sendCarData()
             }
             return EventManagerTypes.CarData
         }
         else if (cmdType == 0x1D) {
-            mcuStat.benzData.parseFromBenzDataEvent(data)
+            if (isLogging) {
+                mcuStat.benzData.parseFromBenzDataEvent(data)
+                sendCarData()
+            }
             return EventManagerTypes.BenzData
         }
         else if (cmdType == 0x1C) {

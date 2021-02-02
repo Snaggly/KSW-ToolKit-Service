@@ -3,7 +3,7 @@ package com.snaggly.ksw_toolkit.util.enums
 enum class EventManagerTypes {
     VoiceCommandButton,
     TelephoneButton,
-    TelephoneButtonLongPress,
+    TelephoneButtonHangUp,
     MediaPrevious,
     MediaNext,
     MediaPlayPause,

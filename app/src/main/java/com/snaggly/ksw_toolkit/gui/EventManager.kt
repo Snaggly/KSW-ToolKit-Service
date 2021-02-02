@@ -17,7 +17,7 @@ class EventManager : Fragment() {
     private var previousTypes: EventManagerTypes? = null
 
     private lateinit var telephoneBtn : Button
-    private lateinit var telephoneLongBtn : Button
+    private lateinit var telephoneHangUpBtn : Button
     private lateinit var voiceBtn : Button
     private lateinit var mediaPreviousBtn : Button
     private lateinit var mediaNextBtn : Button
@@ -55,7 +55,7 @@ class EventManager : Fragment() {
 
     private fun initBtns() {
         telephoneBtn = requireView().findViewById(R.id.telefonBtn)
-        telephoneLongBtn = requireView().findViewById(R.id.telefonLongPressBtn)
+        telephoneHangUpBtn = requireView().findViewById(R.id.telefonHangUpBtn)
         voiceBtn = requireView().findViewById(R.id.voiceBtn)
         mediaPreviousBtn = requireView().findViewById(R.id.mediaPreviousBtn)
         mediaNextBtn = requireView().findViewById(R.id.mediaNextBtn)
@@ -76,7 +76,7 @@ class EventManager : Fragment() {
 
     private fun initBtnClick() {
         setOnClickEvent(telephoneBtn, EventManagerTypes.TelephoneButton)
-        setOnClickEvent(telephoneLongBtn, EventManagerTypes.TelephoneButtonLongPress)
+        setOnClickEvent(telephoneHangUpBtn, EventManagerTypes.TelephoneButtonHangUp)
         setOnClickEvent(voiceBtn, EventManagerTypes.VoiceCommandButton)
         setOnClickEvent(mediaPreviousBtn, EventManagerTypes.MediaPrevious)
         setOnClickEvent(mediaNextBtn, EventManagerTypes.MediaNext)

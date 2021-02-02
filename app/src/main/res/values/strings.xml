@@ -32,7 +32,7 @@
     <string name="media_pause">Media Play/Pause</string>
     <string name="media_next">Media Next</string>
     <string name="media_previous">Media Previous</string>
-    <string name="telephone_button_long_press">Telephone Button Long Press</string>
+    <string name="telephone_button_hang_up">Telephone HangUp Button</string>
     <string name="telephone_button">Telephone Button</string>
     <string name="voice_command_button">Voice Command Button</string>
     <string name="steering_wheel_buttons">Steering Wheel Buttons</string>
