@@ -16,10 +16,10 @@ class BackTapper(val context: Context) {
     private var hasAlreadyDrawn = false
 
     fun drawBackWindow(mcuCommunicator: McuCommunicator) {
-        if (hasAlreadyDrawn) {
+        if (getHasAlreadyDrawn()) {
             return
         }
-        hasAlreadyDrawn = true
+        setHasAlreadyDrawn(true)
 
         handler.post {
             val windowParam = WindowManager.LayoutParams()
@@ -40,7 +40,7 @@ class BackTapper(val context: Context) {
                 returnBackToArm(mcuCommunicator)
                 v.performClick()
                 windowManager.removeViewImmediate(view)
-                hasAlreadyDrawn = false
+                setHasAlreadyDrawn(true)
                 return@setOnTouchListener false
             }
             windowManager.addView(view, windowParam)
@@ -49,5 +49,13 @@ class BackTapper(val context: Context) {
 
     private fun returnBackToArm(mcuCommunicator: McuCommunicator) {
         mcuCommunicator.sendCommand(McuCommands.SWITCH_TO_ANDROID)
+    }
+
+    @Synchronized private fun getHasAlreadyDrawn() : Boolean {
+        return hasAlreadyDrawn
+    }
+
+    @Synchronized private fun setHasAlreadyDrawn(newVal : Boolean) {
+        hasAlreadyDrawn = newVal
     }
 }

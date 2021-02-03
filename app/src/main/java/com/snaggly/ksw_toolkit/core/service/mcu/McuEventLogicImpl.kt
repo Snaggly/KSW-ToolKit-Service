@@ -71,7 +71,7 @@ class McuEventLogicImpl {
 
     fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes? {
         if (cmdType == 0xA1) {
-            if (data[0] == 0x17.toByte()) {
+            if (data[0] == 0x17.toByte() && data.size > 2) {
                 if (data[1] == 0x6.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobTurnRight
                 if (data[1] == 0x7.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobTurnLeft
                 if (data[1] == 0x2.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.KnobTiltDown
@@ -91,7 +91,7 @@ class McuEventLogicImpl {
                 if (data[1] == 0x11.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButton
                 if (data[1] == 0x1f.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonHangUp
                 if (data[1] == 0xb.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonLongPress
-            } else if (data[0] == 0x1A.toByte() && hasNoOEMScreen) {
+            } else if (hasNoOEMScreen && data.size > 1 && data[0] == 0x1A.toByte()) {
                 if (data[1] == 0x1.toByte()) {
                     mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_ON)
                 } else if (data[1] == 0x2.toByte()) {
@@ -128,6 +128,7 @@ class McuEventLogicImpl {
             if (data[0] == 0x1.toByte()) return EventManagerTypes.Idle
             else if (data[0] == 0x2.toByte()) {
                 backTapper?.drawBackWindow(mcuCommunicator!!)
+                return EventManagerTypes.Idle
             }
         }
 
