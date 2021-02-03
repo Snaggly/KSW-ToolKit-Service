@@ -39,17 +39,16 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
         if (config.systemTweaks.kswService.data) {
             adb.startKsw()
             eventLogic.backTapper = null
-            eventLogic.stopSendingCarData()
             eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), LogcatReader())
             eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
         } else {
             adb.stopKsw()
-            eventLogic.backTapper = BackTapper(context)
             if (config.systemTweaks.carDataLogging.data)
                 eventLogic.startSendingCarData()
             eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), SerialReader())
             eventLogic.mcuCommunicator!!.startBeat()
             eventLogic.mcuCommunicator!!.mcuReader!!.startReading(onMcuEventAction)
+            eventLogic.backTapper = BackTapper(context)
         }
 
         if (config.systemTweaks.autoVolume.data) {
