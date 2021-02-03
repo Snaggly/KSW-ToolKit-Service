@@ -40,7 +40,7 @@ class BackTapper(val context: Context) {
                 returnBackToArm(mcuCommunicator)
                 v.performClick()
                 windowManager.removeViewImmediate(view)
-                setHasAlreadyDrawn(true)
+                setHasAlreadyDrawn(false)
                 return@setOnTouchListener false
             }
             windowManager.addView(view, windowParam)
