@@ -26,6 +26,6 @@ enum class KeyCode(val keycode : Int) {
     VOLUME_DOWN(25),
     VOLUME_MUTE(164),
     VOLUME_UP(24),
-    KEYCODE_0(7),
-    KEYCODE_1(8);
+    KEYCODE_1(8),
+    KEYCODE_2(9);
 }
