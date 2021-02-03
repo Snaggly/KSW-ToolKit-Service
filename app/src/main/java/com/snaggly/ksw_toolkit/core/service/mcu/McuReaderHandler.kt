@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
+import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.applist.AppStarter
 import com.snaggly.ksw_toolkit.util.enums.EventMode
 import com.snaggly.ksw_toolkit.util.keyevent.KeyInjector
@@ -37,11 +38,13 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
         eventLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
         if (config.systemTweaks.kswService.data) {
             adb.startKsw()
+            eventLogic.backTapper = null
             eventLogic.stopSendingCarData()
             eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), LogcatReader())
             eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
         } else {
             adb.stopKsw()
+            eventLogic.backTapper = BackTapper(context)
             if (config.systemTweaks.carDataLogging.data)
                 eventLogic.startSendingCarData()
             eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), SerialReader())

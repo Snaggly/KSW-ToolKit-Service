@@ -2,6 +2,7 @@ package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.media.AudioManager
 import android.util.Log
+import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
@@ -19,6 +20,7 @@ class McuEventLogicImpl {
     private var isLogging = true
     private var autoVolume = false
     var senderInterval: Long = 1000
+    var backTapper : BackTapper? = null
 
     //Param
     var hasNoOEMScreen = false
@@ -123,6 +125,9 @@ class McuEventLogicImpl {
         }
         else if (cmdType == 0x1C) {
             if (data[0] == 0x1.toByte()) return EventManagerTypes.Idle
+            else if (data[0] == 0x2.toByte()) {
+                backTapper?.drawBackWindow(mcuCommunicator!!)
+            }
         }
 
         return null
