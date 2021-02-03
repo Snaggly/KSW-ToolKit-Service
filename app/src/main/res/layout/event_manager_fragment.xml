@@ -71,6 +71,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/telephone_button_long_press"/>
+                <Button
+                    android:id="@+id/telefonLongPressBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unassigned"
+                    style="@style/normalButton"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/media_previous"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>

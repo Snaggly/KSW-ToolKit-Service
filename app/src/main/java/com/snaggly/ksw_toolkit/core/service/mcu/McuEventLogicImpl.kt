@@ -90,6 +90,7 @@ class McuEventLogicImpl {
                 if (data[1] == 0xd.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.OptionsButton
                 if (data[1] == 0x11.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButton
                 if (data[1] == 0x1f.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonHangUp
+                if (data[1] == 0xb.toByte() && data[2] == 0x1.toByte()) return EventManagerTypes.TelephoneButtonLongPress
             } else if (data[0] == 0x1A.toByte() && hasNoOEMScreen) {
                 if (data[1] == 0x1.toByte()) {
                     mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_ON)

@@ -4,6 +4,7 @@ enum class EventManagerTypes {
     VoiceCommandButton,
     TelephoneButton,
     TelephoneButtonHangUp,
+    TelephoneButtonLongPress,
     MediaPrevious,
     MediaNext,
     MediaPlayPause,
