@@ -18,6 +18,23 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
 
+    init {
+        eventLogic.mcuCommunicator = McuCommunicator.getInstance()
+    }
+
+    private val initialSerialStartAction = McuCommunicator.McuAction { cmdType, data ->
+        if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
+            eventLogic.mcuCommunicator!!.mcuReader.stopReading()
+            adb.stopKsw()
+            eventLogic.mcuCommunicator!!.mcuReader = SerialReader()
+            eventLogic.mcuCommunicator!!.startBeat()
+            eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
+            if (config.systemTweaks.carDataLogging.data)
+                eventLogic.startSendingCarData()
+            eventLogic.backTapper = BackTapper(context)
+        }
+    }
+
     private val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
         val event = eventLogic.getMcuEvent(cmdType, data)
         if (event != null) {
@@ -36,19 +53,12 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
 
     fun startMcuReader() {
         eventLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
+        adb.startKsw()
+        eventLogic.mcuCommunicator!!.mcuReader = LogcatReader()
         if (config.systemTweaks.kswService.data) {
-            adb.startKsw()
-            eventLogic.backTapper = null
-            eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), LogcatReader())
             eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
         } else {
-            adb.stopKsw()
-            if (config.systemTweaks.carDataLogging.data)
-                eventLogic.startSendingCarData()
-            eventLogic.mcuCommunicator = McuCommunicator(SerialWriter(), SerialReader())
-            eventLogic.mcuCommunicator!!.startBeat()
-            eventLogic.mcuCommunicator!!.mcuReader!!.startReading(onMcuEventAction)
-            eventLogic.backTapper = BackTapper(context)
+            eventLogic.mcuCommunicator!!.mcuReader.startReading(initialSerialStartAction)
         }
 
         if (config.systemTweaks.autoVolume.data) {
@@ -57,6 +67,7 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
     }
 
     fun stopReader() {
+        eventLogic.backTapper = null
         eventLogic.stopAutoVolume()
         eventLogic.stopSendingCarData()
         eventLogic.mcuCommunicator?.stopBeat()
