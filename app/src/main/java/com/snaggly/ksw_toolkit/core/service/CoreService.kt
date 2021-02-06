@@ -4,10 +4,13 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.ContentObserver
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.provider.Settings
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -16,6 +19,7 @@ import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
+import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import java.util.*
 
 class CoreService : Service() {
@@ -73,6 +77,16 @@ class CoreService : Service() {
         } catch (e: Exception) {
             crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
         }
+
+        applicationContext.contentResolver.registerContentObserver(
+                Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),
+                true,
+                object : ContentObserver(Handler(applicationContext.mainLooper)) {
+            override fun onChange(selfChange : Boolean) {
+                val newBrightness = Settings.System.getInt(applicationContext.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+                mcuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel((newBrightness*100/255).toByte()))
+            }
+        })
     }
 
     override fun onDestroy() {
