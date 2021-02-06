@@ -29,6 +29,8 @@ class McuEventLogicImpl {
 
     init {
         try{
+            mcuStat.systemMode = 1
+            mcuStat.mcuVerison = WitsStatus.getMcuVersion()
             mcuStat.carData = WitsStatus.getCarDataStatus()
             mcuStat.acData = WitsStatus.getACDataStatus()
             mcuStat.benzData = WitsStatus.getBenzDataStatus()

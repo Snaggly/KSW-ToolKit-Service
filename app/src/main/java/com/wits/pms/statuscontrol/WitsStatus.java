@@ -55,4 +55,8 @@ public class WitsStatus {
     public static McuStatus.ACData getACDataStatus() throws RemoteException {
         return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("acData"), McuStatus.ACData.class);
     }
+
+    public static String getMcuVersion() throws RemoteException {
+        return PowerManagerApp.getStatusString("mcuVerison");
+    }
 }
