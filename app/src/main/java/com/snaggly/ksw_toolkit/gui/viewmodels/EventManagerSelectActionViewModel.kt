@@ -11,13 +11,16 @@ import com.snaggly.ksw_toolkit.util.applist.AppsLister
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.enums.EventMode
 import com.snaggly.ksw_toolkit.util.keyevent.KeyEvent
+import com.snaggly.ksw_toolkit.util.mcu.McuCommandsList
 
 class EventManagerSelectActionViewModel : ViewModel() {
     private var listKeyEventsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
     private var availableAppsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
+    private var mcuCommandsListAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
 
     private var keyEvents: ArrayList<KeyEvent>? = null
     private var appsList: ArrayList<AppInfo>? = null
+    private var mcuCommandsList: ArrayList<McuCommandsList>? = null
     var config : EventManager? = null
 
     var eventCurType : EventManagerTypes = EventManagerTypes.Dummy
@@ -57,6 +60,12 @@ class EventManagerSelectActionViewModel : ViewModel() {
         availableAppsAdapter = ListTypeAdapter(appsList!!, findAppFromList(config?.appName!!.data), onAppClickListener)
     }
 
+    private fun initMcuCommandsListAdapter(context: Context) {
+        initConfig(context)
+        mcuCommandsList = McuCommandsList.getMcuCommandsList(context)
+        mcuCommandsListAdapter = ListTypeAdapter(mcuCommandsList!!, findAppFromList(config?.appName!!.data), onMcuCommandClickListener)
+    }
+
     fun getListKeyEventsAdapter(context: Context): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
         if (listKeyEventsAdapter == null)
             initKeyEventsAdapter(context)
@@ -67,6 +76,12 @@ class EventManagerSelectActionViewModel : ViewModel() {
         if (availableAppsAdapter == null)
             initAvailableAppsAdapter(context)
         return availableAppsAdapter!!
+    }
+
+    fun getMcuCommandsAdapter(context: Context) : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
+        if (mcuCommandsListAdapter == null)
+            initMcuCommandsListAdapter(context)
+        return mcuCommandsListAdapter!!
     }
 
     fun resetEvent() {
@@ -89,6 +104,15 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.StartApp
             config?.keyCode!!.data = -1
             config?.appName!!.data = appsList?.get(position)!!.packageName
+            actionEvent.notifyView()
+        }
+    }
+
+    private val onMcuCommandClickListener = object : ListTypeAdapter.OnAppClickListener {
+        override fun onAppClick(position: Int) {
+            config?.eventMode = EventMode.McuCommand
+            config?.keyCode!!.data = -1
+            config?.appName!!.data = ""
             actionEvent.notifyView()
         }
     }

@@ -21,10 +21,12 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
     private lateinit var mViewModel: EventManagerSelectActionViewModel
     private lateinit var listKeyEvents: RecyclerView
     private lateinit var listApps: RecyclerView
+    private lateinit var listMcuCommands: RecyclerView
 
     private lateinit var doNothingButton: RadioButton
     private lateinit var invokeKeyButton: RadioButton
     private lateinit var startAppButton: RadioButton
+    private lateinit var mcuCommandsButton: RadioButton
 
     private lateinit var leaveToTopAnimation : Animation
     private lateinit var leaveToButtomAnimation : Animation
@@ -44,10 +46,7 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         mViewModel.eventCurType = type
         mViewModel.actionEvent = actionEvent
         initRadioBtns()
-        listKeyEvents = requireView().findViewById(R.id.availableKeyEventsListView)
-        listApps = requireView().findViewById(R.id.availableAppsListView)
-        initRecyclerViews(listKeyEvents, context?.let { mViewModel.getListKeyEventsAdapter(it) }!! )
-        initRecyclerViews(listApps, context?.let { mViewModel.getAvailableAppsAdapter(it) }!!)
+        initLists()
         loadAnimations(300)
         doButtonEvents()
         preselectEvent()
@@ -58,6 +57,16 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         doNothingButton = requireView().findViewById(R.id.unnassignBtn)
         invokeKeyButton = requireView().findViewById(R.id.invokeKeyeventRadioButton)
         startAppButton = requireView().findViewById(R.id.startAppRadioButton)
+        mcuCommandsButton = requireView().findViewById(R.id.sendMcuCommandBtn)
+    }
+
+    private fun initLists() {
+        listKeyEvents = requireView().findViewById(R.id.availableKeyEventsListView)
+        listApps = requireView().findViewById(R.id.availableAppsListView)
+        listMcuCommands = requireView().findViewById(R.id.mcuCommandsListView)
+        initRecyclerViews(listKeyEvents, context?.let { mViewModel.getListKeyEventsAdapter(it) }!!)
+        initRecyclerViews(listApps, context?.let { mViewModel.getAvailableAppsAdapter(it) }!!)
+        initRecyclerViews(listMcuCommands, context?.let { mViewModel.getMcuCommandsAdapter(it) }!!)
     }
 
     private fun loadAnimations(duration: Long) {
@@ -80,17 +89,26 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
     private fun doButtonEvents() {
         doNothingButton.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
-                if (mode == ActionMode.InvokeKeyEvent) {
-                    invokeKeyButton.isChecked = false
-                    listKeyEvents.clearAnimation()
-                    listKeyEvents.startAnimation(leaveToTopAnimation)
-                    listKeyEvents.visibility = View.GONE
+                when (mode) {
+                    ActionMode.InvokeKeyEvent -> {
+                        invokeKeyButton.isChecked = false
+                        listKeyEvents.clearAnimation()
+                        listKeyEvents.startAnimation(leaveToTopAnimation)
+                        listKeyEvents.visibility = View.GONE
                     }
-                else if (mode == ActionMode.StartApp) {
-                    startAppButton.isChecked = false
-                    listApps.clearAnimation()
-                    listApps.startAnimation((leaveToTopAnimation))
-                    listApps.visibility = View.GONE
+                    ActionMode.StartApp -> {
+                        startAppButton.isChecked = false
+                        listApps.clearAnimation()
+                        listApps.startAnimation((leaveToTopAnimation))
+                        listApps.visibility = View.GONE
+                    }
+                    ActionMode.SendMcuCommand -> {
+                        mcuCommandsButton.isChecked = false
+                        listMcuCommands.clearAnimation()
+                        listMcuCommands.startAnimation((leaveToTopAnimation))
+                        listMcuCommands.visibility = View.GONE
+                    }
+                    else -> {}
                 }
                 mode = ActionMode.DoNothing
                 mViewModel.resetEvent()
@@ -102,14 +120,21 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
                 listKeyEvents.visibility = View.VISIBLE
                 listKeyEvents.startAnimation(enterFromTopAnimation)
 
-                if (mode == ActionMode.StartApp) {
-                    startAppButton.isChecked = false
-                    listApps.clearAnimation()
-                    listApps.visibility = View.GONE
-                    listApps.startAnimation(leaveToButtomAnimation)
+                when (mode) {
+                    ActionMode.StartApp -> {
+                        startAppButton.isChecked = false
+                        listApps.clearAnimation()
+                        listApps.visibility = View.GONE
+                        listApps.startAnimation(leaveToButtomAnimation)
+                    }
+                    ActionMode.SendMcuCommand -> {
+                        mcuCommandsButton.isChecked = false
+                        listMcuCommands.clearAnimation()
+                        listMcuCommands.visibility = View.GONE
+                        listMcuCommands.startAnimation(leaveToButtomAnimation)
+                    }
+                    else -> doNothingButton.isChecked = false
                 }
-                else
-                    doNothingButton.isChecked = false
 
                 listKeyEvents.requestFocus()
                 mode = ActionMode.InvokeKeyEvent
@@ -119,29 +144,68 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
             if (isChecked) {
                 listApps.visibility = View.VISIBLE
                 listApps.requestFocus()
-                if (mode == ActionMode.InvokeKeyEvent) {
-                    invokeKeyButton.isChecked = false
-                    listKeyEvents.clearAnimation()
-                    listKeyEvents.startAnimation(leaveToTopAnimation)
-                    listKeyEvents.visibility = View.GONE
-                    listApps.startAnimation(enterFromButtomAnimation)
-                }
-                else {
-                    doNothingButton.isChecked = false
-                    listApps.startAnimation(enterFromTopAnimation)
+                when (mode) {
+                    ActionMode.InvokeKeyEvent -> {
+                        invokeKeyButton.isChecked = false
+                        listKeyEvents.clearAnimation()
+                        listKeyEvents.startAnimation(leaveToTopAnimation)
+                        listKeyEvents.visibility = View.GONE
+                        listApps.startAnimation(enterFromButtomAnimation)
+                    }
+                    ActionMode.SendMcuCommand -> {
+                        mcuCommandsButton.isChecked = false
+                        listMcuCommands.clearAnimation()
+                        listMcuCommands.startAnimation(leaveToButtomAnimation)
+                        listMcuCommands.visibility = View.GONE
+                        listApps.startAnimation(enterFromTopAnimation)
+                    }
+                    else -> {
+                        doNothingButton.isChecked = false
+                        listApps.startAnimation(enterFromTopAnimation)
+                    }
                 }
 
                 listApps.requestFocus()
                 mode = ActionMode.StartApp
             }
         }
+        mcuCommandsButton.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            if (isChecked) {
+                listMcuCommands.visibility = View.VISIBLE
+                listMcuCommands.requestFocus()
+                when (mode) {
+                    ActionMode.InvokeKeyEvent -> {
+                        invokeKeyButton.isChecked = false
+                        listKeyEvents.clearAnimation()
+                        listKeyEvents.startAnimation(leaveToTopAnimation)
+                        listKeyEvents.visibility = View.GONE
+                        listMcuCommands.startAnimation(enterFromButtomAnimation)
+                    }
+                    ActionMode.StartApp -> {
+                        startAppButton.isChecked = false
+                        listApps.clearAnimation()
+                        listApps.startAnimation(leaveToTopAnimation)
+                        listApps.visibility = View.GONE
+                        listMcuCommands.startAnimation(enterFromButtomAnimation)
+                    }
+                    else -> {
+                        doNothingButton.isChecked = false
+                        listMcuCommands.startAnimation(enterFromTopAnimation)
+                    }
+                }
+
+                listMcuCommands.requestFocus()
+                mode = ActionMode.SendMcuCommand
+            }
+        }
     }
 
     private fun preselectEvent() {
         when(mViewModel.config?.eventMode){
-            EventMode.NoAssignment -> doNothingButton.isChecked = true
             EventMode.KeyEvent -> invokeKeyButton.isChecked = true
             EventMode.StartApp -> startAppButton.isChecked = true
+            EventMode.McuCommand -> mcuCommandsButton.isChecked = true
+            else -> doNothingButton.isChecked = true
         }
     }
 
@@ -151,5 +215,5 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         }
     }
 
-    enum class ActionMode {DoNothing, InvokeKeyEvent, StartApp}
+    enum class ActionMode {DoNothing, InvokeKeyEvent, StartApp, SendMcuCommand}
 }
