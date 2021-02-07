@@ -1,6 +1,6 @@
 package com.snaggly.ksw_toolkit.util.mcu
 
-enum class McuCommands {
+enum class McuCommandsEnum {
     ScreenOff,
     BrightnessInc,
     BrightnessDec,
@@ -10,5 +10,9 @@ enum class McuCommands {
     AUX,
     DVR,
     DVD,
-    DTV
+    DTV;
+
+    companion object {
+        val values = values()
+    }
 }

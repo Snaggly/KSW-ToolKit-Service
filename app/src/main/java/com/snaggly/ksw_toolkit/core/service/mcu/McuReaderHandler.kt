@@ -8,6 +8,8 @@ import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.applist.AppStarter
 import com.snaggly.ksw_toolkit.util.enums.EventMode
 import com.snaggly.ksw_toolkit.util.keyevent.KeyInjector
+import com.snaggly.ksw_toolkit.util.mcu.McuCommander
+import com.snaggly.ksw_toolkit.util.mcu.McuCommandsEnum
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -39,11 +41,17 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
         val event = eventLogic.getMcuEvent(cmdType, data)
         if (event != null) {
             val eventConfig = config.eventManagers[event]
-            if (eventConfig?.eventMode == EventMode.KeyEvent) {
-                KeyInjector.sendKey(eventConfig.keyCode.data)
-            }
-            else if (eventConfig?.eventMode == EventMode.StartApp) {
-                AppStarter.launchAppById(eventConfig.appName.data, context)
+            when (eventConfig?.eventMode) {
+                EventMode.KeyEvent -> {
+                    KeyInjector.sendKey(eventConfig.keyCode.data)
+                }
+                EventMode.StartApp -> {
+                    AppStarter.launchAppById(eventConfig.appName.data, context)
+                }
+                EventMode.McuCommand -> {
+                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], eventLogic.mcuCommunicator, context)
+                }
+                else -> {}
             }
         }
 
