@@ -11,7 +11,7 @@ import projekt.auto.mcu.ksw.serial.collection.McuCommands
 class BackTapper(val context: Context) {
 
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    private lateinit var view: View
+    private var view: View? = null
     private val handler = Handler(context.mainLooper)
     private var hasAlreadyDrawn = false
 
@@ -23,27 +23,37 @@ class BackTapper(val context: Context) {
 
         handler.post {
             val windowParam = WindowManager.LayoutParams()
-            windowParam.type = 2010
-            windowParam.flags = windowParam.flags.or(1024).or(262144).or(524288)
-            windowParam.height = -1
-            windowParam.width = -1
-            windowParam.format = 1
-            windowParam.alpha = 1.0f
-            windowParam.x = 0
-            windowParam.y = 0
+            windowParam.apply {
+                type = 2010
+                flags = windowParam.flags.or(1024).or(262144).or(524288)
+                height = -1
+                width = -1
+                format = 1
+                alpha = 1.0f
+                x = 0
+                y = 0
+            }
 
             view = View(context)
-            view.isClickable = true
-            view.layoutParams = ViewGroup.LayoutParams(-1, -1)
-            view.setOnClickListener {  }
-            view.setOnTouchListener { v, _ ->
-                returnBackToArm(mcuCommunicator)
-                v.performClick()
-                windowManager.removeViewImmediate(view)
-                setHasAlreadyDrawn(false)
-                return@setOnTouchListener false
+            view?.apply {
+                isClickable = true
+                layoutParams = ViewGroup.LayoutParams(-1, -1)
+                setOnClickListener {
+                    returnBackToArm(mcuCommunicator)
+                }
+                setOnTouchListener { v, _ ->
+                    v.performClick()
+                    return@setOnTouchListener false
+                }
             }
             windowManager.addView(view, windowParam)
+        }
+    }
+
+    fun removeBackWindow() {
+        if (getHasAlreadyDrawn()) {
+            windowManager.removeViewImmediate(view)
+            setHasAlreadyDrawn(false)
         }
     }
 
