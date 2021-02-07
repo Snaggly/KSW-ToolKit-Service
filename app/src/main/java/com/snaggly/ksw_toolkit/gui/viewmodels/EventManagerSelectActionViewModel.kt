@@ -55,15 +55,13 @@ class EventManagerSelectActionViewModel : ViewModel() {
     }
 
     private fun initAvailableAppsAdapter(context: Context) {
-        initConfig(context)
         appsList = AppsLister(context).getAppsList()
         availableAppsAdapter = ListTypeAdapter(appsList!!, findAppFromList(config?.appName!!.data), onAppClickListener)
     }
 
     private fun initMcuCommandsListAdapter(context: Context) {
-        initConfig(context)
         mcuCommandsList = McuCommandsList.getMcuCommandsList(context)
-        mcuCommandsListAdapter = ListTypeAdapter(mcuCommandsList!!, findAppFromList(config?.appName!!.data), onMcuCommandClickListener)
+        mcuCommandsListAdapter = ListTypeAdapter(mcuCommandsList!!, config?.mcuCommandMode!!.data, onMcuCommandClickListener)
     }
 
     fun getListKeyEventsAdapter(context: Context): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
@@ -88,6 +86,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
         config?.eventMode = EventMode.NoAssignment
         config?.keyCode!!.data = -1
         config?.appName!!.data = ""
+        config?.mcuCommandMode!!.data = -1
     }
 
     private val onKeyCodeClickListener = object : ListTypeAdapter.OnAppClickListener {
@@ -95,6 +94,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.KeyEvent
             config?.keyCode!!.data = keyEvents?.get(position)!!.code
             config?.appName!!.data = ""
+            config?.mcuCommandMode!!.data = -1
             actionEvent.notifyView()
         }
     }
@@ -104,6 +104,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.StartApp
             config?.keyCode!!.data = -1
             config?.appName!!.data = appsList?.get(position)!!.packageName
+            config?.mcuCommandMode!!.data = -1
             actionEvent.notifyView()
         }
     }
@@ -113,6 +114,7 @@ class EventManagerSelectActionViewModel : ViewModel() {
             config?.eventMode = EventMode.McuCommand
             config?.keyCode!!.data = -1
             config?.appName!!.data = ""
+            config?.mcuCommandMode!!.data = position
             actionEvent.notifyView()
         }
     }

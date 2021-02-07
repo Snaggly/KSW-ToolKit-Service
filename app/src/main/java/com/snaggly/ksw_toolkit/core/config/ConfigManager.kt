@@ -34,6 +34,7 @@ class ConfigManager private constructor() : IConfigBean {
             dataOutputStream.writeInt(eventManager.eventMode.value)
             dataOutputStream.writeInt(eventManager.keyCode.data)
             dataOutputStream.writeUTF(eventManager.appName.data)
+            dataOutputStream.writeInt(eventManager.mcuCommandMode.data)
         }
 
         dataOutputStream.close()
@@ -59,6 +60,7 @@ class ConfigManager private constructor() : IConfigBean {
                     EventMode.findByValue(dataInputStream.readInt())!!,
                     dataInputStream.readInt(),
                     dataInputStream.readUTF(),
+                    dataInputStream.readInt(),
                     this)
         }
     }
