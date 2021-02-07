@@ -23,6 +23,8 @@ class EventManager : Fragment() {
     private lateinit var mediaPreviousBtn : Button
     private lateinit var mediaNextBtn : Button
     private lateinit var mediaPauseBtn : Button
+    private lateinit var volumeDecBtn : Button
+    private lateinit var volumeIncBtn : Button
     private lateinit var modeBtn : Button
     private lateinit var knobPressBtn : Button
     private lateinit var knobTiltUpBtn : Button
@@ -62,6 +64,8 @@ class EventManager : Fragment() {
         mediaPreviousBtn = requireView().findViewById(R.id.mediaPreviousBtn)
         mediaNextBtn = requireView().findViewById(R.id.mediaNextBtn)
         mediaPauseBtn = requireView().findViewById(R.id.mediaPauseBtn)
+        volumeDecBtn = requireView().findViewById(R.id.volumeDecBtn)
+        volumeIncBtn = requireView().findViewById(R.id.volumeIncBtn)
         modeBtn = requireView().findViewById(R.id.modeBtn)
         knobPressBtn = requireView().findViewById(R.id.knobPressBtn)
         knobTiltUpBtn = requireView().findViewById(R.id.knobTiltUpBtn)
@@ -84,6 +88,8 @@ class EventManager : Fragment() {
         setOnClickEvent(mediaPreviousBtn, EventManagerTypes.MediaPrevious)
         setOnClickEvent(mediaNextBtn, EventManagerTypes.MediaNext)
         setOnClickEvent(mediaPauseBtn, EventManagerTypes.MediaPlayPause)
+        setOnClickEvent(volumeDecBtn, EventManagerTypes.VolumeDecrease)
+        setOnClickEvent(volumeIncBtn, EventManagerTypes.VolumeIncrease)
         setOnClickEvent(modeBtn, EventManagerTypes.ModeButton)
         setOnClickEvent(knobPressBtn, EventManagerTypes.KnobPress)
         setOnClickEvent(knobTiltUpBtn, EventManagerTypes.KnobTiltUp)

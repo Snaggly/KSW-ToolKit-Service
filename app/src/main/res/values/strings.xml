@@ -32,7 +32,7 @@
     <string name="media_pause">Media Play/Pause</string>
     <string name="media_next">Media Next</string>
     <string name="media_previous">Media Previous</string>
-    <string name="telephone_button_hang_up">Telephone HangUp Button</string>
+    <string name="telephone_button_hang_up">Telephone HangUp</string>
     <string name="telephone_button_long_press">Telephone Long Press</string>
     <string name="telephone_button">Telephone Button</string>
     <string name="voice_command_button">Voice Command Button</string>
@@ -72,5 +72,7 @@
     <string name="dtv">DTV</string>
     <string name="turn_screen_off">Turn Screen Off</string>
     <string name="send_mcu_command">Send MCU Command</string>
+    <string name="volumedec_button">Volume- Button</string>
+    <string name="volumeinc_button">Volume+ Button</string>
 
 </resources>
