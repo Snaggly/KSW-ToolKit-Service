@@ -38,4 +38,12 @@ class SystemTwaksViewModel : CoreServiceClient() {
     fun hideTopBar() {
         coreService?.adbConnection!!.sendCommand("settings put global policy_control immersive.full=*")
     }
+
+    fun startVoice() {
+        coreService?.mcuReaderHandler?.naviObserver!!.startHandlingNaviCallouts()
+    }
+
+    fun stopVoice() {
+        coreService?.mcuReaderHandler?.naviObserver!!.stopHandlingNaviCallouts()
+    }
 }

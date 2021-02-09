@@ -4,13 +4,10 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.ContentObserver
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.provider.Settings
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -20,8 +17,6 @@ import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
-import com.snaggly.ksw_toolkit.core.service.sys_observers.NaviAppObserver
-import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import java.util.*
 
 class CoreService : Service() {
@@ -56,7 +51,6 @@ class CoreService : Service() {
     val adbConnection = AdbConnection()
     val mcuLogic = McuEventLogicImpl()
     var mcuReaderHandler : McuReaderHandler? = null
-    var naviAppObserver : NaviAppObserver? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startMyOwnForeground()
@@ -82,8 +76,6 @@ class CoreService : Service() {
         }
 
         BrightnessObserver(applicationContext, mcuLogic).startObservingBrightness()
-
-        naviAppObserver = NaviAppObserver(applicationContext, mcuLogic)
     }
 
     override fun onDestroy() {

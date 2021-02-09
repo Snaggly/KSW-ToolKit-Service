@@ -74,5 +74,8 @@
     <string name="send_mcu_command">Send MCU Command</string>
     <string name="volumedec_button">Volume- Button</string>
     <string name="volumeinc_button">Volume+ Button</string>
+    <string name="log_car_data">Log Car Data</string>
+    <string name="log_mcu_events">Log Mcu Events</string>
+    <string name="reroute_navicallouts">Reroute NaviCallouts</string>
 
 </resources>

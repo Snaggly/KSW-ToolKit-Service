@@ -20,6 +20,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class com.snaggly.ksw_toolkit.core.config.ConfigData {*;}
+-keep class com.snaggly.ksw_toolkit.core.config.custom.** {*;}
+-keep class com.snaggly.ksw_toolkit.core.config.beans.** {*;}
+-keep class com.snaggly.ksw_toolkit.util.enums.** {*;}
+-keep class com.snaggly.ksw_toolkit.util.mcu.McuCommandsEnum {*;}
 -keep class com.wits.pms.* {*;}
 -keep class com.wits.pms.statuscontrol.* {*;}
 -keep class projekt.auto.mcu.** {*;}

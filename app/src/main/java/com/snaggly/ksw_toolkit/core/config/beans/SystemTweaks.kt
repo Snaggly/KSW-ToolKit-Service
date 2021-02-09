@@ -11,7 +11,9 @@ class SystemTweaks(startAtBoot: Boolean,
                    maxVolume: Boolean,
                    hideTopBar: Boolean,
                    shrinkTopBar: Boolean,
-                   dpi: Int) {
+                   dpi: Int,
+                   logMcuEvent: Boolean,
+                   muxNaviVoice: Boolean,) {
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
     var carDataLogging = BooleanSetting(carDataLogging)
@@ -20,6 +22,8 @@ class SystemTweaks(startAtBoot: Boolean,
     var hideTopBar = BooleanSetting(hideTopBar)
     var shrinkTopBar = BooleanSetting(shrinkTopBar)
     var dpi = IntegerSetting(dpi)
+    var logMcuEvent = BooleanSetting(logMcuEvent)
+    var muxNaviVoice = BooleanSetting(muxNaviVoice)
 
     companion object {
         fun initSystemTweaks() : SystemTweaks {
@@ -31,7 +35,9 @@ class SystemTweaks(startAtBoot: Boolean,
                     maxVolume = false,
                     hideTopBar = false,
                     shrinkTopBar = false,
-                    dpi = 160
+                    dpi = 160,
+                    logMcuEvent = false,
+                    muxNaviVoice = false,
             )
         }
     }
