@@ -11,19 +11,18 @@ class SystemTweaks(startAtBoot: Boolean,
                    maxVolume: Boolean,
                    hideTopBar: Boolean,
                    shrinkTopBar: Boolean,
-                   dpi: Int,
-                   configMaster: IConfigBean) {
-    var startAtBoot = BooleanSetting(startAtBoot, configMaster)
-    var kswService = BooleanSetting(kswService, configMaster)
-    var carDataLogging = BooleanSetting(carDataLogging, configMaster)
-    var autoVolume = BooleanSetting(autoVolume, configMaster)
-    var maxVolume = BooleanSetting(maxVolume, configMaster)
-    var hideTopBar = BooleanSetting(hideTopBar, configMaster)
-    var shrinkTopBar = BooleanSetting(shrinkTopBar, configMaster)
-    var dpi = IntegerSetting(dpi, configMaster)
+                   dpi: Int) {
+    var startAtBoot = BooleanSetting(startAtBoot)
+    var kswService = BooleanSetting(kswService)
+    var carDataLogging = BooleanSetting(carDataLogging)
+    var autoVolume = BooleanSetting(autoVolume)
+    var maxVolume = BooleanSetting(maxVolume)
+    var hideTopBar = BooleanSetting(hideTopBar)
+    var shrinkTopBar = BooleanSetting(shrinkTopBar)
+    var dpi = IntegerSetting(dpi)
 
     companion object {
-        fun initSystemTweaks(configMaster: IConfigBean) : SystemTweaks {
+        fun initSystemTweaks() : SystemTweaks {
             return SystemTweaks(
                     startAtBoot = true,
                     kswService = true,
@@ -32,8 +31,7 @@ class SystemTweaks(startAtBoot: Boolean,
                     maxVolume = false,
                     hideTopBar = false,
                     shrinkTopBar = false,
-                    dpi = 160,
-                    configMaster = configMaster
+                    dpi = 160
             )
         }
     }

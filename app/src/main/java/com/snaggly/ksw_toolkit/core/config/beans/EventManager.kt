@@ -5,16 +5,16 @@ import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
 import com.snaggly.ksw_toolkit.core.config.custom.StringSetting
 import com.snaggly.ksw_toolkit.util.enums.EventMode
 
-class EventManager(eventMode: EventMode, keyCode: Int, appName: String, mcuCommandMode: Int, configMaster: IConfigBean){
+class EventManager(eventMode: EventMode, keyCode: Int, appName: String, mcuCommandMode: Int){
 
     var eventMode = eventMode
-    var keyCode = IntegerSetting(keyCode, configMaster)
-    var appName = StringSetting(appName, configMaster)
-    var mcuCommandMode = IntegerSetting(mcuCommandMode, configMaster)
+    var keyCode = IntegerSetting(keyCode)
+    var appName = StringSetting(appName)
+    var mcuCommandMode = IntegerSetting(mcuCommandMode)
 
     companion object {
-        fun initEventManager(configMaster: IConfigBean) : EventManager{
-            return EventManager(EventMode.NoAssignment, -1, "", -1, configMaster)
+        fun initEventManager() : EventManager{
+            return EventManager(EventMode.NoAssignment, -1, "", -1)
         }
     }
 }

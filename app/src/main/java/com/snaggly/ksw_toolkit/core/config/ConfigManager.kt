@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.config
 
+import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
 import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.enums.EventMode
@@ -8,66 +9,36 @@ import java.io.*
 class ConfigManager private constructor() : IConfigBean {
     private var configFile: File? = null
     lateinit var systemTweaks: SystemTweaks private set
-    val eventManagers = HashMap<EventManagerTypes, EventManager>()
+    var eventManagers = HashMap<EventManagerTypes, EventManager>()
+    val gson = Gson()
 
     fun initBeans() {
-        systemTweaks = SystemTweaks.initSystemTweaks(this)
+        systemTweaks = SystemTweaks.initSystemTweaks()
         for (type in EventManagerTypes.values()) {
-            eventManagers[type] = EventManager.initEventManager(this)
+            eventManagers[type] = EventManager.initEventManager()
         }
     }
 
     override fun saveConfig() {
-        val dataOutputStream = DataOutputStream(configFile!!.outputStream())
+        val json = gson.toJson(ConfigData(systemTweaks, eventManagers))
 
-        dataOutputStream.writeBoolean(systemTweaks.startAtBoot.data)
-        dataOutputStream.writeBoolean(systemTweaks.kswService.data)
-        dataOutputStream.writeBoolean(systemTweaks.carDataLogging.data)
-        dataOutputStream.writeBoolean(systemTweaks.autoVolume.data)
-        dataOutputStream.writeBoolean(systemTweaks.maxVolume.data)
-        dataOutputStream.writeBoolean(systemTweaks.hideTopBar.data)
-        dataOutputStream.writeBoolean(systemTweaks.shrinkTopBar.data)
-        dataOutputStream.writeInt(systemTweaks.dpi.data)
-
-        for ((key, eventManager) in eventManagers) {
-            dataOutputStream.writeUTF(key.name)
-            dataOutputStream.writeInt(eventManager.eventMode.value)
-            dataOutputStream.writeInt(eventManager.keyCode.data)
-            dataOutputStream.writeUTF(eventManager.appName.data)
-            dataOutputStream.writeInt(eventManager.mcuCommandMode.data)
-        }
-
-        dataOutputStream.close()
+        val fileWriter = FileWriter(configFile!!)
+        fileWriter.write(json)
+        fileWriter.close()
     }
 
     override fun readConfig() {
-        val dataInputStream = DataInputStream(configFile!!.inputStream())
+        val fileReader = FileReader(configFile!!)
+        val json = fileReader.readText()
+        fileReader.close()
 
-        systemTweaks = SystemTweaks(
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readBoolean(),
-                dataInputStream.readInt(),
-                this
-        )
-
-        while (dataInputStream.available() > 0) {
-            eventManagers[EventManagerTypes.findByName(dataInputStream.readUTF())!!] = EventManager(
-                    EventMode.findByValue(dataInputStream.readInt())!!,
-                    dataInputStream.readInt(),
-                    dataInputStream.readUTF(),
-                    dataInputStream.readInt(),
-                    this)
-        }
+        val configData = gson.fromJson(json, ConfigData::class.java)
+        systemTweaks = configData.systemTweaks
+        eventManagers = configData.eventManagers
     }
 
     companion object {
-        private const val fileName = "ksw-tk_config.dat"
-        private const val header = "SNAGGLY_KSW-T"
+        private const val fileName = "ksw-tk_config.json"
         private val config = ConfigManager()
 
         fun getConfig(filePath: String) : ConfigManager{
@@ -83,25 +54,22 @@ class ConfigManager private constructor() : IConfigBean {
             catch (ioe: Exception) {
                 config.initBeans()
             }
+            IConfigBean.configManager = config
             return config
         }
 
         @Throws(UnsupportedEncodingException::class)
         fun importConfig(applicationFilePath: String, toImportFilePath: String) : ConfigManager {
-            val inputFile = DataInputStream(File(toImportFilePath).inputStream())
-            if (inputFile.readUTF() != header)
-                throw UnsupportedEncodingException("Header mismatch!")
-            inputFile.copyTo(File("$applicationFilePath/$fileName").outputStream())
+            val inputFile = File(toImportFilePath)
+            inputFile.copyTo(File("$applicationFilePath/$fileName"))
             config.configFile = null
             getConfig(applicationFilePath)
             return config
         }
 
         fun exportConfig(filePath: String) {
-            val outputFile = DataOutputStream(File(filePath).outputStream())
-            outputFile.writeUTF(header)
-            config.configFile!!.inputStream().copyTo(outputFile)
-            outputFile.close()
+            val outputFile = File(filePath)
+            config.configFile!!.copyTo(outputFile)
         }
     }
 }
