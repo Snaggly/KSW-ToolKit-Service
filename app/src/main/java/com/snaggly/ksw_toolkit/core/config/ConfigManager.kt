@@ -33,8 +33,23 @@ class ConfigManager private constructor() : IConfigBean {
         fileReader.close()
 
         val configData = gson.fromJson(json, ConfigData::class.java)
-        systemTweaks = configData.systemTweaks
-        eventManagers = configData.eventManagers
+        configData.systemTweaks.startAtBoot?.let { systemTweaks.startAtBoot = it }
+        configData.systemTweaks.kswService?.let { systemTweaks.kswService = it }
+        configData.systemTweaks.carDataLogging?.let { systemTweaks.carDataLogging = it }
+        configData.systemTweaks.autoVolume?.let { systemTweaks.autoVolume = it }
+        configData.systemTweaks.maxVolume?.let { systemTweaks.maxVolume = it }
+        configData.systemTweaks.hideTopBar?.let { systemTweaks.hideTopBar = it }
+        configData.systemTweaks.shrinkTopBar?.let { systemTweaks.shrinkTopBar = it }
+        configData.systemTweaks.dpi?.let { systemTweaks.dpi = it }
+        configData.systemTweaks.logMcuEvent?.let { systemTweaks.logMcuEvent = it }
+        configData.systemTweaks.muxNaviVoice?.let { systemTweaks.muxNaviVoice = it }
+
+        for (type in configData.eventManagers) {
+            configData.eventManagers[type.key]!!.eventMode?.let { eventManagers[type.key]?.eventMode = it }
+            configData.eventManagers[type.key]!!.mcuCommandMode?.let { eventManagers[type.key]?.mcuCommandMode = it }
+            configData.eventManagers[type.key]!!.appName?.let { eventManagers[type.key]?.appName = it }
+            configData.eventManagers[type.key]!!.keyCode?.let { eventManagers[type.key]?.keyCode = it }
+        }
     }
 
     companion object {
@@ -48,6 +63,7 @@ class ConfigManager private constructor() : IConfigBean {
             config.configFile = File("$filePath/$fileName")
             if (!config.configFile!!.isFile)
                 config.configFile!!.createNewFile()
+            config.initBeans()
             try {
                 config.readConfig()
             }
