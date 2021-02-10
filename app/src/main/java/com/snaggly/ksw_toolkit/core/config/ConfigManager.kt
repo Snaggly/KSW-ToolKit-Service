@@ -77,7 +77,7 @@ class ConfigManager private constructor() : IConfigBean {
         @Throws(UnsupportedEncodingException::class)
         fun importConfig(applicationFilePath: String, toImportFilePath: String) : ConfigManager {
             val inputFile = File(toImportFilePath)
-            inputFile.copyTo(File("$applicationFilePath/$fileName"))
+            inputFile.copyTo(File("$applicationFilePath/$fileName"), true)
             config.configFile = null
             getConfig(applicationFilePath)
             return config
@@ -85,7 +85,7 @@ class ConfigManager private constructor() : IConfigBean {
 
         fun exportConfig(filePath: String) {
             val outputFile = File(filePath)
-            config.configFile!!.copyTo(outputFile)
+            config.configFile!!.copyTo(outputFile, true)
         }
     }
 }
