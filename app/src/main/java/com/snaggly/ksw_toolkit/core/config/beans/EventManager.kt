@@ -1,6 +1,5 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
-import com.snaggly.ksw_toolkit.core.config.IConfigBean
 import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
 import com.snaggly.ksw_toolkit.core.config.custom.StringSetting
 import com.snaggly.ksw_toolkit.util.enums.EventMode

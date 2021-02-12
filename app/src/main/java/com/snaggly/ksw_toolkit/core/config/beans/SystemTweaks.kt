@@ -1,6 +1,5 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
-import com.snaggly.ksw_toolkit.core.config.IConfigBean
 import com.snaggly.ksw_toolkit.core.config.custom.BooleanSetting
 import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
 
@@ -12,8 +11,7 @@ class SystemTweaks(startAtBoot: Boolean,
                    hideTopBar: Boolean,
                    shrinkTopBar: Boolean,
                    dpi: Int,
-                   logMcuEvent: Boolean,
-                   muxNaviVoice: Boolean,) {
+                   logMcuEvent: Boolean) {
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
     var carDataLogging = BooleanSetting(carDataLogging)
@@ -23,7 +21,6 @@ class SystemTweaks(startAtBoot: Boolean,
     var shrinkTopBar = BooleanSetting(shrinkTopBar)
     var dpi = IntegerSetting(dpi)
     var logMcuEvent = BooleanSetting(logMcuEvent)
-    var muxNaviVoice = BooleanSetting(muxNaviVoice)
 
     companion object {
         fun initSystemTweaks() : SystemTweaks {
@@ -36,8 +33,7 @@ class SystemTweaks(startAtBoot: Boolean,
                     hideTopBar = false,
                     shrinkTopBar = false,
                     dpi = 160,
-                    logMcuEvent = false,
-                    muxNaviVoice = false,
+                    logMcuEvent = false
             )
         }
     }

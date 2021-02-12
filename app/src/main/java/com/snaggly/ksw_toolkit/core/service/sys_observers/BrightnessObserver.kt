@@ -17,7 +17,7 @@ class BrightnessObserver(private val context: Context, mcuLogic: McuEventLogicIm
     }
 
     fun startObservingBrightness() {
-        context.contentResolver.registerContentObserver(Settings.System.getUriFor("usingNavi"), true, brightnessObserver)
+        context.contentResolver.registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS), true, brightnessObserver)
     }
 
     fun stopObservingBrightness() {

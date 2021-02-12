@@ -7,15 +7,18 @@ import android.provider.Settings
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
-class NaviAppObserver(val context: Context, mcuLogic: McuEventLogicImpl) {
+class NaviAppObserver(private val context: Context, mcuLogic: McuEventLogicImpl) {
 
     private val naviObserver = object : ContentObserver(Handler(context.mainLooper)) {
         override fun onChange(selfChanged: Boolean) {
+            val result = Settings.System.getInt(context.contentResolver, "usingNavi")
             val isUsingNavi = Settings.System.getInt(context.contentResolver, "usingNavi") == 1
-            if (isUsingNavi)
+            if (isUsingNavi){
                 mcuLogic.mcuCommunicator?.sendCommand(McuCommands.Start_Voice)
-            else
+            }
+            else {
                 mcuLogic.mcuCommunicator?.sendCommand(McuCommands.Stop_Voice)
+            }
         }
     }
 

@@ -33,7 +33,6 @@ class SystemTwaks : Fragment() {
     private lateinit var dpiInputField: TextInputEditText
     private lateinit var logCarDataToggle: SwitchCompat
     private lateinit var logMcuEventsToggle: SwitchCompat
-    private lateinit var muxNaviCalloutsToggle: SwitchCompat
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -68,7 +67,6 @@ class SystemTwaks : Fragment() {
         dpiInputField = requireView().findViewById(R.id.dpiTxtInput)
         logCarDataToggle = requireView().findViewById(R.id.logCarDataToggle)
         logMcuEventsToggle = requireView().findViewById(R.id.logMcuEventsToggle)
-        muxNaviCalloutsToggle = requireView().findViewById(R.id.muxNaviCalloutsToggle)
 
         startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
         stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
@@ -81,11 +79,9 @@ class SystemTwaks : Fragment() {
         dpiInputField.setText(actualDpi.toString())
         logCarDataToggle.isChecked = viewModel.getConfig(requireContext()).carDataLogging.data
         logMcuEventsToggle.isChecked = viewModel.getConfig(requireContext()).logMcuEvent.data
-        muxNaviCalloutsToggle.isChecked = viewModel.getConfig(requireContext()).muxNaviVoice.data
         if (!viewModel.getConfig(requireContext()).kswService.data) {
             logCarDataToggle.isEnabled = true
             logMcuEventsToggle.isEnabled = true
-            muxNaviCalloutsToggle.isEnabled = true
         }
     }
 
@@ -120,7 +116,6 @@ class SystemTwaks : Fragment() {
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, "Yes!") { _, _ ->
                     logCarDataToggle.isEnabled = true
                     logMcuEventsToggle.isEnabled = true
-                    muxNaviCalloutsToggle.isEnabled = true
                     try {
                         viewModel.restartMcuReader()
                     } catch (exception: Exception) {
@@ -137,10 +132,8 @@ class SystemTwaks : Fragment() {
             } else {
                 logCarDataToggle.isChecked = false
                 logMcuEventsToggle.isChecked = false
-                muxNaviCalloutsToggle.isChecked = false
                 logCarDataToggle.isEnabled = false
                 logMcuEventsToggle.isEnabled = false
-                muxNaviCalloutsToggle.isEnabled = false
                 try {
                     viewModel.restartMcuReader()
                 } catch (exception: Exception) {
@@ -225,14 +218,6 @@ class SystemTwaks : Fragment() {
 
         logMcuEventsToggle.setOnCheckedChangeListener { _, isChecked ->
             viewModel.getConfig(requireContext()).logMcuEvent.data = isChecked
-        }
-
-        muxNaviCalloutsToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).muxNaviVoice.data = isChecked
-            if (isChecked)
-                viewModel.startVoice()
-            else
-                viewModel.stopVoice()
         }
     }
 }

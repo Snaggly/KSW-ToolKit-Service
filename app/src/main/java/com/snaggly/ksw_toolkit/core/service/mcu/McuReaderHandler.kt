@@ -22,7 +22,6 @@ class McuReaderHandler(private val context: Context, private val adb : AdbConnec
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
     val brightnessObserver = BrightnessObserver(context, eventLogic)
-    val naviObserver = NaviAppObserver(context, eventLogic)
 
     init {
         eventLogic.mcuCommunicator = McuCommunicator.getInstance()
@@ -33,16 +32,13 @@ class McuReaderHandler(private val context: Context, private val adb : AdbConnec
             eventLogic.mcuCommunicator!!.mcuReader.stopReading()
             adb.stopKsw()
             eventLogic.mcuCommunicator!!.mcuReader = SerialReader()
-            eventLogic.mcuCommunicator!!.startBeat()
+            eventLogic.mcuCommunicator!!.startBeat() //*
             eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
             if (config.systemTweaks.carDataLogging.data)
                 eventLogic.startSendingCarData()
-            eventLogic.backTapper = BackTapper(context)
-            if (config.systemTweaks.muxNaviVoice.data){
-                naviObserver.startHandlingNaviCallouts()
-                Log.d("Snaggly", "Registering Navi")
-            }
-            brightnessObserver.startObservingBrightness()
+            eventLogic.backTapper = BackTapper(context) //*
+            brightnessObserver.startObservingBrightness() //*
+            //* Subject to be removed when reading Sender KSW
         }
     }
 
@@ -95,7 +91,6 @@ class McuReaderHandler(private val context: Context, private val adb : AdbConnec
 
     fun stopReader() {
         brightnessObserver.stopObservingBrightness()
-        naviObserver.stopHandlingNaviCallouts()
         eventLogic.backTapper = null
         eventLogic.stopAutoVolume()
         eventLogic.stopSendingCarData()
