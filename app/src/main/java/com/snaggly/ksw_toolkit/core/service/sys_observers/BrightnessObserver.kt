@@ -7,7 +7,7 @@ import android.provider.Settings
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
-class BrightnessObserver(val context: Context, mcuLogic: McuEventLogicImpl) {
+class BrightnessObserver(private val context: Context, mcuLogic: McuEventLogicImpl) {
 
     private val brightnessObserver = object : ContentObserver(Handler(context.mainLooper)) {
         override fun onChange(selfChange: Boolean) {

@@ -16,7 +16,6 @@ import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
-import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import java.util.*
 
 class CoreService : Service() {
@@ -74,8 +73,6 @@ class CoreService : Service() {
         } catch (e: Exception) {
             crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
         }
-
-        BrightnessObserver(applicationContext, mcuLogic).startObservingBrightness()
     }
 
     override fun onDestroy() {

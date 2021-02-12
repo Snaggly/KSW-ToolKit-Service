@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.util.Log
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
+import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.sys_observers.NaviAppObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.applist.AppStarter
@@ -17,9 +18,10 @@ import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 
-class McuReaderHandler(val context: Context, private val adb : AdbConnection, private val eventLogic: McuEventLogicImpl) {
+class McuReaderHandler(private val context: Context, private val adb : AdbConnection, private val eventLogic: McuEventLogicImpl) {
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
+    val brightnessObserver = BrightnessObserver(context, eventLogic)
     val naviObserver = NaviAppObserver(context, eventLogic)
 
     init {
@@ -36,8 +38,11 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
             if (config.systemTweaks.carDataLogging.data)
                 eventLogic.startSendingCarData()
             eventLogic.backTapper = BackTapper(context)
-            if (config.systemTweaks.muxNaviVoice.data)
+            if (config.systemTweaks.muxNaviVoice.data){
                 naviObserver.startHandlingNaviCallouts()
+                Log.d("Snaggly", "Registering Navi")
+            }
+            brightnessObserver.startObservingBrightness()
         }
     }
 
@@ -89,6 +94,7 @@ class McuReaderHandler(val context: Context, private val adb : AdbConnection, pr
     }
 
     fun stopReader() {
+        brightnessObserver.stopObservingBrightness()
         naviObserver.stopHandlingNaviCallouts()
         eventLogic.backTapper = null
         eventLogic.stopAutoVolume()
