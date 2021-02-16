@@ -52,8 +52,10 @@ class BackTapper(val context: Context) {
 
     fun removeBackWindow() {
         if (getHasAlreadyDrawn()) {
-            windowManager.removeViewImmediate(view)
-            setHasAlreadyDrawn(false)
+            handler.post {
+                windowManager.removeViewImmediate(view)
+                setHasAlreadyDrawn(false)
+            }
         }
     }
 
@@ -61,7 +63,7 @@ class BackTapper(val context: Context) {
         mcuCommunicator.sendCommand(McuCommands.SWITCH_TO_ANDROID)
     }
 
-    @Synchronized private fun getHasAlreadyDrawn() : Boolean {
+    @Synchronized fun getHasAlreadyDrawn() : Boolean {
         return hasAlreadyDrawn
     }
 
