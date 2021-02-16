@@ -30,8 +30,8 @@ class McuReaderHandler(private val context: Context) {
 
     private val initialSerialStartAction = McuCommunicator.McuAction { cmdType, data ->
         if (!hasSerialInit) {
-            hasSerialInit = true
             if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
+                hasSerialInit = true
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
                 AdbServiceConnection.stopKsw()
 
