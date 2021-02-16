@@ -1,10 +1,10 @@
-package com.snaggly.ksw_toolkit.util.mcu
+package com.snaggly.ksw_toolkit.util.list.mcu
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.util.ListType
+import com.snaggly.ksw_toolkit.util.list.ListType
 
 class McuCommandsList(name: String, icon: Drawable, command: McuCommandsEnum) : ListType(name, icon) {
     companion object {

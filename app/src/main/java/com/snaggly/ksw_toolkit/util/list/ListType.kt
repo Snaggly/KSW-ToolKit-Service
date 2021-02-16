@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util
+package com.snaggly.ksw_toolkit.util.list
 
 import android.graphics.drawable.Drawable
 

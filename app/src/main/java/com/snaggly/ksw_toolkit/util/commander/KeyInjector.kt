@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.keyevent
+package com.snaggly.ksw_toolkit.util.commander
 
 import android.app.Instrumentation
 

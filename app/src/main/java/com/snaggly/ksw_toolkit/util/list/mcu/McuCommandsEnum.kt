@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.mcu
+package com.snaggly.ksw_toolkit.util.list.mcu
 
 enum class McuCommandsEnum {
     ScreenOff,

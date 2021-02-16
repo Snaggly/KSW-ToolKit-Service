@@ -2,8 +2,7 @@ package com.snaggly.ksw_toolkit.core.config
 
 import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
-import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
-import com.snaggly.ksw_toolkit.util.enums.EventMode
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import java.io.*
 
 class ConfigManager private constructor() : IConfigBean {

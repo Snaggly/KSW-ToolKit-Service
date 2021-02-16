@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
 import com.snaggly.ksw_toolkit.util.adapters.McuEventRVAdapter
-import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
 class McuListenerViewModel : CoreServiceClient() {
 

@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.applist
+package com.snaggly.ksw_toolkit.util.list.app
 
 import android.annotation.SuppressLint
 import android.content.Context

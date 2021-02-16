@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.EventManagerViewModel
-import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
-import com.snaggly.ksw_toolkit.util.enums.EventMode
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 
 class EventManager : Fragment() {
     private var previousBtn : Button? = null

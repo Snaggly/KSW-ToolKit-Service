@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.enums
+package com.snaggly.ksw_toolkit.util.list.eventtype
 
 enum class EventManagerTypes {
     VoiceCommandButton,

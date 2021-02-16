@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
 import com.snaggly.ksw_toolkit.util.adapters.ListTypeAdapter
-import com.snaggly.ksw_toolkit.util.applist.AppInfo
-import com.snaggly.ksw_toolkit.util.applist.AppsLister
-import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
-import com.snaggly.ksw_toolkit.util.enums.EventMode
-import com.snaggly.ksw_toolkit.util.keyevent.KeyEvent
-import com.snaggly.ksw_toolkit.util.mcu.McuCommandsList
+import com.snaggly.ksw_toolkit.util.list.app.AppInfo
+import com.snaggly.ksw_toolkit.util.list.app.AppsLister
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
+import com.snaggly.ksw_toolkit.util.list.keyevent.KeyEvent
+import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsList
 
 class EventManagerSelectActionViewModel : ViewModel() {
     private var listKeyEventsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null

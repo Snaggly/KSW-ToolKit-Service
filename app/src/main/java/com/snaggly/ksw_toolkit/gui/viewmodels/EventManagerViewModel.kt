@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
-import com.snaggly.ksw_toolkit.util.enums.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
 class EventManagerViewModel : ViewModel() {
     private var config : HashMap<EventManagerTypes, EventManager>? = null

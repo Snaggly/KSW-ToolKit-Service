@@ -9,7 +9,7 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.util.ListType
+import com.snaggly.ksw_toolkit.util.list.ListType
 
 class ListTypeAdapter(private val appsList: ArrayList<out ListType>,
                       private var selectedApp : Int,

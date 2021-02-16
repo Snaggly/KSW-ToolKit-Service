@@ -1,10 +1,10 @@
-package com.snaggly.ksw_toolkit.util.keyevent
+package com.snaggly.ksw_toolkit.util.list.keyevent
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.util.ListType
+import com.snaggly.ksw_toolkit.util.list.ListType
 
 class KeyEvent(name: String, icon: Drawable, val code: Int) : ListType(name, icon) {
 
