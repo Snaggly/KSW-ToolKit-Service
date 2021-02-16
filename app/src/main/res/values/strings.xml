@@ -77,5 +77,7 @@
     <string name="log_car_data">Log Car Data</string>
     <string name="log_mcu_events">Log Mcu Events</string>
     <string name="reroute_navicallouts">Reroute NaviCallouts</string>
+    <string name="give_tasker_read_logs_permission">Give Tasker READ_LOGS permission</string>
+    <string name="intercept_mcucommmands">Intercept McuCommmands</string>
 
 </resources>
