@@ -33,6 +33,7 @@ class SystemTwaks : Fragment() {
     private lateinit var dpiInputField: TextInputEditText
     private lateinit var logCarDataToggle: SwitchCompat
     private lateinit var logMcuEventsToggle: SwitchCompat
+    private lateinit var interceptMcuCommandToggle: SwitchCompat
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,6 +68,7 @@ class SystemTwaks : Fragment() {
         dpiInputField = requireView().findViewById(R.id.dpiTxtInput)
         logCarDataToggle = requireView().findViewById(R.id.logCarDataToggle)
         logMcuEventsToggle = requireView().findViewById(R.id.logMcuEventsToggle)
+        interceptMcuCommandToggle = requireView().findViewById(R.id.interceptMcuCommandsToggle)
 
         startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
         stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
@@ -79,9 +81,11 @@ class SystemTwaks : Fragment() {
         dpiInputField.setText(actualDpi.toString())
         logCarDataToggle.isChecked = viewModel.getConfig(requireContext()).carDataLogging.data
         logMcuEventsToggle.isChecked = viewModel.getConfig(requireContext()).logMcuEvent.data
+        interceptMcuCommandToggle.isChecked = viewModel.getConfig(requireContext()).interceptMcuCommand.data
         if (!viewModel.getConfig(requireContext()).kswService.data) {
             logCarDataToggle.isEnabled = true
             logMcuEventsToggle.isEnabled = true
+            interceptMcuCommandToggle.isEnabled = true
         }
     }
 
@@ -116,6 +120,7 @@ class SystemTwaks : Fragment() {
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, "Yes!") { _, _ ->
                     logCarDataToggle.isEnabled = true
                     logMcuEventsToggle.isEnabled = true
+                    interceptMcuCommandToggle.isEnabled = true
                     try {
                         viewModel.restartMcuReader()
                     } catch (exception: Exception) {
@@ -132,8 +137,10 @@ class SystemTwaks : Fragment() {
             } else {
                 logCarDataToggle.isChecked = false
                 logMcuEventsToggle.isChecked = false
+                interceptMcuCommandToggle.isChecked = false
                 logCarDataToggle.isEnabled = false
                 logMcuEventsToggle.isEnabled = false
+                interceptMcuCommandToggle.isEnabled = false
                 try {
                     viewModel.restartMcuReader()
                 } catch (exception: Exception) {
@@ -218,6 +225,19 @@ class SystemTwaks : Fragment() {
 
         logMcuEventsToggle.setOnCheckedChangeListener { _, isChecked ->
             viewModel.getConfig(requireContext()).logMcuEvent.data = isChecked
+        }
+
+        interceptMcuCommandToggle.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.getConfig(requireContext()).interceptMcuCommand.data = isChecked
+
+            try {
+                viewModel.restartMcuReader()
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
         }
     }
 }

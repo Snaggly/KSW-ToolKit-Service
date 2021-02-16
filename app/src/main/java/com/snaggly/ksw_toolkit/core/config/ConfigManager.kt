@@ -41,6 +41,7 @@ class ConfigManager private constructor() : IConfigBean {
         configData.systemTweaks.shrinkTopBar?.let { systemTweaks.shrinkTopBar = it }
         configData.systemTweaks.dpi?.let { systemTweaks.dpi = it }
         configData.systemTweaks.logMcuEvent?.let { systemTweaks.logMcuEvent = it }
+        configData.systemTweaks.interceptMcuCommand?.let { systemTweaks.interceptMcuCommand = it }
 
         for (type in configData.eventManagers) {
             configData.eventManagers[type.key]!!.eventMode?.let { eventManagers[type.key]?.eventMode = it }

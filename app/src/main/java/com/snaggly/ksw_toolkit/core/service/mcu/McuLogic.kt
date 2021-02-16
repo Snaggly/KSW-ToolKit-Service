@@ -15,7 +15,7 @@ object McuLogic {
     private val mcuStat = McuStatus()
 
     //Intern
-    private var isLogging = true
+    var isLogging = true
     private var autoVolume = false
     var senderInterval: Long = 1000
     var backTapper : BackTapper? = null
@@ -39,14 +39,6 @@ object McuLogic {
     private fun sendCarData() {
         //WitsStatus.logMcuStatus(mcuStat)
         WitsStatus.sendOutMcuStatus(mcuStat)
-    }
-
-    fun startSendingCarData() {
-        isLogging = true
-    }
-
-    fun stopSendingCarData() {
-        isLogging = false
     }
 
     fun startAutoVolume(audioManager: AudioManager) {
@@ -130,7 +122,6 @@ object McuLogic {
             0x1C -> {
                 if (data[0] == 0x1.toByte()) {
                     backTapper?.removeBackWindow()
-                    sendCarData()
                 } else {
                     backTapper?.drawBackWindow(mcuCommunicator!!)
                 }

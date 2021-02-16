@@ -34,17 +34,23 @@ class McuReaderHandler(private val context: Context) {
             if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
                 AdbServiceConnection.stopKsw()
+
                 McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
-                //eventLogic.mcuCommunicator!!.startBeat() //*
-                sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
-                    McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
-                })
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
+
+                if (config.systemTweaks.interceptMcuCommand.data) {
+                    sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
+                        McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
+                    })
+                } else {
+                    McuLogic.mcuCommunicator!!.startBeat()
+                    brightnessObserver.startObservingBrightness()
+                }
+
                 if (config.systemTweaks.carDataLogging.data)
-                    McuLogic.startSendingCarData()
+                    McuLogic.isLogging = true
+
                 McuLogic.backTapper = BackTapper(context)
-                //brightnessObserver.startObservingBrightness() //*
-                //* Subject to be removed when reading Sender KSW
             }
         }
     }
@@ -102,7 +108,7 @@ class McuReaderHandler(private val context: Context) {
         brightnessObserver.stopObservingBrightness()
         McuLogic.backTapper = null
         McuLogic.stopAutoVolume()
-        McuLogic.stopSendingCarData()
+        McuLogic.isLogging = false
         McuLogic.mcuCommunicator?.stopBeat()
         sendingInterceptor.stopReading()
         McuLogic.mcuCommunicator?.mcuReader?.stopReading()
