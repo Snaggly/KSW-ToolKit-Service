@@ -1,13 +1,10 @@
 package com.snaggly.ksw_toolkit.core.service.mcu;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 
-import projekt.auto.mcu.BuildConfig;
 import projekt.auto.mcu.ksw.serial.McuCommunicator;
 import projekt.auto.mcu.ksw.serial.reader.Reader;
 

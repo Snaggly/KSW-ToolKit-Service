@@ -7,6 +7,7 @@ Idle response: cmdType:1C - data:01
 Top Start Service:
 am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService
 echo -en \\xf2\\x0\\x69\\x2\\x12\\x2\\x80 > /dev/ttyMSM1
+echo -en \\xf2\\x0\\x69\\x2\\x12\\x1\\x81 > /dev/ttyMSM1
 am start -n com.snaggly.ksw_toolkit/com.snaggly.ksw_toolkit.gui.MainActivity
 
 Check if running:

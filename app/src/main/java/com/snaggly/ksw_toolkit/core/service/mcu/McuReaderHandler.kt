@@ -2,16 +2,13 @@ package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.content.Context
 import android.media.AudioManager
-import android.util.Log
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
+import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
+import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
+import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
-import com.snaggly.ksw_toolkit.util.commander.AppStarter
-import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
-import com.snaggly.ksw_toolkit.util.commander.KeyInjector
-import com.snaggly.ksw_toolkit.util.commander.McuCommander
-import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -22,6 +19,8 @@ class McuReaderHandler(private val context: Context) {
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
     private val brightnessObserver = BrightnessObserver(context)
     private val sendingInterceptor = McuSenderInterceptor()
+    private lateinit var eventAction : EventAction
+    private var parseMcuEvent = McuEvent(ScreenSwitchEvent, CarDataEvent, BenzDataEvent)
     private var hasSerialInit = false
 
     init {
@@ -35,6 +34,14 @@ class McuReaderHandler(private val context: Context) {
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
                 AdbServiceConnection.stopKsw()
 
+                if (config.systemTweaks.logMcuEvent.data)
+                    eventAction = EventActionLogger(context)
+
+                if (config.systemTweaks.carDataLogging.data) {
+                    parseMcuEvent.carDataEvent = CarDataEventLogger
+                    parseMcuEvent.benzDataEvent = BenzDataEvent
+                }
+
                 McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
 
@@ -47,9 +54,6 @@ class McuReaderHandler(private val context: Context) {
                     brightnessObserver.startObservingBrightness()
                 }
 
-                if (config.systemTweaks.carDataLogging.data)
-                    McuLogic.isLogging = true
-
                 McuLogic.backTapper = BackTapper(context)
             }
         }
@@ -57,32 +61,8 @@ class McuReaderHandler(private val context: Context) {
 
     private val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
         Thread {
-            val event = McuLogic.getMcuEvent(cmdType, data)
-            if (event != null) {
-                val eventConfig = config.eventManagers[event]
-                when (eventConfig?.eventMode) {
-                    EventMode.KeyEvent -> {
-                        KeyInjector.sendKey(eventConfig.keyCode.data)
-                    }
-                    EventMode.StartApp -> {
-                        AppStarter.launchAppById(eventConfig.appName.data, context)
-                    }
-                    EventMode.McuCommand -> {
-                        McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], McuLogic.mcuCommunicator, context)
-                    }
-                    else -> {}
-                }
-                if (config.systemTweaks.logMcuEvent.data) {
-                    val cmdTypeString = String.format("%02X", cmdType)
-                    var dataString = ""
-                    for (i in 0 .. data.size-2) {
-                        dataString += String.format("%02X", data[i])
-                        dataString += "-"
-                    }
-                    dataString += String.format("%02X", data.last())
-                    Log.i("KswMcuListener", "--Mcu toString-----[ cmdType:$cmdTypeString - data:$dataString ]")
-                }
-            }
+            val event = parseMcuEvent.getMcuEvent(cmdType, data)
+            eventAction.processAction(cmdType, data, event, config)
 
             for (mcuEventListener in mcuEventListeners)
                 mcuEventListener.update(event, cmdType, data)
@@ -90,7 +70,15 @@ class McuReaderHandler(private val context: Context) {
     }
 
     fun startMcuReader() {
-        McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
+        eventAction = EventAction(context)
+        parseMcuEvent.carDataEvent = CarDataEvent
+        parseMcuEvent.benzDataEvent = BenzDataEvent
+
+        parseMcuEvent.screenSwitchEvent = if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
+            ScreenSwitchEventNoOEMScreen
+        } else {
+            ScreenSwitchEvent
+        }
         AdbServiceConnection.startKsw()
         McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
         if (config.systemTweaks.kswService.data) {
@@ -108,7 +96,6 @@ class McuReaderHandler(private val context: Context) {
         brightnessObserver.stopObservingBrightness()
         McuLogic.backTapper = null
         McuLogic.stopAutoVolume()
-        McuLogic.isLogging = false
         McuLogic.mcuCommunicator?.stopBeat()
         sendingInterceptor.stopReading()
         McuLogic.mcuCommunicator?.mcuReader?.stopReading()

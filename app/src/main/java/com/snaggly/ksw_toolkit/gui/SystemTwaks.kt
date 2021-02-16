@@ -225,6 +225,14 @@ class SystemTwaks : Fragment() {
 
         logMcuEventsToggle.setOnCheckedChangeListener { _, isChecked ->
             viewModel.getConfig(requireContext()).logMcuEvent.data = isChecked
+            try {
+                viewModel.restartMcuReader()
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
         }
 
         interceptMcuCommandToggle.setOnCheckedChangeListener { _, isChecked ->

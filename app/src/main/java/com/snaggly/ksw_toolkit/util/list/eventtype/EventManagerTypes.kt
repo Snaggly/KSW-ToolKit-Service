@@ -25,6 +25,7 @@ enum class EventManagerTypes {
     Idle,
     CarData,
     BenzData,
+    ScreenSwitch,
     Dummy;
 
     companion object {
