@@ -12,7 +12,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.security.NoSuchAlgorithmException
 
-class AdbManager {
+object AdbManager {
     private lateinit var socket : Socket
     private var isConnected = false
     private lateinit var adbConnection: AdbConnection

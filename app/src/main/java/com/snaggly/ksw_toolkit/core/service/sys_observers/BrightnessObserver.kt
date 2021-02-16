@@ -4,15 +4,15 @@ import android.content.Context
 import android.database.ContentObserver
 import android.os.Handler
 import android.provider.Settings
-import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
+import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
-class BrightnessObserver(private val context: Context, mcuLogic: McuEventLogicImpl) {
+class BrightnessObserver(private val context: Context) {
 
     private val brightnessObserver = object : ContentObserver(Handler(context.mainLooper)) {
         override fun onChange(selfChange: Boolean) {
             val newBrightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-            mcuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel((newBrightness * 100 / 255).toByte()))
+            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel((newBrightness * 100 / 255).toByte()))
         }
     }
 

@@ -13,8 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.snaggly.ksw_toolkit.BuildConfig
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
-import com.snaggly.ksw_toolkit.core.service.mcu.McuEventLogicImpl
+import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
+import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import java.util.*
 
@@ -47,15 +47,15 @@ class CoreService : Service() {
         return binder
     }
 
-    val adbConnection = AdbConnection()
-    val mcuLogic = McuEventLogicImpl()
+    val adbConnection = AdbServiceConnection
+    val mcuLogic = McuLogic
     var mcuReaderHandler : McuReaderHandler? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startMyOwnForeground()
 
         try {
-            mcuReaderHandler = McuReaderHandler(applicationContext, adbConnection, mcuLogic)
+            mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()
         } catch (e: Exception) {
             return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")
@@ -77,8 +77,7 @@ class CoreService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (adbConnection.hasShutKsw)
-            adbConnection.startKsw()
+        adbConnection.startKsw()
         mcuReaderHandler?.stopReader()
         adbConnection.disconnect()
     }
