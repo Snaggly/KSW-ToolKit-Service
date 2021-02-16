@@ -20,10 +20,3 @@ And MULF should be COMBOX for E series if I understand right
 
 FullBrightness:     --Mcu toString-----[ cmdType:6C - data:01-64 ]
 LowestBrightness:   --Mcu toString-----[ cmdType:6C - data:01-00 ]
-
-
-New to do:
-- Tap2Return on closed screen
-- Log MCU Events
-- NaviCallouts in Radio
-- Remove BT Devices from GOC
