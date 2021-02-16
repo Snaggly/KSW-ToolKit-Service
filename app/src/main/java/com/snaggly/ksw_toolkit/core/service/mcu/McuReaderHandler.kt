@@ -4,98 +4,109 @@ import android.content.Context
 import android.media.AudioManager
 import android.util.Log
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
-import com.snaggly.ksw_toolkit.core.service.adb.AdbConnection
+import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
-import com.snaggly.ksw_toolkit.core.service.sys_observers.NaviAppObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
-import com.snaggly.ksw_toolkit.util.applist.AppStarter
-import com.snaggly.ksw_toolkit.util.enums.EventMode
-import com.snaggly.ksw_toolkit.util.keyevent.KeyInjector
-import com.snaggly.ksw_toolkit.util.mcu.McuCommander
-import com.snaggly.ksw_toolkit.util.mcu.McuCommandsEnum
+import com.snaggly.ksw_toolkit.util.commander.AppStarter
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
+import com.snaggly.ksw_toolkit.util.commander.KeyInjector
+import com.snaggly.ksw_toolkit.util.commander.McuCommander
+import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 
-class McuReaderHandler(private val context: Context, private val adb : AdbConnection, private val eventLogic: McuEventLogicImpl) {
+class McuReaderHandler(private val context: Context) {
     private val mcuEventListeners = ArrayList<McuEventObserver>()
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
-    val brightnessObserver = BrightnessObserver(context, eventLogic)
+    private val brightnessObserver = BrightnessObserver(context)
+    private val sendingInterceptor = McuSenderInterceptor()
+    private var hasSerialInit = false
 
     init {
-        eventLogic.mcuCommunicator = McuCommunicator.getInstance()
+        McuLogic.mcuCommunicator = McuCommunicator.getInstance()
     }
 
     private val initialSerialStartAction = McuCommunicator.McuAction { cmdType, data ->
-        if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
-            eventLogic.mcuCommunicator!!.mcuReader.stopReading()
-            adb.stopKsw()
-            eventLogic.mcuCommunicator!!.mcuReader = SerialReader()
-            eventLogic.mcuCommunicator!!.startBeat() //*
-            eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
-            if (config.systemTweaks.carDataLogging.data)
-                eventLogic.startSendingCarData()
-            eventLogic.backTapper = BackTapper(context) //*
-            brightnessObserver.startObservingBrightness() //*
-            //* Subject to be removed when reading Sender KSW
+        if (!hasSerialInit) {
+            hasSerialInit = true
+            if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
+                McuLogic.mcuCommunicator!!.mcuReader.stopReading()
+                AdbServiceConnection.stopKsw()
+                McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                //eventLogic.mcuCommunicator!!.startBeat() //*
+                sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
+                    McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
+                })
+                McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
+                if (config.systemTweaks.carDataLogging.data)
+                    McuLogic.startSendingCarData()
+                McuLogic.backTapper = BackTapper(context)
+                //brightnessObserver.startObservingBrightness() //*
+                //* Subject to be removed when reading Sender KSW
+            }
         }
     }
 
     private val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
-        val event = eventLogic.getMcuEvent(cmdType, data)
-        if (event != null) {
-            val eventConfig = config.eventManagers[event]
-            when (eventConfig?.eventMode) {
-                EventMode.KeyEvent -> {
-                    KeyInjector.sendKey(eventConfig.keyCode.data)
+        Thread {
+            val event = McuLogic.getMcuEvent(cmdType, data)
+            if (event != null) {
+                val eventConfig = config.eventManagers[event]
+                when (eventConfig?.eventMode) {
+                    EventMode.KeyEvent -> {
+                        KeyInjector.sendKey(eventConfig.keyCode.data)
+                    }
+                    EventMode.StartApp -> {
+                        AppStarter.launchAppById(eventConfig.appName.data, context)
+                    }
+                    EventMode.McuCommand -> {
+                        McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], McuLogic.mcuCommunicator, context)
+                    }
+                    else -> {}
                 }
-                EventMode.StartApp -> {
-                    AppStarter.launchAppById(eventConfig.appName.data, context)
+                if (config.systemTweaks.logMcuEvent.data) {
+                    val cmdTypeString = String.format("%02X", cmdType)
+                    var dataString = ""
+                    for (i in 0 .. data.size-2) {
+                        dataString += String.format("%02X", data[i])
+                        dataString += "-"
+                    }
+                    dataString += String.format("%02X", data.last())
+                    Log.i("KswMcuListener", "--Mcu toString-----[ cmdType:$cmdTypeString - data:$dataString ]")
                 }
-                EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], eventLogic.mcuCommunicator, context)
-                }
-                else -> {}
             }
-            if (config.systemTweaks.logMcuEvent.data) {
-                val cmdTypeString = String.format("%02X", cmdType)
-                var dataString = ""
-                for (i in 0 .. data.size-2) {
-                    dataString += String.format("%02X", data[i])
-                    dataString += "-"
-                }
-                dataString += String.format("%02X", data.last())
-                Log.i("KswMcuListener", "--Mcu toString-----[ cmdType:$cmdTypeString - data:$dataString ]")
-            }
-        }
 
-        for (mcuEventListener in mcuEventListeners)
-            mcuEventListener.update(event, cmdType, data)
+            for (mcuEventListener in mcuEventListeners)
+                mcuEventListener.update(event, cmdType, data)
+        }.start()
     }
 
     fun startMcuReader() {
-        eventLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
-        adb.startKsw()
-        eventLogic.mcuCommunicator!!.mcuReader = LogcatReader()
+        McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0
+        AdbServiceConnection.startKsw()
+        McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
         if (config.systemTweaks.kswService.data) {
-            eventLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
+            McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
         } else {
-            eventLogic.mcuCommunicator!!.mcuReader.startReading(initialSerialStartAction)
+            McuLogic.mcuCommunicator!!.mcuReader.startReading(initialSerialStartAction)
         }
 
         if (config.systemTweaks.autoVolume.data) {
-            eventLogic.startAutoVolume(context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
+            McuLogic.startAutoVolume(context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
         }
     }
 
     fun stopReader() {
         brightnessObserver.stopObservingBrightness()
-        eventLogic.backTapper = null
-        eventLogic.stopAutoVolume()
-        eventLogic.stopSendingCarData()
-        eventLogic.mcuCommunicator?.stopBeat()
-        eventLogic.mcuCommunicator?.mcuReader?.stopReading()
+        McuLogic.backTapper = null
+        McuLogic.stopAutoVolume()
+        McuLogic.stopSendingCarData()
+        McuLogic.mcuCommunicator?.stopBeat()
+        sendingInterceptor.stopReading()
+        McuLogic.mcuCommunicator?.mcuReader?.stopReading()
+        hasSerialInit = false
     }
 
     fun restartReader() {
