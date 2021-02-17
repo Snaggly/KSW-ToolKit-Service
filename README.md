@@ -2,28 +2,26 @@
 
 ![screenshot](/images/screenshot-eventmanager.png)
 
-KSW-ToolKit is the swiss army knife for any KSW SD625 Android Screen. This project is part of the greater goal to fully replace all of the built in KSW applications. 
+KSW-ToolKit is capable of reading and understanding your Mcu. For example it can detect the Telefon button on your steering wheel and you determine to start whatever App you wish. Aside from starting apps, you can also invoke a set of global Android KeyEvents or McuCommands. This way you could remap your car buttons with just a few clicks! To check what Car button causes what Event, an Mcu Listener is included to show live every Event the Mcu posts. Additionally this App has easy tweaks, like being able to fully hide your TopBar with just a toggle. A built in ADB Shell is also included.
 
-This app is capable of reading and understanding your Mcu's inputs which can be translated to your desire, by invoking a global Android KeyEvent or starting of Apps. This way you can fully remap your car buttons from just a few clicks! Plus you'll be able to view live every single Input the Mcu does, if you wish to configure something new in Tasker. Additionally you will have easy tweaks like being able to fully hide your TopBar with just a toggle and a built in ADB Shell! 
-
-To achieve the remapping of buttons, this App hijacks the Mcu reading by shutting down the internal KSW McuService! Once shut down the built in Apps won't be receive any new CarData. For example, the built in Dashboard App won't work anymore! However 3rd Party Apps like [StandaloneDashboard](https://github.com/KswCarProject/StandaloneDashboard) will keep working when enabling the logging those CarDatas.
+To achieve the remapping of your existing buttons, this App will have to hijack the Mcu by shutting down the internal KSW McuService and starting its own reader service. Once shut down, only this app will be able to receive and send data to your Mcu!
 
 ## Example
 
-1- Install the Apk and start it.
-2- Go to System Tweaks and disable "KSW Service". At this point you'll be no longer able to navigate with your iDrive as the service to mcu has been hijacked by this app.
-3- Navigate to Mcu Event Manager and Scroll down to "Drive Knob Buttons".
-4- Sequentially assign for each button the correct DPAD KeyEvent.
+* 1- Install the Apk and start it.
+* 2- Go to System Tweaks and disable "KSW Service". After this point you'll be no longer able to navigate with your iDrive as the mcu has been hijacked by this app.
+* 3- Navigate to Mcu Event Manager and Scroll down to "Drive Knob Buttons".
+* 4- Sequentially assign for each button the correct DPAD KeyEvent.
 
 Optional in System Tweaks:
-5a - Enable Log CarData, if you wish to use 3rd party Dashboard Apps.
-5b - Enable Log McuEvent, if you want to capture Mcu Events with Tasker.
-5c - Enable Intercept McuCommands, to make Factory Settings and basic commands from the built in Launcher work while KSW-Service is off.
+* 5a - Enable Log CarData to wrap CarData to the System for Dashboards and Climate Control (Benz only).
+* 5b - Enable Log McuEvent if you want to capture Mcu Events with Tasker via Logcat.
+* 5c - Enable Intercept McuCommands to redirect the commands to Mcu from the hijacked KSW-Service.
 
 
 ## Building
 
-Android Studio was using to build and compile this App. For the core functionalities to work (eg. invoking KeyEvents on Instrumentation), this App requires System Level priviledges. When compiling, you will need to sign the APK with the same KeyStore as the Android OS was signed with.
+Android Studio was used to write and compile this App. For the core functionalities to work (eg. invoking KeyEvents on Instrumentation), this App requires System Level priviledges. When compiling, you will need to sign the APK with the same KeyStore as the Android OS was signed with.
 
 ## Contributing
 
