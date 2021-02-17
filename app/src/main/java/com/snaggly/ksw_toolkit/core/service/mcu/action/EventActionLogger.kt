@@ -5,7 +5,7 @@ import android.util.Log
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
-class EventActionLogger(private val context: Context) : EventAction(context) {
+class EventActionLogger(context: Context) : EventAction(context) {
     override fun processAction(cmdType: Int, data: ByteArray, event: EventManagerTypes?, config: ConfigManager) {
         super.processAction(cmdType, data, event, config)
 

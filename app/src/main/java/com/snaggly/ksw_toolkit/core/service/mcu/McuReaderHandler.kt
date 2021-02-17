@@ -39,7 +39,7 @@ class McuReaderHandler(private val context: Context) {
 
                 if (config.systemTweaks.carDataLogging.data) {
                     parseMcuEvent.carDataEvent = CarDataEventLogger
-                    parseMcuEvent.benzDataEvent = BenzDataEvent
+                    parseMcuEvent.benzDataEvent = BenzDataEventLogger
                 }
 
                 McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
