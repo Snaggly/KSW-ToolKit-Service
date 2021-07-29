@@ -11,6 +11,7 @@ class KeyEvent(name: String, icon: Drawable, val code: Int) : ListType(name, ico
     companion object {
         fun getKeyEventList(context: Context) : ArrayList<KeyEvent> {
             val result = ArrayList<KeyEvent>()
+            result.add(KeyEvent(KeyCode.APP_SWITCH.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_flip_to_front_36)!!, KeyCode.APP_SWITCH.keycode))
             result.add(KeyEvent(KeyCode.BACK.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_keyboard_backspace_36)!!, KeyCode.BACK.keycode))
             result.add(KeyEvent(KeyCode.CALCULATOR.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_calculate_36)!!, KeyCode.CALCULATOR.keycode))
             result.add(KeyEvent(KeyCode.CALENDAR.name, ContextCompat.getDrawable(context, R.drawable.ic_baseline_calendar_today_36)!!, KeyCode.CALENDAR.keycode))

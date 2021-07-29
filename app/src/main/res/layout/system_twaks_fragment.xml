@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".gui.SystemTwaks">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:columnCount="2">
+            android:columnCount="3">
             <LinearLayout>
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/startAppAtBootTgl"
@@ -37,6 +38,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ksw_service"
+                    style="@style/switchTextStyle"/>
+            </LinearLayout>
+            <LinearLayout>
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/autoThemeToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto Dark Theme"
                     style="@style/switchTextStyle"/>
             </LinearLayout>
             <LinearLayout>

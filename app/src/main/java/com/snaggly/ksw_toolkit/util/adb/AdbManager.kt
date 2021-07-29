@@ -2,6 +2,7 @@ package com.snaggly.ksw_toolkit.util.adb
 
 import android.content.Context
 import android.net.TrafficStats
+import android.util.Log
 import projekt.auto.mcu.adb.AdbManager
 import projekt.auto.mcu.adb.lib.AdbConnection
 import projekt.auto.mcu.adb.lib.AdbCrypto
@@ -39,6 +40,7 @@ object AdbManager {
                 shellStream = adbConnection.open(destination)
             } catch (e: Exception) {
                 outerException = e
+                Log.e("Snaggly", "Error in ADB connect AdbConnection - ${e.message}")
             }
         }
         setup.start()
@@ -60,7 +62,7 @@ object AdbManager {
                 }
                 catch (e : Exception) {
                     isConnected = false
-                    e.printStackTrace()
+                    Log.e("Snaggly", "Error in ADB connect ShellStream - ${e.message}")
                 }
             }
         }.start()
@@ -79,7 +81,13 @@ object AdbManager {
     fun sendCommand(command: String) {
         if (isConnected) {
             Thread {
-                shellStream.write(" $command\n")
+                try {
+                    shellStream.write(" $command\n")
+                }
+                catch (e : Exception) {
+                    Log.e("Snaggly", "Error in ADB SendCommand - $command - ${e.message}")
+                    isConnected = false
+                }
             }.start()
         }
     }

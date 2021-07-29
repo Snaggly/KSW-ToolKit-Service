@@ -8,11 +8,11 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.snaggly.ksw_toolkit"
+        applicationId "com.snaggly.wits.ksw_toolkit"
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
-        versionName "0.7.0"
+        versionName "0.7.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

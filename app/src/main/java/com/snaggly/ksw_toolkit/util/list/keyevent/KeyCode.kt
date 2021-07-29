@@ -2,6 +2,7 @@ package com.snaggly.ksw_toolkit.util.list.keyevent
 
 enum class KeyCode(val keycode : Int) {
     ASSIST(219),
+    APP_SWITCH(187),
     BACK(4),
     CALCULATOR( 210),
     CALENDAR( 208),

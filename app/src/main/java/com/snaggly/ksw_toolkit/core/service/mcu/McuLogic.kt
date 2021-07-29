@@ -15,7 +15,6 @@ object McuLogic {
     //Intern
     private var autoVolume = false
     var senderInterval: Long = 1000
-    var backTapper : BackTapper? = null
 
     //Param
     var speedMaxVolume = 80

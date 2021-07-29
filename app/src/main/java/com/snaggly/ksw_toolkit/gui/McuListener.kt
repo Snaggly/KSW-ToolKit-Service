@@ -39,7 +39,7 @@ class McuListener : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        viewModel.coreService?.mcuReaderHandler?.unregisterMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReaderHandler?.unregisterMcuEventListener()
     }
 
     private fun initElements() {

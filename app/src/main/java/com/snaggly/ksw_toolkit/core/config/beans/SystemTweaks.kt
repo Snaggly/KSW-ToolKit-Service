@@ -6,6 +6,7 @@ import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
 class SystemTweaks(startAtBoot: Boolean,
                    kswService: Boolean,
                    carDataLogging: Boolean,
+                   autoTheme: Boolean,
                    autoVolume: Boolean,
                    maxVolume: Boolean,
                    hideTopBar: Boolean,
@@ -16,6 +17,7 @@ class SystemTweaks(startAtBoot: Boolean,
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
     var carDataLogging = BooleanSetting(carDataLogging)
+    var autoTheme = BooleanSetting(autoTheme)
     var autoVolume = BooleanSetting(autoVolume)
     var maxVolume = BooleanSetting(maxVolume)
     var hideTopBar = BooleanSetting(hideTopBar)
@@ -30,6 +32,7 @@ class SystemTweaks(startAtBoot: Boolean,
                     startAtBoot = true,
                     kswService = true,
                     carDataLogging = false,
+                    autoTheme = false,
                     autoVolume = false,
                     maxVolume = false,
                     hideTopBar = false,

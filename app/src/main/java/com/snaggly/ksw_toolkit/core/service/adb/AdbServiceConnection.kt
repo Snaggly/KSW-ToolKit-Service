@@ -4,13 +4,12 @@ import android.content.Context
 import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
 object AdbServiceConnection {
-    private val adbShellListeners = ArrayList<ShellObserver>()
+    private var adbShellListener : ShellObserver? = null
 
     fun connect(context: Context) {
         AdbManager.connect(context, "shell:", object : AdbManager.OnAdbShellDataReceived {
             override fun onDataReceived(text: String) {
-                for (listener in adbShellListeners)
-                    listener.update(text)
+                adbShellListener?.update(text)
             }
         })
     }
@@ -40,10 +39,10 @@ object AdbServiceConnection {
     }
 
     fun registerShellListener(listener: ShellObserver) {
-        adbShellListeners.add(listener)
+        adbShellListener = listener
     }
 
     fun unregisterShellListener(listener: ShellObserver) {
-        adbShellListeners.remove(listener)
+        adbShellListener = listener
     }
 }

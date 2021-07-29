@@ -17,6 +17,8 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.MODIFY_DAY_NIGHT_MODE"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="false"

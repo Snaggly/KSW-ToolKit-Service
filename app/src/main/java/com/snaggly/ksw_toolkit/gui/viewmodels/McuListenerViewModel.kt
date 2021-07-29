@@ -21,6 +21,8 @@ class McuListenerViewModel : CoreServiceClient() {
 
     fun dataBytesToString(data: ByteArray): String {
         var result = ""
+        if (data.isEmpty())
+            return result
         for (i in 0..data.size - 2) {
             result += data[i].toString(16) + "-"
         }

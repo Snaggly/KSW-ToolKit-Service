@@ -61,18 +61,18 @@ class CoreService : Service() {
             return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")
         }
 
+        try {
+            adbConnection.connect(applicationContext)
+            checkPermission()
+        } catch (e: Exception) {
+            return crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
+        }
+
         return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
-
-        try {
-            adbConnection.connect(applicationContext)
-            checkPermission()
-        } catch (e: Exception) {
-            crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
-        }
     }
 
     override fun onDestroy() {

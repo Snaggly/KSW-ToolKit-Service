@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
+import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
@@ -15,12 +16,12 @@ import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 
 class McuReaderHandler(private val context: Context) {
-    private val mcuEventListeners = ArrayList<McuEventObserver>()
+    private var mcuEventListener : McuEventObserver? = null
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
     private val brightnessObserver = BrightnessObserver(context)
     private val sendingInterceptor = McuSenderInterceptor()
     private lateinit var eventAction : EventAction
-    private var parseMcuEvent = McuEvent(ScreenSwitchEvent, CarDataEvent, BenzDataEvent)
+    private var parseMcuEvent = McuEvent(context)
     private var hasSerialInit = false
 
     init {
@@ -42,6 +43,14 @@ class McuReaderHandler(private val context: Context) {
                     parseMcuEvent.benzDataEvent = BenzDataEventLogger
                 }
 
+                parseMcuEvent.carDataEvent.lightEvent = if (config.systemTweaks.autoTheme.data) {
+                    LightEventSwitch.apply {
+                        uiModeManager = context.getSystemService(UiModeManager::class.java)
+                    }
+                } else {
+                    LightEvent
+                }
+
                 McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
 
@@ -54,7 +63,7 @@ class McuReaderHandler(private val context: Context) {
                     brightnessObserver.startObservingBrightness()
                 }
 
-                McuLogic.backTapper = BackTapper(context)
+                parseMcuEvent.idleEvent.armBackTapper()
             }
         }
     }
@@ -64,8 +73,7 @@ class McuReaderHandler(private val context: Context) {
             val event = parseMcuEvent.getMcuEvent(cmdType, data)
             eventAction.processAction(cmdType, data, event, config)
 
-            for (mcuEventListener in mcuEventListeners)
-                mcuEventListener.update(event, cmdType, data)
+            mcuEventListener?.update(event, cmdType, data)
         }.start()
     }
 
@@ -94,7 +102,7 @@ class McuReaderHandler(private val context: Context) {
 
     fun stopReader() {
         brightnessObserver.stopObservingBrightness()
-        McuLogic.backTapper = null
+        parseMcuEvent.idleEvent.clearBackTapper()
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()
         sendingInterceptor.stopReading()
@@ -108,10 +116,10 @@ class McuReaderHandler(private val context: Context) {
     }
 
     fun registerMcuEventListener(listener: McuEventObserver) {
-        mcuEventListeners.add(listener)
+        mcuEventListener = listener
     }
 
-    fun unregisterMcuEventListener(listener: McuEventObserver) {
-        mcuEventListeners.remove(listener)
+    fun unregisterMcuEventListener() {
+        mcuEventListener = null
     }
 }

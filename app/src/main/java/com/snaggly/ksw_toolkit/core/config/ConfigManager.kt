@@ -35,6 +35,7 @@ class ConfigManager private constructor() : IConfigBean {
         configData.systemTweaks.startAtBoot?.let { systemTweaks.startAtBoot = it }
         configData.systemTweaks.kswService?.let { systemTweaks.kswService = it }
         configData.systemTweaks.carDataLogging?.let { systemTweaks.carDataLogging = it }
+        configData.systemTweaks.autoTheme?.let { systemTweaks.autoTheme = it }
         configData.systemTweaks.autoVolume?.let { systemTweaks.autoVolume = it }
         configData.systemTweaks.maxVolume?.let { systemTweaks.maxVolume = it }
         configData.systemTweaks.hideTopBar?.let { systemTweaks.hideTopBar = it }

@@ -26,6 +26,7 @@ class SystemTwaks : Fragment() {
     private lateinit var stopKswServiceSwitch: SwitchCompat
     private lateinit var hideTopBarSwitch: SwitchCompat
     private lateinit var shrinkTopBarSwitch: SwitchCompat
+    private lateinit var autoThemeToggle: SwitchCompat
     private lateinit var autoVolumeSwitch: SwitchCompat
     private lateinit var maxVolumeOnBootSwitch: SwitchCompat
     private lateinit var changeDPIButton: Button
@@ -59,6 +60,7 @@ class SystemTwaks : Fragment() {
     private fun initElements() {
         startAtBoot = requireView().findViewById(R.id.startAppAtBootTgl)
         stopKswServiceSwitch = requireView().findViewById(R.id.startStopKSWServiceSwitch)
+        autoThemeToggle = requireView().findViewById(R.id.autoThemeToggle)
         autoVolumeSwitch = requireView().findViewById(R.id.autoVolumeToggle)
         maxVolumeOnBootSwitch = requireView().findViewById(R.id.maxVolumeAtBootToggle)
         hideTopBarSwitch = requireView().findViewById(R.id.hideTopBarToggle)
@@ -72,6 +74,7 @@ class SystemTwaks : Fragment() {
 
         startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
         stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
+        autoThemeToggle.isChecked = viewModel.getConfig(requireContext()).autoTheme.data
         autoVolumeSwitch.isChecked = viewModel.getConfig(requireContext()).autoVolume.data
         maxVolumeOnBootSwitch.isChecked = viewModel.getConfig(requireContext()).maxVolume.data
         hideTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).hideTopBar.data
@@ -92,6 +95,18 @@ class SystemTwaks : Fragment() {
     private fun initButtonClickEvents() {
         startAtBoot.setOnCheckedChangeListener { _, isChecked ->
             viewModel.getConfig(requireContext()).startAtBoot.data = isChecked
+        }
+
+        autoThemeToggle.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.getConfig(requireContext()).autoTheme.data = isChecked
+            try {
+                viewModel.restartMcuReader()
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
         }
 
         autoVolumeSwitch.setOnCheckedChangeListener { _, isChecked ->
