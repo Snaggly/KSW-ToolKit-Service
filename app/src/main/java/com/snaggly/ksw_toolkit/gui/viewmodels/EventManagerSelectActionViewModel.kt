@@ -1,7 +1,8 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
@@ -13,7 +14,7 @@ import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyEvent
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsList
 
-class EventManagerSelectActionViewModel : ViewModel() {
+class EventManagerSelectActionViewModel(application: Application) : AndroidViewModel(application) {
     private var listKeyEventsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
     private var availableAppsAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
     private var mcuCommandsListAdapter : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder>? = null
@@ -27,9 +28,9 @@ class EventManagerSelectActionViewModel : ViewModel() {
 
     lateinit var actionEvent: com.snaggly.ksw_toolkit.gui.EventManager.OnActionResult
 
-    private fun initConfig(context: Context) {
+    private fun initConfig() {
         if (config == null)
-            config = ConfigManager.getConfig(context.filesDir.absolutePath).eventManagers[eventCurType]
+            config = ConfigManager.getConfig(getApplication<Application>().applicationContext.filesDir.absolutePath).eventManagers[eventCurType]
     }
 
     private fun findKeyCodeFromList(keyCode: Int) : Int{
@@ -48,37 +49,37 @@ class EventManagerSelectActionViewModel : ViewModel() {
         return -1
     }
 
-    private fun initKeyEventsAdapter(context: Context) {
-        initConfig(context)
-        keyEvents = KeyEvent.getKeyEventList(context)
+    private fun initKeyEventsAdapter() {
+        initConfig()
+        keyEvents = KeyEvent.getKeyEventList(getApplication<Application>().applicationContext)
         listKeyEventsAdapter = ListTypeAdapter(keyEvents!!, findKeyCodeFromList(config?.keyCode!!.data), onKeyCodeClickListener)
     }
 
-    private fun initAvailableAppsAdapter(context: Context) {
-        appsList = AppsLister(context).getAppsList()
+    private fun initAvailableAppsAdapter() {
+        appsList = AppsLister(getApplication<Application>().applicationContext).getAppsList()
         availableAppsAdapter = ListTypeAdapter(appsList!!, findAppFromList(config?.appName!!.data), onAppClickListener)
     }
 
-    private fun initMcuCommandsListAdapter(context: Context) {
-        mcuCommandsList = McuCommandsList.getMcuCommandsList(context)
+    private fun initMcuCommandsListAdapter() {
+        mcuCommandsList = McuCommandsList.getMcuCommandsList(getApplication<Application>().applicationContext)
         mcuCommandsListAdapter = ListTypeAdapter(mcuCommandsList!!, config?.mcuCommandMode!!.data, onMcuCommandClickListener)
     }
 
-    fun getListKeyEventsAdapter(context: Context): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
+    fun getListKeyEventsAdapter(): RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
         if (listKeyEventsAdapter == null)
-            initKeyEventsAdapter(context)
+            initKeyEventsAdapter()
         return listKeyEventsAdapter!!
     }
 
-    fun getAvailableAppsAdapter(context: Context) : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
+    fun getAvailableAppsAdapter() : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
         if (availableAppsAdapter == null)
-            initAvailableAppsAdapter(context)
+            initAvailableAppsAdapter()
         return availableAppsAdapter!!
     }
 
-    fun getMcuCommandsAdapter(context: Context) : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
+    fun getMcuCommandsAdapter() : RecyclerView.Adapter<ListTypeAdapter.AppsListViewHolder> {
         if (mcuCommandsListAdapter == null)
-            initMcuCommandsListAdapter(context)
+            initMcuCommandsListAdapter()
         return mcuCommandsListAdapter!!
     }
 

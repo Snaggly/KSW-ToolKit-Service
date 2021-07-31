@@ -1,12 +1,13 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.provider.Settings
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.enums.SOUND_SRC_TYPE
 
-class ToolKitViewModel : CoreServiceClient() {
+class ToolKitViewModel(application: Application) : CoreServiceClient(application) {
 
     fun getBrightness(context: Context) : Int {
         return (Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 255)* 100) / 255

@@ -105,7 +105,7 @@ class EventManager : Fragment() {
     }
 
     private fun setBtnLabel(button: Button, eventManagerTypes: EventManagerTypes) {
-        if (mViewModel.getConfig(requireContext())[eventManagerTypes]?.eventMode != EventMode.NoAssignment)
+        if (mViewModel.getConfig()[eventManagerTypes]?.eventMode != EventMode.NoAssignment)
             button.text = getString(R.string.assigned)
         else
             button.text = getString(R.string.unassigned)

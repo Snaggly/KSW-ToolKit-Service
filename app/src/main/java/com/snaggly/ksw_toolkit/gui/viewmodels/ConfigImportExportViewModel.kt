@@ -1,23 +1,25 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
+import android.app.Application
 import android.content.Context
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
+import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
-class ConfigImportExportViewModel : CoreServiceClient() {
-    fun importConfig(context: Context) : String {
-        val storagePath = "${context.getExternalFilesDir(null)?.absolutePath}/KSW-Config.json"
-        storagePath.let { ConfigManager.importConfig(context.filesDir.absolutePath, it) }
+class ConfigImportExportViewModel(application: Application) : CoreServiceClient(application) {
+    fun importConfig() : String {
+        val storagePath = "${getApplication<Application>().applicationContext.getExternalFilesDir(null)?.absolutePath}/KSW-Config.json"
+        storagePath.let { ConfigManager.importConfig(getApplication<Application>().applicationContext.filesDir.absolutePath, it) }
         return storagePath
     }
 
-    fun exportConfig(context: Context) : String {
-        val storagePath = "${context.getExternalFilesDir(null)?.absolutePath}/KSW-Config.json"
+    fun exportConfig() : String {
+        val storagePath = "${getApplication<Application>().applicationContext.getExternalFilesDir(null)?.absolutePath}/KSW-Config.json"
         storagePath.let { ConfigManager.exportConfig(it) }
         return storagePath
     }
 
-    fun restartSystem() {
-        coreService?.adbConnection!!.sendCommand("reboot")
+    fun restartSystem(context: Context) {
+        AdbManager.sendCommand("reboot", context)
     }
 }

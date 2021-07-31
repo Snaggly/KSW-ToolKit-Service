@@ -1,10 +1,13 @@
 package com.snaggly.ksw_toolkit.core.service.helper
 
-import androidx.lifecycle.ViewModel
+import android.annotation.SuppressLint
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import com.snaggly.ksw_toolkit.core.service.CoreService
 
-abstract class CoreServiceClient : ViewModel() {
+abstract class CoreServiceClient(application: Application) : AndroidViewModel(application) {
     companion object {
+        @SuppressLint("StaticFieldLeak")
         var coreService: CoreService? = null
     }
 

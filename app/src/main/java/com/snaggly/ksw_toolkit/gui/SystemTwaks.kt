@@ -1,7 +1,6 @@
 package com.snaggly.ksw_toolkit.gui
 
 import android.app.AlertDialog
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -206,7 +205,7 @@ class SystemTwaks : Fragment() {
             try {
                 val newDPI = Integer.parseInt(dpiInputField.text.toString())
                 viewModel.getConfig(requireContext()).dpi.data = newDPI
-                viewModel.changeDPI(newDPI)
+                viewModel.changeDPI(newDPI, requireContext())
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Exception Saving DPI!\n\n${exception.localizedMessage}").create()
@@ -217,7 +216,7 @@ class SystemTwaks : Fragment() {
 
         giveTaskerLogcatPermBtn.setOnClickListener {
             try {
-                viewModel.coreService?.adbConnection!!.sendCommand("pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS")
+                viewModel.giveTaskerPerm()
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to give Tasker Logcat Permission!\n\n${exception.localizedMessage}").create()

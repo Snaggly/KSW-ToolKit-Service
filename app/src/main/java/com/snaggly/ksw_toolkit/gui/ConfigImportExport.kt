@@ -3,7 +3,6 @@ package com.snaggly.ksw_toolkit.gui
 import android.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.gui.viewmodels.ConfigImportExportViewModel
 
 class ConfigImportExport : Fragment() {
@@ -47,7 +45,7 @@ class ConfigImportExport : Fragment() {
     private fun initBtnClicks() {
         importConfigBtn.setOnClickListener {
             try {
-                Toast.makeText(requireContext(), "Imported from: ${importExportViewModel.importConfig(requireContext())}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Imported from: ${importExportViewModel.importConfig()}", Toast.LENGTH_LONG).show()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
                         .setMessage("Unable to import!\n\n${exception.localizedMessage}").create()
@@ -57,7 +55,7 @@ class ConfigImportExport : Fragment() {
         }
         exportConfigBtn.setOnClickListener {
             try {
-                Toast.makeText(requireContext(), "Exported to: ${importExportViewModel.exportConfig(requireContext())}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Exported to: ${importExportViewModel.exportConfig()}", Toast.LENGTH_LONG).show()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
                         .setMessage("Unable to export!\n\n${exception.localizedMessage}").create()
@@ -67,7 +65,7 @@ class ConfigImportExport : Fragment() {
         }
         restartBtn.setOnClickListener {
             try {
-                importExportViewModel.restartSystem()
+                importExportViewModel.restartSystem(requireContext())
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
                         .setMessage("Unable to restart!\n\n${exception.localizedMessage}").create()

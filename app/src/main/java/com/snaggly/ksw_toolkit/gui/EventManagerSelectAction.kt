@@ -64,9 +64,9 @@ class EventManagerSelectAction(private val type: EventManagerTypes, private val 
         listKeyEvents = requireView().findViewById(R.id.availableKeyEventsListView)
         listApps = requireView().findViewById(R.id.availableAppsListView)
         listMcuCommands = requireView().findViewById(R.id.mcuCommandsListView)
-        initRecyclerViews(listKeyEvents, context?.let { mViewModel.getListKeyEventsAdapter(it) }!!)
-        initRecyclerViews(listApps, context?.let { mViewModel.getAvailableAppsAdapter(it) }!!)
-        initRecyclerViews(listMcuCommands, context?.let { mViewModel.getMcuCommandsAdapter(it) }!!)
+        initRecyclerViews(listKeyEvents, mViewModel.getListKeyEventsAdapter())
+        initRecyclerViews(listApps, mViewModel.getAvailableAppsAdapter())
+        initRecyclerViews(listMcuCommands, mViewModel.getMcuCommandsAdapter())
     }
 
     private fun loadAnimations(duration: Long) {

@@ -1,11 +1,13 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
+import android.app.Application
 import android.content.Context
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.SystemTweaks
 import com.snaggly.ksw_toolkit.core.service.helper.CoreServiceClient
+import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
-class SystemTwaksViewModel : CoreServiceClient() {
+class SystemTwaksViewModel(application: Application) : CoreServiceClient(application) {
 
     private var config: SystemTweaks? = null
 
@@ -19,23 +21,27 @@ class SystemTwaksViewModel : CoreServiceClient() {
         coreService?.mcuReaderHandler?.restartReader()
     }
 
-    fun changeDPI(dpi: Int) {
-        coreService?.adbConnection!!.sendCommand("wm density $dpi")
+    fun changeDPI(dpi: Int, context: Context) {
+        AdbManager.sendCommand("wm density $dpi", context)
     }
 
     fun shrinkTopBar() {
-        coreService?.adbConnection!!.sendCommand("wm overscan 0,-9,0,0\nwm density ${config?.dpi!!.data-2}")
+        AdbManager.sendCommand("wm overscan 0,-9,0,0\nwm density ${config?.dpi!!.data-2}", getApplication<Application>().applicationContext)
     }
 
     fun restoreTopBar() {
-        coreService?.adbConnection!!.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.dpi!!.data}")
+        AdbManager.sendCommand("wm overscan 0,0,0,0\nwm density ${config?.dpi!!.data}", getApplication<Application>().applicationContext)
     }
 
     fun showTopBar() {
-        coreService?.adbConnection!!.sendCommand("settings put global policy_control null*")
+        AdbManager.sendCommand("settings put global policy_control null*", getApplication<Application>().applicationContext)
     }
 
     fun hideTopBar() {
-        coreService?.adbConnection!!.sendCommand("settings put global policy_control immersive.full=*")
+        AdbManager.sendCommand("settings put global policy_control immersive.full=*", getApplication<Application>().applicationContext)
+    }
+
+    fun giveTaskerPerm() {
+        AdbManager.sendCommand("pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS", getApplication<Application>().applicationContext)
     }
 }

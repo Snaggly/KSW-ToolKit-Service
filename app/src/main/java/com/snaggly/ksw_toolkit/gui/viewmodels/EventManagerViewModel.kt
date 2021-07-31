@@ -1,17 +1,17 @@
 package com.snaggly.ksw_toolkit.gui.viewmodels
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
-class EventManagerViewModel : ViewModel() {
+class EventManagerViewModel(application: Application) : AndroidViewModel(application) {
     private var config : HashMap<EventManagerTypes, EventManager>? = null
 
-    fun getConfig(context: Context) : HashMap<EventManagerTypes, EventManager> {
+    fun getConfig() : HashMap<EventManagerTypes, EventManager> {
         if (config == null)
-            config = ConfigManager.getConfig(context.filesDir.absolutePath).eventManagers
+            config = ConfigManager.getConfig(getApplication<Application>().applicationContext.filesDir.absolutePath).eventManagers
         return config!!
     }
 
