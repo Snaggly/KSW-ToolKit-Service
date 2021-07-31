@@ -1,7 +1,6 @@
 package com.snaggly.ksw_toolkit.gui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.service.CoreService
-import com.snaggly.ksw_toolkit.core.service.adb.ShellObserver
+import com.snaggly.ksw_toolkit.util.adb.ShellObserver
 import com.snaggly.ksw_toolkit.gui.viewmodels.AdbShellViewModel
+import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
 class AdbShell : Fragment() {
 
@@ -54,12 +53,12 @@ class AdbShell : Fragment() {
         super.onStart()
         sendButton.requestFocus()
         initList()
-        viewModel.coreService?.adbConnection!!.registerShellListener(adbShellObserver)
+        AdbManager.registerShellListener(adbShellObserver, requireContext())
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.coreService?.adbConnection!!.unregisterShellListener(adbShellObserver)
+        AdbManager.unregisterShellListener()
     }
 
     private fun initElements() {
@@ -75,7 +74,7 @@ class AdbShell : Fragment() {
 
     private fun initClickEvent() {
         sendButton.setOnClickListener {
-            viewModel.coreService?.adbConnection!!.sendCommand(textInput.text.toString())
+            AdbManager.sendCommand(textInput.text.toString(), requireContext())
             textInput.setText("")
         }
     }

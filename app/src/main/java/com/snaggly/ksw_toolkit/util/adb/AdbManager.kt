@@ -2,7 +2,6 @@ package com.snaggly.ksw_toolkit.util.adb
 
 import android.content.Context
 import android.net.TrafficStats
-import android.util.Log
 import projekt.auto.mcu.adb.AdbManager
 import projekt.auto.mcu.adb.lib.AdbConnection
 import projekt.auto.mcu.adb.lib.AdbCrypto
@@ -14,18 +13,15 @@ import java.net.Socket
 import java.security.NoSuchAlgorithmException
 
 object AdbManager {
-    private lateinit var socket : Socket
     private var isConnected = false
-    private lateinit var adbConnection: AdbConnection
-    private lateinit var shellStream: AdbStream
+    private var socket : Socket? = null
+    private var adbConnection: AdbConnection? = null
+    private var shellStream: AdbStream? = null
     private var previousShellText = ""
-
-    interface OnAdbShellDataReceived {
-        fun onDataReceived(text: String)
-    }
+    private var adbShellListener : ShellObserver? = null
 
     @Throws(AdbConnectionException::class)
-    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived) {
+    private fun connect(context: Context) {
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -34,13 +30,12 @@ object AdbManager {
                 TrafficStats.setThreadStatsTag(Thread.currentThread().id.toInt())
                 val adbCrypto = setupCrypto(context.filesDir)
                 socket = Socket()
-                socket.connect(InetSocketAddress("localhost", 5555), 5000)
+                socket!!.connect(InetSocketAddress("localhost", 5555), 5000)
                 adbConnection = AdbConnection.create(socket, adbCrypto)
-                adbConnection.connect()
-                shellStream = adbConnection.open(destination)
+                adbConnection!!.connect()
+                shellStream = adbConnection!!.open("shell:")
             } catch (e: Exception) {
                 outerException = e
-                Log.e("Snaggly", "Error in ADB connect AdbConnection - ${e.message}")
             }
         }
         setup.start()
@@ -49,46 +44,37 @@ object AdbManager {
         if (outerException != null) {
             throw AdbConnectionException(outerException!!)
         }
-
-        Thread {
-            while (!shellStream.isClosed) {
-                try {
-                    Thread.sleep(100)
-                    var shellText = String(shellStream.read(), Charsets.US_ASCII)
-                    if (shellText != previousShellText) {
-                        previousShellText = shellText
-                        callback.onDataReceived(shellText)
-                    }
-                }
-                catch (e : Exception) {
-                    isConnected = false
-                    Log.e("Snaggly", "Error in ADB connect ShellStream - ${e.message}")
-                }
-            }
-        }.start()
-        isConnected = true
+        isConnected = shellStream != null
     }
 
-    fun disconnect() {
-        if (isConnected) {
-            shellStream.close()
-            adbConnection.close()
-            socket.close()
-        }
+    private fun disconnect() {
+        shellStream?.close()
+        adbConnection?.close()
+        socket?.close()
+
         isConnected = false
     }
 
-    fun sendCommand(command: String) {
+    private fun writeCommand(command: String) {
+        Thread {
+            try {
+                shellStream?.write(" $command\n")
+            }
+            catch (e : Exception) {
+                isConnected = false
+            }
+        }.start()
+    }
+
+    fun sendCommand(command: String, context: Context) {
         if (isConnected) {
-            Thread {
-                try {
-                    shellStream.write(" $command\n")
-                }
-                catch (e : Exception) {
-                    Log.e("Snaggly", "Error in ADB SendCommand - $command - ${e.message}")
-                    isConnected = false
-                }
-            }.start()
+            writeCommand(command)
+        } else {
+            connect(context)
+            if (isConnected) {
+                writeCommand(command)
+            }
+            disconnect()
         }
     }
 
@@ -118,5 +104,33 @@ object AdbManager {
         override fun getStackTrace(): Array<StackTraceElement> {
             return outerException.stackTrace
         }
+    }
+
+    fun registerShellListener(listener: ShellObserver, context: Context) {
+        adbShellListener = listener
+
+        Thread {
+            while (adbShellListener != null) {
+                try {
+                    Thread.sleep(100)
+                    shellStream?.let { it ->
+                        val shellText = String(it.read(), Charsets.US_ASCII)
+                        if (shellText != previousShellText) {
+                            previousShellText = shellText
+                            adbShellListener?.update(shellText)
+                        }
+                    }
+                }
+                catch (e : Exception) {
+                    isConnected = false
+                }
+            }
+        }.start()
+        connect(context)
+    }
+
+    fun unregisterShellListener() {
+        disconnect()
+        adbShellListener = null
     }
 }

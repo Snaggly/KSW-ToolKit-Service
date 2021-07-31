@@ -9,7 +9,6 @@ import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
-import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -33,7 +32,7 @@ class McuReaderHandler(private val context: Context) {
             if (cmdType == 0x1C && data[0] == 0x1.toByte()) {
                 hasSerialInit = true
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
-                AdbServiceConnection.stopKsw()
+                AdbServiceConnection.stopKsw(context)
 
                 if (config.systemTweaks.logMcuEvent.data)
                     eventAction = EventActionLogger(context)
@@ -87,7 +86,7 @@ class McuReaderHandler(private val context: Context) {
         } else {
             ScreenSwitchEvent
         }
-        AdbServiceConnection.startKsw()
+        AdbServiceConnection.startKsw(context)
         McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
         if (config.systemTweaks.kswService.data) {
             McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
