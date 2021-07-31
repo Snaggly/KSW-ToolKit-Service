@@ -42,11 +42,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        mainViewModel.bindToMcuService()
     }
 
     override fun onResume() {
         super.onResume()
-        mainViewModel.bindToMcuService()
     }
 
     override fun onStop() {

@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.service.mcu.McuEventObserver
 import com.snaggly.ksw_toolkit.gui.viewmodels.McuListenerViewModel
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
 class McuListener : Fragment() {
 
@@ -33,8 +35,7 @@ class McuListener : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.parentActivity = requireActivity()
-        viewModel.coreService?.mcuReaderHandler?.registerMcuEventListener(viewModel.mcuObserver)
+        viewModel.coreService?.mcuReaderHandler?.registerMcuEventListener(mcuObserver)
     }
 
     override fun onStop() {
@@ -46,5 +47,17 @@ class McuListener : Fragment() {
         mcuEventRV = requireView().findViewById(R.id.McuEventsRV);
         mcuEventRV.layoutManager = LinearLayoutManager(context)
         mcuEventRV.adapter = viewModel.getMcuEventAdapter()
+    }
+
+    private val mcuObserver = object : McuEventObserver {
+        override fun update(eventType: EventManagerTypes?, cmdType: Int, data: ByteArray) {
+            if (data.size > 2)
+                if (cmdType == 0xA1 && data[0] == 0x17.toByte() && data[2] == 0x0.toByte())
+                    return
+            val eventName = eventType?.name ?: "Unknown Event"
+            requireActivity().runOnUiThread {
+                viewModel.addEntryToAdapter("$eventName - $cmdType", viewModel.dataBytesToString(data))
+            }
+        }
     }
 }

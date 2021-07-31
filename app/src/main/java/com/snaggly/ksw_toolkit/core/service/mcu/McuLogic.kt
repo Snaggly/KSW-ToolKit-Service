@@ -1,7 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.media.AudioManager
-import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
 import projekt.auto.mcu.ksw.serial.McuCommunicator
