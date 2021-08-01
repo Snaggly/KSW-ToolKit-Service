@@ -3,6 +3,7 @@ package com.snaggly.ksw_toolkit.core.service.mcu
 import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
+import android.os.Build
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
@@ -50,7 +51,18 @@ class McuReaderHandler(private val context: Context) {
                     LightEvent
                 }
 
-                McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                when {
+                    Build.VERSION.RELEASE.contains("11") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
+                    }
+                    Build.DISPLAY.contains("8937") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
+                    }
+                    else -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                    }
+                }
+
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
 
                 if (config.systemTweaks.interceptMcuCommand.data) {
