@@ -61,7 +61,7 @@ class CoreService : Service() {
             mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()
         } catch (e: Exception) {
-            return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")
+            return crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
 
         /*try {

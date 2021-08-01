@@ -48,9 +48,13 @@ object AdbManager {
     }
 
     private fun disconnect() {
-        shellStream?.close()
-        adbConnection?.close()
-        socket?.close()
+        val disconnecter = Thread {
+            shellStream?.close()
+            adbConnection?.close()
+            socket?.close()
+        }
+        disconnecter.start()
+        disconnecter.join()
 
         isConnected = false
     }

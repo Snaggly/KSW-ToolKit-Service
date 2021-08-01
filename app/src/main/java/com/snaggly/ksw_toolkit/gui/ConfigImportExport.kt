@@ -48,7 +48,7 @@ class ConfigImportExport : Fragment() {
                 Toast.makeText(requireContext(), "Imported from: ${importExportViewModel.importConfig()}", Toast.LENGTH_LONG).show()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
-                        .setMessage("Unable to import!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to import!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -58,7 +58,7 @@ class ConfigImportExport : Fragment() {
                 Toast.makeText(requireContext(), "Exported to: ${importExportViewModel.exportConfig()}", Toast.LENGTH_LONG).show()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
-                        .setMessage("Unable to export!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to export!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -68,7 +68,7 @@ class ConfigImportExport : Fragment() {
                 importExportViewModel.restartSystem(requireContext())
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-Config")
-                        .setMessage("Unable to restart!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to restart!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }

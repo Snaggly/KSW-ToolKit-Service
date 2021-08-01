@@ -102,7 +102,7 @@ class SystemTwaks : Fragment() {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -114,7 +114,7 @@ class SystemTwaks : Fragment() {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -139,7 +139,7 @@ class SystemTwaks : Fragment() {
                         viewModel.restartMcuReader()
                     } catch (exception: Exception) {
                         val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                                .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                                .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                         alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                         alertExc.show()
                     }
@@ -159,7 +159,7 @@ class SystemTwaks : Fragment() {
                     viewModel.restartMcuReader()
                 } catch (exception: Exception) {
                     val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                            .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                            .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                     alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     alert.show()
                 }
@@ -178,7 +178,7 @@ class SystemTwaks : Fragment() {
                 viewModel.getConfig(requireContext()).hideTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to mess with TopBar!\n\n${exception.stackTrace}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
             }
@@ -195,7 +195,7 @@ class SystemTwaks : Fragment() {
                 viewModel.getConfig(requireContext()).shrinkTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Unable to mess with TopBar!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to mess with TopBar!\n\n${exception.stackTrace}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
             }
@@ -208,7 +208,7 @@ class SystemTwaks : Fragment() {
                 viewModel.changeDPI(newDPI, requireContext())
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Exception Saving DPI!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Exception Saving DPI!\n\n${exception.stackTrace}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
             }
@@ -219,7 +219,7 @@ class SystemTwaks : Fragment() {
                 viewModel.giveTaskerPerm()
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Unable to give Tasker Logcat Permission!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to give Tasker Logcat Permission!\n\n${exception.stackTrace}").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.show()
             }
@@ -231,7 +231,7 @@ class SystemTwaks : Fragment() {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -243,7 +243,7 @@ class SystemTwaks : Fragment() {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -256,7 +256,7 @@ class SystemTwaks : Fragment() {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Could not restart McuReader!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }

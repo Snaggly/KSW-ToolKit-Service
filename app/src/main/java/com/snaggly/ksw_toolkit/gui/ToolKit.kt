@@ -60,7 +60,7 @@ class ToolKit : Fragment() {
                     mViewModel.setBrightness(requireContext(), progress)
                 } catch (exception: Exception) {
                     val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                            .setMessage("Unable to change System Brightness!\n\n${exception.localizedMessage}").create()
+                            .setMessage("Unable to change System Brightness!\n\n${exception.stackTrace}").create()
                     alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                     alertExc.show()
                 }
@@ -79,7 +79,7 @@ class ToolKit : Fragment() {
                 mViewModel.openOEMScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open OEM Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open OEM Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -90,7 +90,7 @@ class ToolKit : Fragment() {
                 mViewModel.openRadioScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open Radio Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open Radio Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -101,7 +101,7 @@ class ToolKit : Fragment() {
                 mViewModel.openFCamScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open F_CAM Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open F_CAM Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -112,7 +112,7 @@ class ToolKit : Fragment() {
                 mViewModel.openAuxScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open AUX Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open AUX Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -123,7 +123,7 @@ class ToolKit : Fragment() {
                 mViewModel.openDvrScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open DVR Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open DVR Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -134,7 +134,7 @@ class ToolKit : Fragment() {
                 mViewModel.openDvdScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open DVD Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open DVD Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -145,7 +145,7 @@ class ToolKit : Fragment() {
                 mViewModel.openDtvScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to open DTV Screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to open DTV Screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
@@ -156,7 +156,7 @@ class ToolKit : Fragment() {
                 mViewModel.closeScreen()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
-                        .setMessage("Unable to close screen!\n\n${exception.localizedMessage}").create()
+                        .setMessage("Unable to close screen!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }
