@@ -21,3 +21,7 @@ And MULF should be COMBOX for E series if I understand right
 
 FullBrightness:     --Mcu toString-----[ cmdType:6C - data:01-64 ]
 LowestBrightness:   --Mcu toString-----[ cmdType:6C - data:01-00 ]
+
+MediaButtons Yes: cmdType: 0x70, data: 0x0e-0x00
+MediaButtons  No: cmdType: 0x70, data: 0x0e-0x01
+

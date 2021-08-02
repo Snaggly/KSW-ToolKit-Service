@@ -64,36 +64,14 @@ class CoreService : Service() {
             return crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
 
-        /*try {
-            adbConnection.connect(applicationContext)
-            checkPermission()
-        } catch (e: Exception) {
-            return crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
-        }*/
-
         return START_STICKY
-    }
-
-    override fun onCreate() {
-        super.onCreate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
-        //adbConnection.disconnect()
     }
-
-    /*private fun checkPermission() {
-        if (applicationContext.checkSelfPermission("android.permission.READ_LOGS") != PackageManager.PERMISSION_GRANTED) {
-            adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
-            adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.INJECT_EVENTS")
-            val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-McuService").setMessage("Granted system permissions.\nPlease restart the app for effects to take in place").create()
-            alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-            alert.show()
-        }
-    }*/
 
     private fun crashOut(message: String) : Int {
         val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()

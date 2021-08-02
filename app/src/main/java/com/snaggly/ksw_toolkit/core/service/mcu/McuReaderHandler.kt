@@ -14,6 +14,7 @@ import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
+import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
 class McuReaderHandler(private val context: Context) {
     private var mcuEventListener : McuEventObserver? = null
@@ -54,9 +55,11 @@ class McuReaderHandler(private val context: Context) {
                 when {
                     Build.VERSION.RELEASE.contains("11") -> {
                         McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
+                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHS1")
                     }
                     Build.DISPLAY.contains("8937") -> {
                         McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
+                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHSL1")
                     }
                     else -> {
                         McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
