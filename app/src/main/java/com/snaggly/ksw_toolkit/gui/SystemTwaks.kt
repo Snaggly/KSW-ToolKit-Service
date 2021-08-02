@@ -28,12 +28,11 @@ class SystemTwaks : Fragment() {
     private lateinit var autoThemeToggle: SwitchCompat
     private lateinit var autoVolumeSwitch: SwitchCompat
     private lateinit var maxVolumeOnBootSwitch: SwitchCompat
-    private lateinit var changeDPIButton: Button
     private lateinit var giveTaskerLogcatPermBtn: Button
-    private lateinit var dpiInputField: TextInputEditText
     private lateinit var logCarDataToggle: SwitchCompat
     private lateinit var logMcuEventsToggle: SwitchCompat
     private lateinit var interceptMcuCommandToggle: SwitchCompat
+    private lateinit var extraBtnHandleToggle: SwitchCompat
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,12 +63,11 @@ class SystemTwaks : Fragment() {
         maxVolumeOnBootSwitch = requireView().findViewById(R.id.maxVolumeAtBootToggle)
         hideTopBarSwitch = requireView().findViewById(R.id.hideTopBarToggle)
         shrinkTopBarSwitch = requireView().findViewById(R.id.shrinkTopBarToggle)
-        changeDPIButton = requireView().findViewById(R.id.changeDpiBtn)
         giveTaskerLogcatPermBtn = requireView().findViewById(R.id.giveTaskerLogcat)
-        dpiInputField = requireView().findViewById(R.id.dpiTxtInput)
         logCarDataToggle = requireView().findViewById(R.id.logCarDataToggle)
         logMcuEventsToggle = requireView().findViewById(R.id.logMcuEventsToggle)
         interceptMcuCommandToggle = requireView().findViewById(R.id.interceptMcuCommandsToggle)
+        extraBtnHandleToggle = requireView().findViewById(R.id.extraBtnHandleToggle)
 
         startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
         stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
@@ -78,12 +76,10 @@ class SystemTwaks : Fragment() {
         maxVolumeOnBootSwitch.isChecked = viewModel.getConfig(requireContext()).maxVolume.data
         hideTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).hideTopBar.data
         shrinkTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).shrinkTopBar.data
-        val actualDpi = requireView().resources.displayMetrics.densityDpi
-        viewModel.getConfig(requireContext()).dpi.data = actualDpi
-        dpiInputField.setText(actualDpi.toString())
         logCarDataToggle.isChecked = viewModel.getConfig(requireContext()).carDataLogging.data
         logMcuEventsToggle.isChecked = viewModel.getConfig(requireContext()).logMcuEvent.data
         interceptMcuCommandToggle.isChecked = viewModel.getConfig(requireContext()).interceptMcuCommand.data
+        extraBtnHandleToggle.isChecked = viewModel.getConfig(requireContext()).extraMediaButtonHandle.data
         if (!viewModel.getConfig(requireContext()).kswService.data) {
             logCarDataToggle.isEnabled = true
             logMcuEventsToggle.isEnabled = true
@@ -201,19 +197,6 @@ class SystemTwaks : Fragment() {
             }
         }
 
-        changeDPIButton.setOnClickListener {
-            try {
-                val newDPI = Integer.parseInt(dpiInputField.text.toString())
-                viewModel.getConfig(requireContext()).dpi.data = newDPI
-                viewModel.changeDPI(newDPI, requireContext())
-            } catch (exception: Exception) {
-                val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                        .setMessage("Exception Saving DPI!\n\n${exception.stackTrace}").create()
-                alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-                alert.show()
-            }
-        }
-
         giveTaskerLogcatPermBtn.setOnClickListener {
             try {
                 viewModel.giveTaskerPerm()
@@ -257,6 +240,18 @@ class SystemTwaks : Fragment() {
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
+        }
+
+        extraBtnHandleToggle.setOnCheckedChangeListener { _, isChecked ->
+            try {
+                viewModel.extraButtons(isChecked)
+                viewModel.getConfig(requireContext()).extraMediaButtonHandle.data = isChecked
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                    .setMessage("Could not write to MCU!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }

@@ -9,7 +9,7 @@ class ConfigManager private constructor() : IConfigBean {
     private var configFile: File? = null
     lateinit var systemTweaks: SystemTweaks private set
     var eventManagers = HashMap<EventManagerTypes, EventManager>()
-    val gson = Gson()
+    private val gson = Gson()
 
     fun initBeans() {
         systemTweaks = SystemTweaks.initSystemTweaks()
@@ -40,9 +40,9 @@ class ConfigManager private constructor() : IConfigBean {
         configData.systemTweaks.maxVolume?.let { systemTweaks.maxVolume = it }
         configData.systemTweaks.hideTopBar?.let { systemTweaks.hideTopBar = it }
         configData.systemTweaks.shrinkTopBar?.let { systemTweaks.shrinkTopBar = it }
-        configData.systemTweaks.dpi?.let { systemTweaks.dpi = it }
         configData.systemTweaks.logMcuEvent?.let { systemTweaks.logMcuEvent = it }
         configData.systemTweaks.interceptMcuCommand?.let { systemTweaks.interceptMcuCommand = it }
+        configData.systemTweaks.extraMediaButtonHandle?.let { systemTweaks.extraMediaButtonHandle = it }
 
         for (type in configData.eventManagers) {
             configData.eventManagers[type.key]!!.eventMode?.let { eventManagers[type.key]?.eventMode = it }

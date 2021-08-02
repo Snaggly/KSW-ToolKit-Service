@@ -79,5 +79,6 @@
     <string name="reroute_navicallouts">Reroute NaviCallouts</string>
     <string name="give_tasker_read_logs_permission">Give Tasker READ_LOGS permission</string>
     <string name="intercept_mcucommmands">Intercept McuCommmands</string>
+    <string name="enable_media_tel_button_handling">Enable Media/Tel Button Handling</string>
 
 </resources>

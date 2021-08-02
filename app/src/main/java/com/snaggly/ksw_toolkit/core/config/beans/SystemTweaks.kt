@@ -1,7 +1,7 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
 import com.snaggly.ksw_toolkit.core.config.custom.BooleanSetting
-import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
+import com.wits.pms.statuscontrol.PowerManagerApp
 
 class SystemTweaks(startAtBoot: Boolean,
                    kswService: Boolean,
@@ -11,9 +11,9 @@ class SystemTweaks(startAtBoot: Boolean,
                    maxVolume: Boolean,
                    hideTopBar: Boolean,
                    shrinkTopBar: Boolean,
-                   dpi: Int,
                    logMcuEvent: Boolean,
-                   interceptMcuCommand: Boolean) {
+                   interceptMcuCommand: Boolean,
+                   extraMediaButtonHandle: Boolean) {
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
     var carDataLogging = BooleanSetting(carDataLogging)
@@ -22,9 +22,9 @@ class SystemTweaks(startAtBoot: Boolean,
     var maxVolume = BooleanSetting(maxVolume)
     var hideTopBar = BooleanSetting(hideTopBar)
     var shrinkTopBar = BooleanSetting(shrinkTopBar)
-    var dpi = IntegerSetting(dpi)
     var logMcuEvent = BooleanSetting(logMcuEvent)
     var interceptMcuCommand = BooleanSetting(interceptMcuCommand)
+    var extraMediaButtonHandle = BooleanSetting(extraMediaButtonHandle)
 
     companion object {
         fun initSystemTweaks() : SystemTweaks {
@@ -37,9 +37,9 @@ class SystemTweaks(startAtBoot: Boolean,
                     maxVolume = false,
                     hideTopBar = false,
                     shrinkTopBar = false,
-                    dpi = 160,
                     logMcuEvent = false,
-                    interceptMcuCommand = false
+                    interceptMcuCommand = false,
+                    extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0
             )
         }
     }
