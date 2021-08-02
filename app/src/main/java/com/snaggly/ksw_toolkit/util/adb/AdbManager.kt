@@ -60,14 +60,16 @@ object AdbManager {
     }
 
     private fun writeCommand(command: String) {
-        Thread {
+        var writer = Thread {
             try {
                 shellStream?.write(" $command\n")
             }
             catch (e : Exception) {
                 isConnected = false
             }
-        }.start()
+        }
+        writer.start()
+        writer.join()
     }
 
     fun sendCommand(command: String, context: Context) {

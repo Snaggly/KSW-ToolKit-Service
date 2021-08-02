@@ -45,13 +45,10 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.bindToMcuService()
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        //mainViewModel.unbindFromMcuService()
+    override fun onDestroy() {
+        super.onDestroy()
+        mainViewModel.unbindFromMcuService()
+        mainViewModel.startKsw()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
