@@ -40,13 +40,4 @@ class SystemTwaksViewModel(application: Application) : CoreServiceClient(applica
     fun giveTaskerPerm() {
         AdbManager.sendCommand("pm grant net.dinglisch.android.taskerm android.permission.READ_LOGS", getApplication<Application>().applicationContext)
     }
-
-    fun extraButtons(isEnabled: Boolean) {
-        val dataBytes = if (isEnabled) {
-            byteArrayOf(0x0e, 0x00)
-        } else {
-            byteArrayOf(0x0e, 0x01)
-        }
-        coreService?.mcuLogic?.mcuCommunicator!!.sendCommand(0x70, dataBytes, false)
-    }
 }

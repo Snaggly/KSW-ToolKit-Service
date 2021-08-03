@@ -24,4 +24,6 @@ LowestBrightness:   --Mcu toString-----[ cmdType:6C - data:01-00 ]
 
 MediaButtons Yes: cmdType: 0x70, data: 0x0e-0x00
 MediaButtons  No: cmdType: 0x70, data: 0x0e-0x01
+echo -en \\xf2\\x0\\x70\\x2\\xe\\x0\\x7F > /dev/ttyMSM1
+echo -en \\xf2\\x0\\x70\\x2\\xe\\x1\\x7E > /dev/ttyMSM1
 

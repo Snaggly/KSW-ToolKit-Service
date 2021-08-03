@@ -246,12 +246,13 @@ class SystemTwaks : Fragment() {
         }
 
         extraBtnHandleToggle.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.getConfig(requireContext()).extraMediaButtonHandle.data = isChecked
+
             try {
-                viewModel.extraButtons(isChecked)
-                viewModel.getConfig(requireContext()).extraMediaButtonHandle.data = isChecked
+                viewModel.restartMcuReader()
             } catch (exception: Exception) {
                 val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
-                    .setMessage("Could not write to MCU!\n\n${exception.stackTrace}").create()
+                    .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
                 alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alertExc.show()
             }

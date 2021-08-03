@@ -96,10 +96,18 @@ class McuReaderHandler(private val context: Context) {
         parseMcuEvent.carDataEvent = CarDataEvent
         parseMcuEvent.benzDataEvent = BenzDataEvent
 
-        parseMcuEvent.screenSwitchEvent = if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
-            ScreenSwitchEventNoOEMScreen
+        if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
+            parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen
         } else {
-            ScreenSwitchEvent
+            val dataBytes : ByteArray
+            if (config.systemTweaks.extraMediaButtonHandle.data) {
+                parseMcuEvent.screenSwitchEvent = ScreenSwitchMediaHack
+                dataBytes = byteArrayOf(0x0e, 0x00)
+            } else {
+                parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent
+                dataBytes = byteArrayOf(0x0e, 0x01)
+            }
+            McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
         }
         AdbServiceConnection.startKsw(context)
         McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
