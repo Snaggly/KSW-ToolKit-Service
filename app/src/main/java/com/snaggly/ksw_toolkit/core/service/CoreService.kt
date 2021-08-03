@@ -64,19 +64,25 @@ class CoreService : Service() {
             return crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
 
+        showMessage("KSW-ToolKit-Service started")
         return START_STICKY
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        showMessage("KSW-ToolKit-Service stopped")
         AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
+        super.onDestroy()
     }
 
-    private fun crashOut(message: String) : Int {
+    private fun showMessage(message: String) {
         val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
         alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         alert.show()
+    }
+
+    private fun crashOut(message: String) : Int {
+        showMessage(message)
         stopSelf()
         return START_NOT_STICKY
     }
