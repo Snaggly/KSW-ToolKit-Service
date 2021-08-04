@@ -11,9 +11,9 @@ class SystemTwaksViewModel(application: Application) : CoreServiceClient(applica
 
     private var config: SystemTweaks? = null
 
-    fun getConfig(context: Context) : SystemTweaks {
+    fun getConfig() : SystemTweaks {
         if (config == null)
-            config = ConfigManager.getConfig(context.filesDir.absolutePath).systemTweaks
+            config = ConfigManager.getConfig(getApplication<Application>().applicationContext.filesDir.absolutePath).systemTweaks
         return config!!
     }
 

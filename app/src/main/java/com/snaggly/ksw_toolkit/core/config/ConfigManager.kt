@@ -43,6 +43,8 @@ class ConfigManager private constructor() : IConfigBean {
         configData.systemTweaks.logMcuEvent?.let { systemTweaks.logMcuEvent = it }
         configData.systemTweaks.interceptMcuCommand?.let { systemTweaks.interceptMcuCommand = it }
         configData.systemTweaks.extraMediaButtonHandle?.let { systemTweaks.extraMediaButtonHandle = it }
+        configData.systemTweaks.nightBrightness?.let { systemTweaks.nightBrightness = it }
+        configData.systemTweaks.nightBrightnessLevel?.let { systemTweaks.nightBrightnessLevel = it }
 
         for (type in configData.eventManagers) {
             configData.eventManagers[type.key]!!.eventMode?.let { eventManagers[type.key]?.eventMode = it }

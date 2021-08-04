@@ -13,6 +13,7 @@ import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
+import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
@@ -36,6 +37,20 @@ class McuReaderHandler(private val context: Context) {
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
                 AdbServiceConnection.stopKsw(context)
 
+                when {
+                    Build.VERSION.RELEASE.contains("11") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
+                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHS1")
+                    }
+                    Build.DISPLAY.contains("8937") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
+                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHSL1")
+                    }
+                    else -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                    }
+                }
+
                 if (config.systemTweaks.logMcuEvent.data)
                     eventAction = EventActionLogger(context)
 
@@ -52,17 +67,13 @@ class McuReaderHandler(private val context: Context) {
                     LightEvent
                 }
 
-                when {
-                    Build.VERSION.RELEASE.contains("11") -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
-                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHS1")
-                    }
-                    Build.DISPLAY.contains("8937") -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
-                        McuLogic.mcuCommunicator!!.mcuWriter = SerialWriter("/dev/ttyHSL1")
-                    }
-                    else -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                parseMcuEvent.carDataEvent.lightEvent.hasNightBrightness = config.systemTweaks.nightBrightness.data
+                if (config.systemTweaks.nightBrightness.data) {
+                    McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
+                    parseMcuEvent.carDataEvent.lightEvent.nightBrightnessLevel = config.systemTweaks.nightBrightnessLevel.data
+                } else {
+                    if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
+                        McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
                     }
                 }
 
@@ -109,6 +120,7 @@ class McuReaderHandler(private val context: Context) {
             }
             McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
         }
+
         AdbServiceConnection.startKsw(context)
         McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
         if (config.systemTweaks.kswService.data) {
@@ -128,6 +140,13 @@ class McuReaderHandler(private val context: Context) {
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()
         sendingInterceptor.stopReading()
+        if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
+            McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
+        }
+        if (config.systemTweaks.extraMediaButtonHandle.data && PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
+            val dataBytes = byteArrayOf(0x0e, 0x01)
+            McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
+        }
         McuLogic.mcuCommunicator?.mcuReader?.stopReading()
         hasSerialInit = false
     }

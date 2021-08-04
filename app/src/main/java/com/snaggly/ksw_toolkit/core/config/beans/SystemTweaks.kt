@@ -1,6 +1,7 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
 import com.snaggly.ksw_toolkit.core.config.custom.BooleanSetting
+import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
 import com.wits.pms.statuscontrol.PowerManagerApp
 
 class SystemTweaks(startAtBoot: Boolean,
@@ -13,7 +14,9 @@ class SystemTweaks(startAtBoot: Boolean,
                    shrinkTopBar: Boolean,
                    logMcuEvent: Boolean,
                    interceptMcuCommand: Boolean,
-                   extraMediaButtonHandle: Boolean) {
+                   extraMediaButtonHandle: Boolean,
+                   nightBrightness: Boolean,
+                   nightBrightnessLevel: Int) {
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
     var carDataLogging = BooleanSetting(carDataLogging)
@@ -25,6 +28,8 @@ class SystemTweaks(startAtBoot: Boolean,
     var logMcuEvent = BooleanSetting(logMcuEvent)
     var interceptMcuCommand = BooleanSetting(interceptMcuCommand)
     var extraMediaButtonHandle = BooleanSetting(extraMediaButtonHandle)
+    var nightBrightness = BooleanSetting(nightBrightness)
+    var nightBrightnessLevel = IntegerSetting(nightBrightnessLevel)
 
     companion object {
         fun initSystemTweaks() : SystemTweaks {
@@ -39,7 +44,9 @@ class SystemTweaks(startAtBoot: Boolean,
                     shrinkTopBar = false,
                     logMcuEvent = false,
                     interceptMcuCommand = false,
-                    extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0
+                    extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0,
+                    nightBrightness = false,
+                    nightBrightnessLevel = 20
             )
         }
     }

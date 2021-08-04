@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.SeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputEditText
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.gui.viewmodels.SystemTwaksViewModel
 
@@ -33,6 +33,8 @@ class SystemTwaks : Fragment() {
     private lateinit var logMcuEventsToggle: SwitchCompat
     private lateinit var interceptMcuCommandToggle: SwitchCompat
     private lateinit var extraBtnHandleToggle: SwitchCompat
+    private lateinit var nightBrightnessToggle: SwitchCompat
+    private lateinit var nightBrightnessSeekBar: SeekBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -68,32 +70,39 @@ class SystemTwaks : Fragment() {
         logMcuEventsToggle = requireView().findViewById(R.id.logMcuEventsToggle)
         interceptMcuCommandToggle = requireView().findViewById(R.id.interceptMcuCommandsToggle)
         extraBtnHandleToggle = requireView().findViewById(R.id.extraBtnHandleToggle)
+        nightBrightnessToggle = requireView().findViewById(R.id.nightBrightnessToggle)
+        nightBrightnessSeekBar = requireView().findViewById(R.id.nightBrightnessSeekBar)
 
-        startAtBoot.isChecked = viewModel.getConfig(requireContext()).startAtBoot.data
-        stopKswServiceSwitch.isChecked = viewModel.getConfig(requireContext()).kswService.data
-        autoThemeToggle.isChecked = viewModel.getConfig(requireContext()).autoTheme.data
-        autoVolumeSwitch.isChecked = viewModel.getConfig(requireContext()).autoVolume.data
-        maxVolumeOnBootSwitch.isChecked = viewModel.getConfig(requireContext()).maxVolume.data
-        hideTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).hideTopBar.data
-        shrinkTopBarSwitch.isChecked = viewModel.getConfig(requireContext()).shrinkTopBar.data
-        logCarDataToggle.isChecked = viewModel.getConfig(requireContext()).carDataLogging.data
-        logMcuEventsToggle.isChecked = viewModel.getConfig(requireContext()).logMcuEvent.data
-        interceptMcuCommandToggle.isChecked = viewModel.getConfig(requireContext()).interceptMcuCommand.data
-        extraBtnHandleToggle.isChecked = viewModel.getConfig(requireContext()).extraMediaButtonHandle.data
-        if (!viewModel.getConfig(requireContext()).kswService.data) {
+        startAtBoot.isChecked = viewModel.getConfig().startAtBoot.data
+        stopKswServiceSwitch.isChecked = viewModel.getConfig().kswService.data
+        autoThemeToggle.isChecked = viewModel.getConfig().autoTheme.data
+        autoVolumeSwitch.isChecked = viewModel.getConfig().autoVolume.data
+        maxVolumeOnBootSwitch.isChecked = viewModel.getConfig().maxVolume.data
+        hideTopBarSwitch.isChecked = viewModel.getConfig().hideTopBar.data
+        shrinkTopBarSwitch.isChecked = viewModel.getConfig().shrinkTopBar.data
+        logCarDataToggle.isChecked = viewModel.getConfig().carDataLogging.data
+        logMcuEventsToggle.isChecked = viewModel.getConfig().logMcuEvent.data
+        interceptMcuCommandToggle.isChecked = viewModel.getConfig().interceptMcuCommand.data
+        extraBtnHandleToggle.isChecked = viewModel.getConfig().extraMediaButtonHandle.data
+        nightBrightnessToggle.isChecked = viewModel.getConfig().nightBrightness.data
+        nightBrightnessSeekBar.progress = viewModel.getConfig().nightBrightnessLevel.data
+        if (!viewModel.getConfig().kswService.data) {
             logCarDataToggle.isEnabled = true
             logMcuEventsToggle.isEnabled = true
             interceptMcuCommandToggle.isEnabled = true
+        }
+        if (!nightBrightnessToggle.isChecked) {
+            nightBrightnessSeekBar.isEnabled = false
         }
     }
 
     private fun initButtonClickEvents() {
         startAtBoot.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).startAtBoot.data = isChecked
+            viewModel.getConfig().startAtBoot.data = isChecked
         }
 
         autoThemeToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).autoTheme.data = isChecked
+            viewModel.getConfig().autoTheme.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
@@ -105,7 +114,7 @@ class SystemTwaks : Fragment() {
         }
 
         autoVolumeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).autoVolume.data = isChecked
+            viewModel.getConfig().autoVolume.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
@@ -117,11 +126,11 @@ class SystemTwaks : Fragment() {
         }
 
         maxVolumeOnBootSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).maxVolume.data = isChecked
+            viewModel.getConfig().maxVolume.data = isChecked
         }
 
         stopKswServiceSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).kswService.data = isChecked
+            viewModel.getConfig().kswService.data = isChecked
 
             if (!isChecked) {
                 val alert = AlertDialog.Builder(requireContext(), R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
@@ -171,7 +180,7 @@ class SystemTwaks : Fragment() {
                 } else {
                     viewModel.showTopBar()
                 }
-                viewModel.getConfig(requireContext()).hideTopBar.data = isChecked
+                viewModel.getConfig().hideTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.stackTrace}").create()
@@ -188,7 +197,7 @@ class SystemTwaks : Fragment() {
                 } else {
                     viewModel.restoreTopBar()
                 }
-                viewModel.getConfig(requireContext()).shrinkTopBar.data = isChecked
+                viewModel.getConfig().shrinkTopBar.data = isChecked
             } catch (exception: Exception) {
                 val alert = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
                         .setMessage("Unable to mess with TopBar!\n\n${exception.stackTrace}").create()
@@ -209,7 +218,7 @@ class SystemTwaks : Fragment() {
         }
 
         logCarDataToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).carDataLogging.data = isChecked
+            viewModel.getConfig().carDataLogging.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
@@ -221,7 +230,7 @@ class SystemTwaks : Fragment() {
         }
 
         logMcuEventsToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).logMcuEvent.data = isChecked
+            viewModel.getConfig().logMcuEvent.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
@@ -233,7 +242,7 @@ class SystemTwaks : Fragment() {
         }
 
         interceptMcuCommandToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).interceptMcuCommand.data = isChecked
+            viewModel.getConfig().interceptMcuCommand.data = isChecked
 
             try {
                 viewModel.restartMcuReader()
@@ -246,7 +255,7 @@ class SystemTwaks : Fragment() {
         }
 
         extraBtnHandleToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig(requireContext()).extraMediaButtonHandle.data = isChecked
+            viewModel.getConfig().extraMediaButtonHandle.data = isChecked
 
             try {
                 viewModel.restartMcuReader()
@@ -257,5 +266,39 @@ class SystemTwaks : Fragment() {
                 alertExc.show()
             }
         }
+
+        nightBrightnessToggle.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.getConfig().nightBrightness.data = isChecked
+            nightBrightnessSeekBar.isEnabled = isChecked
+
+            try {
+                viewModel.restartMcuReader()
+            } catch (exception: Exception) {
+                val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit-SystemTweaks")
+                    .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
+                alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                alertExc.show()
+            }
+        }
+
+        nightBrightnessSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                viewModel.getConfig().nightBrightnessLevel.data = progress
+                try {
+                    viewModel.restartMcuReader()
+                } catch (exception: Exception) {
+                    val alertExc = AlertDialog.Builder(context, R.style.alertDialogNight).setTitle("KSW-ToolKit")
+                        .setMessage("Could not restart McuReader!\n\n${exception.stackTrace}").create()
+                    alertExc.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                    alertExc.show()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 }
