@@ -6,7 +6,7 @@ import com.wits.pms.statuscontrol.PowerManagerApp
 
 class SystemTweaks(startAtBoot: Boolean,
                    kswService: Boolean,
-                   carDataLogging: Boolean,
+                   soundRestorer: Boolean,
                    autoTheme: Boolean,
                    autoVolume: Boolean,
                    maxVolume: Boolean,
@@ -19,7 +19,7 @@ class SystemTweaks(startAtBoot: Boolean,
                    nightBrightnessLevel: Int) {
     var startAtBoot = BooleanSetting(startAtBoot)
     var kswService = BooleanSetting(kswService)
-    var carDataLogging = BooleanSetting(carDataLogging)
+    var soundRestorer = BooleanSetting(soundRestorer)
     var autoTheme = BooleanSetting(autoTheme)
     var autoVolume = BooleanSetting(autoVolume)
     var maxVolume = BooleanSetting(maxVolume)
@@ -35,15 +35,15 @@ class SystemTweaks(startAtBoot: Boolean,
         fun initSystemTweaks() : SystemTweaks {
             return SystemTweaks(
                     startAtBoot = true,
-                    kswService = true,
-                    carDataLogging = false,
+                    kswService = false,
+                    soundRestorer = true,
                     autoTheme = false,
                     autoVolume = false,
-                    maxVolume = false,
+                    maxVolume = true,
                     hideTopBar = false,
                     shrinkTopBar = false,
-                    logMcuEvent = false,
-                    interceptMcuCommand = false,
+                    logMcuEvent = true,
+                    interceptMcuCommand = true,
                     extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0,
                     nightBrightness = false,
                     nightBrightnessLevel = 20

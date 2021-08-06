@@ -34,7 +34,7 @@ class ConfigManager private constructor() : IConfigBean {
         val configData = gson.fromJson(json, ConfigData::class.java)
         configData.systemTweaks.startAtBoot?.let { systemTweaks.startAtBoot = it }
         configData.systemTweaks.kswService?.let { systemTweaks.kswService = it }
-        configData.systemTweaks.carDataLogging?.let { systemTweaks.carDataLogging = it }
+        configData.systemTweaks.soundRestorer?.let { systemTweaks.soundRestorer = it }
         configData.systemTweaks.autoTheme?.let { systemTweaks.autoTheme = it }
         configData.systemTweaks.autoVolume?.let { systemTweaks.autoVolume = it }
         configData.systemTweaks.maxVolume?.let { systemTweaks.maxVolume = it }

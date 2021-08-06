@@ -97,14 +97,14 @@
             </LinearLayout>
             <LinearLayout>
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/logCarDataToggle"
+                    android:id="@+id/soundRestorerToggle"
                     android:enabled="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/log_car_data"
+                    android:text="@string/sound_restorer"
                     style="@style/switchTextStyle"/>
             </LinearLayout>
             <LinearLayout>

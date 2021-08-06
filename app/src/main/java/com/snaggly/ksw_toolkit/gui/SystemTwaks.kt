@@ -29,7 +29,7 @@ class SystemTwaks : Fragment() {
     private lateinit var autoVolumeSwitch: SwitchCompat
     private lateinit var maxVolumeOnBootSwitch: SwitchCompat
     private lateinit var giveTaskerLogcatPermBtn: Button
-    private lateinit var logCarDataToggle: SwitchCompat
+    private lateinit var soundRestorerToggle: SwitchCompat
     private lateinit var logMcuEventsToggle: SwitchCompat
     private lateinit var interceptMcuCommandToggle: SwitchCompat
     private lateinit var extraBtnHandleToggle: SwitchCompat
@@ -66,7 +66,7 @@ class SystemTwaks : Fragment() {
         hideTopBarSwitch = requireView().findViewById(R.id.hideTopBarToggle)
         shrinkTopBarSwitch = requireView().findViewById(R.id.shrinkTopBarToggle)
         giveTaskerLogcatPermBtn = requireView().findViewById(R.id.giveTaskerLogcat)
-        logCarDataToggle = requireView().findViewById(R.id.logCarDataToggle)
+        soundRestorerToggle = requireView().findViewById(R.id.soundRestorerToggle)
         logMcuEventsToggle = requireView().findViewById(R.id.logMcuEventsToggle)
         interceptMcuCommandToggle = requireView().findViewById(R.id.interceptMcuCommandsToggle)
         extraBtnHandleToggle = requireView().findViewById(R.id.extraBtnHandleToggle)
@@ -80,14 +80,14 @@ class SystemTwaks : Fragment() {
         maxVolumeOnBootSwitch.isChecked = viewModel.getConfig().maxVolume.data
         hideTopBarSwitch.isChecked = viewModel.getConfig().hideTopBar.data
         shrinkTopBarSwitch.isChecked = viewModel.getConfig().shrinkTopBar.data
-        logCarDataToggle.isChecked = viewModel.getConfig().carDataLogging.data
+        soundRestorerToggle.isChecked = viewModel.getConfig().soundRestorer.data
         logMcuEventsToggle.isChecked = viewModel.getConfig().logMcuEvent.data
         interceptMcuCommandToggle.isChecked = viewModel.getConfig().interceptMcuCommand.data
         extraBtnHandleToggle.isChecked = viewModel.getConfig().extraMediaButtonHandle.data
         nightBrightnessToggle.isChecked = viewModel.getConfig().nightBrightness.data
         nightBrightnessSeekBar.progress = viewModel.getConfig().nightBrightnessLevel.data
         if (!viewModel.getConfig().kswService.data) {
-            logCarDataToggle.isEnabled = true
+            soundRestorerToggle.isEnabled = true
             logMcuEventsToggle.isEnabled = true
             interceptMcuCommandToggle.isEnabled = true
         }
@@ -137,7 +137,7 @@ class SystemTwaks : Fragment() {
                         .setMessage("You are about to shut down the built in KSW McuService. This could lead to unaccounted issues. Are you sure you still want to proceed?").create()
                 alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, "Yes!") { _, _ ->
-                    logCarDataToggle.isEnabled = true
+                    soundRestorerToggle.isEnabled = true
                     logMcuEventsToggle.isEnabled = true
                     interceptMcuCommandToggle.isEnabled = true
                     try {
@@ -154,10 +154,10 @@ class SystemTwaks : Fragment() {
                 }
                 alert.show()
             } else {
-                logCarDataToggle.isChecked = false
+                soundRestorerToggle.isChecked = false
                 logMcuEventsToggle.isChecked = false
                 interceptMcuCommandToggle.isChecked = false
-                logCarDataToggle.isEnabled = false
+                soundRestorerToggle.isEnabled = false
                 logMcuEventsToggle.isEnabled = false
                 interceptMcuCommandToggle.isEnabled = false
                 try {
@@ -217,8 +217,8 @@ class SystemTwaks : Fragment() {
             }
         }
 
-        logCarDataToggle.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.getConfig().carDataLogging.data = isChecked
+        soundRestorerToggle.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.getConfig().soundRestorer.data = isChecked
             try {
                 viewModel.restartMcuReader()
             } catch (exception: Exception) {
