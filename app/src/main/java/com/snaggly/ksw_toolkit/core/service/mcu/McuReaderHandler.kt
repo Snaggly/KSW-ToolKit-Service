@@ -78,6 +78,9 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 parseMcuEvent.idleEvent.armBackTapper()
+
+                //Get current CarData
+                McuLogic.mcuCommunicator!!.sendCommand(104, byteArrayOf(5, 0), false)
             }
         }
     }
