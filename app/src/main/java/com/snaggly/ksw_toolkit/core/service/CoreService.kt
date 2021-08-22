@@ -8,6 +8,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.snaggly.ksw_toolkit.BuildConfig
@@ -54,36 +55,38 @@ class CoreService : Service() {
     val mcuLogic = McuLogic
     var mcuReaderHandler : McuReaderHandler? = null
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onCreate() {
         startMyOwnForeground()
 
         try {
             mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()
         } catch (e: Exception) {
-            return crashOut("Could not start McuReader!\n\n${e.stackTrace}")
+            crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
 
         showMessage("KSW-ToolKit-Service started")
-        return START_STICKY
     }
 
     override fun onDestroy() {
-        showMessage("KSW-ToolKit-Service stopped")
+        showAlertMessage("KSW-ToolKit-Service stopped")
         AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
         super.onDestroy()
     }
 
     private fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showAlertMessage(message: String) {
         val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
         alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         alert.show()
     }
 
-    private fun crashOut(message: String) : Int {
-        showMessage(message)
+    private fun crashOut(message: String) {
+        showAlertMessage(message)
         stopSelf()
-        return START_NOT_STICKY
     }
 }
