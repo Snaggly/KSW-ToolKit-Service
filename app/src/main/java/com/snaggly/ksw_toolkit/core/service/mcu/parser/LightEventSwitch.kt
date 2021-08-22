@@ -11,7 +11,7 @@ object LightEventSwitch : ILightEvent {
     var uiModeManager : UiModeManager? = null
 
     override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
-        if (data[1].and(7) == 0x05.toByte()) {
+        if (data[1].and(7) > 1) {
             uiModeManager?.nightMode = UiModeManager.MODE_NIGHT_YES
             if(hasNightBrightness) {
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(thisNightBrightnessLevel.toByte()))
