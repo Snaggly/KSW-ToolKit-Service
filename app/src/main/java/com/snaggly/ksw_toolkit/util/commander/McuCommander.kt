@@ -16,16 +16,17 @@ object McuCommander {
 
             McuCommandsEnum.BrightnessInc -> {
                 var currentBrightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0xFF)
-                currentBrightness += 51
-                currentBrightness = currentBrightness.and(0xFF)
+                currentBrightness = (currentBrightness * 1.5).toInt()
+                if (currentBrightness > 0xFF)
+                    currentBrightness = 0xFF
                 Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness)
             }
 
             McuCommandsEnum.BrightnessDec -> {
                 var currentBrightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0xFF)
-                currentBrightness -= 51
-                if (currentBrightness < 0)
-                    currentBrightness = 0
+                currentBrightness = (currentBrightness / 1.5).toInt()
+                if (currentBrightness < 10)
+                    currentBrightness = 10
                 Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness)
             }
 
