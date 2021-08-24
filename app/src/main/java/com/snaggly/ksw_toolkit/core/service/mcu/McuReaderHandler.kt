@@ -21,7 +21,7 @@ class McuReaderHandler(private val context: Context) {
     private var mcuEventListener : McuEventObserver? = null
     private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
     private val brightnessObserver = BrightnessObserver(context)
-    private val sendingInterceptor = McuSenderInterceptor()
+    private val sendingInterceptor = McuSenderInterceptor(100)
     private lateinit var eventAction : EventAction
     private var parseMcuEvent = McuEvent(context)
     private var hasSerialInit = false
