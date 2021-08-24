@@ -13,9 +13,7 @@ class ConfigManager private constructor() : IConfigBean {
 
     fun initBeans() {
         systemTweaks = SystemTweaks.initSystemTweaks()
-        for (type in EventManagerTypes.values()) {
-            eventManagers[type] = EventManager.initEventManager()
-        }
+        eventManagers = EventManager.initStandardButtons()
     }
 
     override fun saveConfig() {
