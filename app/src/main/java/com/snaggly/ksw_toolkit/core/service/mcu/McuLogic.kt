@@ -18,6 +18,7 @@ object McuLogic {
     //Param
     var speedMaxVolume = 80
     var minVolume = 0.75f
+    var actionLock = false
 
     init {
         try{
