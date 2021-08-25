@@ -41,7 +41,7 @@ class EventManager(eventMode: EventMode, keyCode: Int, appName: String, mcuComma
                 ),
                 EventManagerTypes.KnobTiltLeft to EventManager(
                     EventMode.KeyEvent,
-                    KeyCode.DPAD_RIGHT.keycode,
+                    KeyCode.DPAD_LEFT.keycode,
                     "",
                     -1
                 ),
