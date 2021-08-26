@@ -61,6 +61,41 @@ class McuReaderHandler(private val context: Context) {
                     }
                 }
 
+                //Check if Service should handle extra Media Buttons
+                if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
+                    parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen
+                } else {
+                    val dataBytes : ByteArray
+                    if (config.systemTweaks.extraMediaButtonHandle.data) {
+                        parseMcuEvent.screenSwitchEvent = ScreenSwitchMediaHack
+                        dataBytes = byteArrayOf(0x0e, 0x00)
+                    } else {
+                        parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent
+                        dataBytes = byteArrayOf(0x0e, 0x01)
+                    }
+                    McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
+                }
+
+                //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
+                if (config.systemTweaks.autoTheme.data) {
+                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch.apply {
+                        uiModeManager = context.getSystemService(UiModeManager::class.java)
+                    }
+                } else {
+                    parseMcuEvent.carDataEvent.lightEvent = LightEvent
+                }
+
+                //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
+                parseMcuEvent.carDataEvent.lightEvent.hasNightBrightness = config.systemTweaks.nightBrightness.data
+                if (config.systemTweaks.nightBrightness.data) {
+                    McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
+                    parseMcuEvent.carDataEvent.lightEvent.nightBrightnessLevel = config.systemTweaks.nightBrightnessLevel.data
+                } else {
+                    if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
+                        McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
+                    }
+                }
+
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
                 if (config.systemTweaks.logMcuEvent.data)
                     eventAction = EventActionLogger(context)
@@ -98,41 +133,6 @@ class McuReaderHandler(private val context: Context) {
 
     fun startMcuReader() {
         eventAction = EventAction(context)
-
-        //Check if Service should handle extra Media Buttons
-        if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
-            parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen
-        } else {
-            val dataBytes : ByteArray
-            if (config.systemTweaks.extraMediaButtonHandle.data) {
-                parseMcuEvent.screenSwitchEvent = ScreenSwitchMediaHack
-                dataBytes = byteArrayOf(0x0e, 0x00)
-            } else {
-                parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent
-                dataBytes = byteArrayOf(0x0e, 0x01)
-            }
-            McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
-        }
-
-        //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
-        if (config.systemTweaks.autoTheme.data) {
-            parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch.apply {
-                uiModeManager = context.getSystemService(UiModeManager::class.java)
-            }
-        } else {
-            parseMcuEvent.carDataEvent.lightEvent = LightEvent
-        }
-
-        //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
-        parseMcuEvent.carDataEvent.lightEvent.hasNightBrightness = config.systemTweaks.nightBrightness.data
-        if (config.systemTweaks.nightBrightness.data) {
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
-            parseMcuEvent.carDataEvent.lightEvent.nightBrightnessLevel = config.systemTweaks.nightBrightnessLevel.data
-        } else {
-            if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
-                McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
-            }
-        }
 
         //Start CenterService-McuService. If CenterService has to be hijacked, I need to wait until it's ready.
         AdbServiceConnection.startKsw(context)
