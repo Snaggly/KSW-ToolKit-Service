@@ -46,7 +46,7 @@ class SystemTweaks(startAtBoot: Boolean,
                     interceptMcuCommand = true,
                     extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0,
                     nightBrightness = false,
-                    nightBrightnessLevel = 20
+                    nightBrightnessLevel = 65
             )
         }
     }
