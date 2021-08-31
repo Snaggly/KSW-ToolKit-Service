@@ -17,14 +17,14 @@ open class EventAction(private val context: Context) {
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
-                    if (!(McuLogic.actionLock && eventConfig.keyCode.data == KeyCode.HOME.keycode))
-                        KeyInjector.sendKey(eventConfig.keyCode.data)
+                    if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
+                        KeyInjector.sendKey(eventConfig.keyCode!!)
                 }
                 EventMode.StartApp -> {
-                    AppStarter.launchAppById(eventConfig.appName.data, context)
+                    AppStarter.launchAppById(eventConfig.appName!!, context)
                 }
                 EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], McuLogic.mcuCommunicator, context)
+                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode!!], McuLogic.mcuCommunicator, context)
                 }
                 else -> {}
             }

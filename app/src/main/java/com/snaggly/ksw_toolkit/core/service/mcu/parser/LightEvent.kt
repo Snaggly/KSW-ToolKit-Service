@@ -1,6 +1,5 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
-import android.app.UiModeManager
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import projekt.auto.mcu.ksw.serial.collection.McuCommands

@@ -6,16 +6,15 @@ import android.content.Intent
 import android.media.AudioManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
-import com.snaggly.ksw_toolkit.core.service.CoreService
+import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.wits.pms.statuscontrol.PowerManagerApp
-
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (Intent.ACTION_BOOT_COMPLETED == intent!!.action) {
             val config = ConfigManager.getConfig(context?.filesDir!!.absolutePath)
 
-            if (config.systemTweaks.maxVolume.data) {
+            if (config.systemOptions.maxVolume!!) {
                 try {
                     val armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol")
                     val armPhoneVol = PowerManagerApp.getManager().getSettingsInt("Android_phone_vol")
@@ -40,8 +39,8 @@ class BootReceiver : BroadcastReceiver() {
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), 0)
             }
 
-            if (config.systemTweaks.startAtBoot.data) {
-                context.startForegroundService(Intent(context, CoreService::class.java))
+            if (config.systemOptions.startAtBoot!!) {
+                AdbServiceConnection.startThisService(context)
             }
         }
     }

@@ -13,11 +13,11 @@ object McuLogic {
 
     //Intern
     private var autoVolume = false
-    var senderInterval: Long = 1000
+    private var senderInterval: Long = 1000
 
     //Param
-    var speedMaxVolume = 80
-    var minVolume = 0.75f
+    private var speedMaxVolume = 80
+    private var minVolume = 0.75f
     var actionLock = false
 
     init {

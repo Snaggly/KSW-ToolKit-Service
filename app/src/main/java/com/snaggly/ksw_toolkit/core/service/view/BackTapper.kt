@@ -24,7 +24,7 @@ class BackTapper(val context: Context) {
         handler.post {
             val windowParam = WindowManager.LayoutParams()
             windowParam.apply {
-                type = 2010
+                type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR
                 flags = windowParam.flags.or(1024).or(262144).or(524288)
                 height = -1
                 width = -1

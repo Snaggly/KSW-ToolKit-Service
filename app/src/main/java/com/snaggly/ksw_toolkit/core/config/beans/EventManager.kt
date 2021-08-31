@@ -1,23 +1,15 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
-import com.snaggly.ksw_toolkit.core.config.custom.IntegerSetting
-import com.snaggly.ksw_toolkit.core.config.custom.StringSetting
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
 
-class EventManager(eventMode: EventMode, keyCode: Int, appName: String, mcuCommandMode: Int){
-
-    var eventMode = eventMode
-    var keyCode = IntegerSetting(keyCode)
-    var appName = StringSetting(appName)
-    var mcuCommandMode = IntegerSetting(mcuCommandMode)
+class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: String?,
+                   var mcuCommandMode: Int?
+){
 
     companion object {
-        fun initEventManager() : EventManager{
-            return EventManager(EventMode.NoAssignment, -1, "", -1)
-        }
 
         fun initStandardButtons(): HashMap<EventManagerTypes, EventManager> {
             return hashMapOf(

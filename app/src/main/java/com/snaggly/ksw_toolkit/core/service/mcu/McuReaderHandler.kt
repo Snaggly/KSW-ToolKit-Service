@@ -4,6 +4,7 @@ import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
+import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
@@ -18,16 +19,20 @@ import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
 class McuReaderHandler(private val context: Context) {
-    private var mcuEventListener : McuEventObserver? = null
-    private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
+    private var mcuEventListeners = ArrayList<IMcuListener>()
     private val brightnessObserver = BrightnessObserver(context)
     private val sendingInterceptor = McuSenderInterceptor(100)
     private lateinit var eventAction : EventAction
     private var parseMcuEvent = McuEvent(context)
     private var hasSerialInit = false
 
+    val config = ConfigManager.getConfig(context.filesDir.absolutePath)
+
     init {
         when {
+            config.systemOptions.mcuPath != "" -> {
+                McuLogic.mcuCommunicator = McuCommunicator(SerialWriter(config.systemOptions.mcuPath), LogcatReader())
+            }
             Build.VERSION.RELEASE.contains("11") -> {
                 McuLogic.mcuCommunicator = McuCommunicator(SerialWriter("/dev/ttyHS1"), LogcatReader())
             }
@@ -50,6 +55,9 @@ class McuReaderHandler(private val context: Context) {
 
                 //Initialize SerialReader
                 when {
+                    config.systemOptions.mcuPath != "" -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader(config.systemOptions.mcuPath)
+                    }
                     Build.VERSION.RELEASE.contains("11") -> {
                         McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
                     }
@@ -66,7 +74,7 @@ class McuReaderHandler(private val context: Context) {
                     parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen
                 } else {
                     val dataBytes : ByteArray
-                    if (config.systemTweaks.extraMediaButtonHandle.data) {
+                    if (config.systemOptions.extraMediaButtonHandle!!) {
                         parseMcuEvent.screenSwitchEvent = ScreenSwitchMediaHack
                         dataBytes = byteArrayOf(0x0e, 0x00)
                     } else {
@@ -77,7 +85,7 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
-                if (config.systemTweaks.autoTheme.data) {
+                if (config.systemOptions.autoTheme!!) {
                     parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch.apply {
                         uiModeManager = context.getSystemService(UiModeManager::class.java)
                     }
@@ -86,10 +94,10 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
-                parseMcuEvent.carDataEvent.lightEvent.hasNightBrightness = config.systemTweaks.nightBrightness.data
-                if (config.systemTweaks.nightBrightness.data) {
+                parseMcuEvent.carDataEvent.lightEvent.hasNightBrightness = config.systemOptions.nightBrightness!!
+                if (config.systemOptions.nightBrightness!!) {
                     McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
-                    parseMcuEvent.carDataEvent.lightEvent.nightBrightnessLevel = config.systemTweaks.nightBrightnessLevel.data
+                    parseMcuEvent.carDataEvent.lightEvent.nightBrightnessLevel = config.systemOptions.nightBrightnessLevel!!
                 } else {
                     if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
                         McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
@@ -97,13 +105,13 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
-                if (config.systemTweaks.logMcuEvent.data)
+                if (config.systemOptions.logMcuEvent!!)
                     eventAction = EventActionLogger(context)
 
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
 
                 //Should this service intercept what CenterService tries to send to Mcu? Replicated core CenterService commands.
-                if (config.systemTweaks.interceptMcuCommand.data) {
+                if (config.systemOptions.interceptMcuCommand!!) {
                     sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
                         McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
                     })
@@ -126,7 +134,13 @@ class McuReaderHandler(private val context: Context) {
                 val event = parseMcuEvent.getMcuEvent(cmdType, data)
                 eventAction.processAction(cmdType, data, event, config)
 
-                mcuEventListener?.update(event, cmdType, data)
+                for (i in mcuEventListeners.indices) {
+                    try {
+                        mcuEventListeners[i].updateMcu(event.toString(), cmdType, data)
+                    } catch (e: Exception) {
+                        unregisterMcuEventListener(mcuEventListeners[i])
+                    }
+                }
             }
         }.start()
     }
@@ -138,14 +152,14 @@ class McuReaderHandler(private val context: Context) {
         AdbServiceConnection.startKsw(context)
         McuLogic.mcuCommunicator!!.mcuReader?.stopReading()
         McuLogic.mcuCommunicator!!.mcuReader = LogcatReader()
-        if (config.systemTweaks.kswService.data) {
-            McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
-        } else {
+        if (config.systemOptions.hijackCS!!) {
             McuLogic.mcuCommunicator!!.mcuReader.startReading(initialSerialStartAction)
+        } else {
+            McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
         }
 
         //Is AutoVolume on? Start on it on its separate thread. This only works when CarData get parsed!
-        if (config.systemTweaks.autoVolume.data) {
+        if (config.systemOptions.autoVolume!!) {
             McuLogic.startAutoVolume(context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
         }
     }
@@ -159,7 +173,7 @@ class McuReaderHandler(private val context: Context) {
         if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
         }
-        if (config.systemTweaks.extraMediaButtonHandle.data && PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
+        if (config.systemOptions.extraMediaButtonHandle!! && PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
             val dataBytes = byteArrayOf(0x0e, 0x01)
             McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
         }
@@ -172,11 +186,11 @@ class McuReaderHandler(private val context: Context) {
         startMcuReader()
     }
 
-    fun registerMcuEventListener(listener: McuEventObserver) {
-        mcuEventListener = listener
+    fun registerMcuEventListener(listener: IMcuListener) {
+        mcuEventListeners.add(listener)
     }
 
-    fun unregisterMcuEventListener() {
-        mcuEventListener = null
+    fun unregisterMcuEventListener(listener: IMcuListener) {
+        mcuEventListeners.remove(listener)
     }
 }

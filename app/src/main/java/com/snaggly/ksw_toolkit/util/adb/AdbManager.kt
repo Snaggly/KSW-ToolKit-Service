@@ -17,8 +17,6 @@ object AdbManager {
     private var socket : Socket? = null
     private var adbConnection: AdbConnection? = null
     private var shellStream: AdbStream? = null
-    private var previousShellText = ""
-    private var adbShellListener : ShellObserver? = null
 
     @Throws(AdbConnectionException::class)
     private fun connect(context: Context) {
@@ -60,7 +58,7 @@ object AdbManager {
     }
 
     private fun writeCommand(command: String) {
-        var writer = Thread {
+        val writer = Thread {
             try {
                 shellStream?.write(" $command\n")
             }
@@ -112,31 +110,4 @@ object AdbManager {
         }
     }
 
-    fun registerShellListener(listener: ShellObserver, context: Context) {
-        adbShellListener = listener
-
-        Thread {
-            while (adbShellListener != null) {
-                try {
-                    Thread.sleep(100)
-                    shellStream?.let { it ->
-                        val shellText = String(it.read(), Charsets.US_ASCII)
-                        if (shellText != previousShellText) {
-                            previousShellText = shellText
-                            adbShellListener?.update(shellText)
-                        }
-                    }
-                }
-                catch (e : Exception) {
-                    isConnected = false
-                }
-            }
-        }.start()
-        connect(context)
-    }
-
-    fun unregisterShellListener() {
-        disconnect()
-        adbShellListener = null
-    }
 }

@@ -1,82 +1,69 @@
 package com.snaggly.ksw_toolkit.core.service
 
-import android.app.*
-import android.content.Context
+import android.app.AlertDialog
+import android.app.Service
 import android.content.Intent
-import android.graphics.Color
-import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import com.snaggly.ksw_toolkit.BuildConfig
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
+import com.snaggly.ksw_toolkit.core.service.remote.KSWToolKitService
+import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
 
 class CoreService : Service() {
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun startMyOwnForeground() {
-        val notificationChannelId = BuildConfig.APPLICATION_ID
-        val channelName = "McuListenerService"
-        val chan = NotificationChannel(notificationChannelId, channelName, NotificationManager.IMPORTANCE_NONE)
-        chan.lightColor = Color.BLACK
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-        manager.createNotificationChannel(chan)
-        val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
-        val notification: Notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_stat_name)
-                .setContentTitle("KSW-Toolkit running in background...")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build()
-        startForeground(2, notification)
+    override fun onBind(intent: Intent): IBinder? {
+        ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        ServiceValidation.hasAuthenticated = false
+        return kswToolKitService
     }
 
-    companion object var thisInstance : CoreService? = null
-
-    inner class McuServiceBinder : Binder() {
-        fun getService(): CoreService {
-            if (thisInstance == null)
-                thisInstance = this@CoreService
-            return thisInstance!!
-        }
+    override fun onRebind(intent: Intent?) {
+        if (intent != null)
+            ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        else
+            ServiceValidation.signature = null
+        ServiceValidation.hasAuthenticated = false
+        super.onRebind(intent)
     }
 
-    private val binder = McuServiceBinder()
-    override fun onBind(intent: Intent): IBinder {
-        return binder
+    override fun onUnbind(intent: Intent?): Boolean {
+        ServiceValidation.signature = null
+        ServiceValidation.hasAuthenticated = false
+        return super.onUnbind(intent)
     }
 
     val mcuLogic = McuLogic
-    var mcuReaderHandler : McuReaderHandler? = null
+    private var mcuReaderHandler : McuReaderHandler? = null
+    private var kswToolKitService : KSWToolKitService? = null
 
     override fun onCreate() {
-        startMyOwnForeground()
-
         try {
             mcuReaderHandler = McuReaderHandler(applicationContext)
+            if (mcuReaderHandler == null)
+                throw Exception("Unable to initiate McuReaderHandler")
+
             mcuReaderHandler!!.startMcuReader()
+            kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
 
-        showMessage("KSW-ToolKit-Service started")
+        "KSW-ToolKit-Service started".showMessage()
     }
 
     override fun onDestroy() {
+        kswToolKitService = null
         showAlertMessage("KSW-ToolKit-Service stopped")
         AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
         super.onDestroy()
     }
 
-    private fun showMessage(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun String.showMessage() {
+        Toast.makeText(this@CoreService, this, Toast.LENGTH_SHORT).show()
     }
 
     private fun showAlertMessage(message: String) {
