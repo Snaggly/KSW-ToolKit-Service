@@ -19,9 +19,9 @@ class SystemOptions(
     companion object {
         fun initSystemTweaks() : SystemOptions {
             return SystemOptions(
-                    startAtBoot = true,
-                    hijackCS = true,
-                    soundRestorer = true,
+                    startAtBoot = false,
+                    hijackCS = false,
+                    soundRestorer = false,
                     autoTheme = false,
                     autoVolume = false,
                     maxVolume = true,
