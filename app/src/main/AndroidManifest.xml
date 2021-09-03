@@ -23,9 +23,6 @@
     <uses-permission
         android:name="android.permission.MODIFY_DAY_NIGHT_MODE"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="com.snaggly.ksw_toolkit.remote"/>
-
-    <permission android:name="com.snaggly.ksw_toolkit.remote" />
 
     <application
         android:allowBackup="false"
@@ -37,7 +34,7 @@
             android:name=".core.service.CoreService"
             android:enabled="true"
             android:exported="true"
-            android:permission="com.snaggly.ksw_toolkit.remote" />
+            tools:ignore="ExportedService" />
 
         <receiver
             android:name=".boot.BootReceiver"
