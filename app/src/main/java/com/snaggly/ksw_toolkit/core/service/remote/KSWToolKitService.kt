@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.snaggly.ksw_toolkit.IKSWToolKitService
 import com.snaggly.ksw_toolkit.IMcuListener
+import com.snaggly.ksw_toolkit.core.config.beans.EventManager
 import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
@@ -77,6 +78,11 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         }
         configManager.saveConfig()
         return true
+    }
+
+    override fun setDefaultBtnLayout() {
+        configManager.eventManagers = EventManager.initStandardButtons()
+        configManager.saveConfig()
     }
 
     override fun getConfig(): String? {

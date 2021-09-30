@@ -7,7 +7,7 @@ import java.io.*
 class ConfigManager private constructor() {
     private var configFile: File? = null
     var systemOptions = SystemOptions.initSystemTweaks()
-    var eventManagers = EventManager.initStandardButtons()
+    var eventManagers = EventManager.initialButtons()
     var json : String? = null
     private val gson = Gson()
 

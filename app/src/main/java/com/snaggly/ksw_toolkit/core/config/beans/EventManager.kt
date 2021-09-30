@@ -11,6 +11,15 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
 
     companion object {
 
+        fun initialButtons(): HashMap<EventManagerTypes, EventManager> {
+            val result = hashMapOf<EventManagerTypes, EventManager>()
+            for (type in EventManagerTypes.values()) {
+                result[type] = EventManager(EventMode.NoAssignment, -1, "", -1)
+            }
+
+            return result
+        }
+
         fun initStandardButtons(): HashMap<EventManagerTypes, EventManager> {
             return hashMapOf(
                 EventManagerTypes.KnobPress to EventManager(
