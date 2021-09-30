@@ -18,6 +18,8 @@ object ServiceValidation {
         hasAuthenticated = false
         if (signature==null) return false
         val packageName = context.packageManager.getNameForUid(Binder.getCallingUid()) ?: return false
+        if (packageName in allowedPackages)
+            return true
         val s = Signature.getInstance("SHA256withRSA/PSS").apply {
             initVerify(getPublicKey())
             update(packageName.toByteArray())
@@ -54,6 +56,10 @@ object ServiceValidation {
             )
             )
     }
+
+    private val allowedPackages : Array<String> = arrayOf(
+        "com.snaggly.wits.ksw_toolkit.client"
+    )
 
     private const val publicKeyBase64 =
         "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3EJuFxL6kgtGpXRmt20e" +

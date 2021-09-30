@@ -15,14 +15,21 @@ import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
 
 class CoreService : Service() {
     override fun onBind(intent: Intent): IBinder? {
-        ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        try {
+            ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        }
+        catch (e : Exception) {}
         ServiceValidation.hasAuthenticated = false
         return kswToolKitService
     }
 
     override fun onRebind(intent: Intent?) {
-        if (intent != null)
-            ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        if (intent != null) {
+            try {
+                ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+            }
+            catch (e : Exception) {}
+        }
         else
             ServiceValidation.signature = null
         ServiceValidation.hasAuthenticated = false
