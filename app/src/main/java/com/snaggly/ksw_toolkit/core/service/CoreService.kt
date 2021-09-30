@@ -54,11 +54,10 @@ class CoreService : Service() {
 
             mcuReaderHandler!!.startMcuReader()
             kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
+            "KSW-ToolKit-Service started".showMessage()
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
-
-        "KSW-ToolKit-Service started".showMessage()
     }
 
     override fun onDestroy() {

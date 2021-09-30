@@ -16,10 +16,12 @@ object ServiceValidation {
 
     fun validate(context: Context) : Boolean {
         hasAuthenticated = false
-        if (signature==null) return false
+
         val packageName = context.packageManager.getNameForUid(Binder.getCallingUid()) ?: return false
         if (packageName in allowedPackages)
             return true
+        else if (signature==null)
+            return false
         val s = Signature.getInstance("SHA256withRSA/PSS").apply {
             initVerify(getPublicKey())
             update(packageName.toByteArray())

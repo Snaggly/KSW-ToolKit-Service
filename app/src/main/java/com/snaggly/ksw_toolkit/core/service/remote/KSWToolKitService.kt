@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.remote
 
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import com.snaggly.ksw_toolkit.IKSWToolKitService
@@ -171,7 +172,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
             return if (ServiceValidation.validate(serviceContext)) {
                 true
             } else {
-                serviceContext.stopService(Intent(serviceContext, CoreService::class.java))
+                (serviceContext as Service).stopSelf()
                 false
             }
         }
