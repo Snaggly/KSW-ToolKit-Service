@@ -2,52 +2,47 @@ package com.snaggly.ksw_toolkit.core.config
 
 import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
-import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import java.io.*
 
-class ConfigManager private constructor() : IConfigBean {
+class ConfigManager private constructor() {
     private var configFile: File? = null
-    lateinit var systemTweaks: SystemTweaks private set
-    var eventManagers = HashMap<EventManagerTypes, EventManager>()
-    val gson = Gson()
+    var systemOptions = SystemOptions.initSystemTweaks()
+    var eventManagers = EventManager.initialButtons()
+    var json : String? = null
+    private val gson = Gson()
 
-    fun initBeans() {
-        systemTweaks = SystemTweaks.initSystemTweaks()
-        for (type in EventManagerTypes.values()) {
-            eventManagers[type] = EventManager.initEventManager()
-        }
-    }
-
-    override fun saveConfig() {
-        val json = gson.toJson(ConfigData(systemTweaks, eventManagers))
+    fun saveConfig() {
+        json = gson.toJson(ConfigData(systemOptions, eventManagers))
 
         val fileWriter = FileWriter(configFile!!)
         fileWriter.write(json)
         fileWriter.close()
     }
 
-    override fun readConfig() {
+    fun readConfig() {
         val fileReader = FileReader(configFile!!)
-        val json = fileReader.readText()
+        json = fileReader.readText()
         fileReader.close()
 
         val configData = gson.fromJson(json, ConfigData::class.java)
-        configData.systemTweaks.startAtBoot?.let { systemTweaks.startAtBoot = it }
-        configData.systemTweaks.kswService?.let { systemTweaks.kswService = it }
-        configData.systemTweaks.carDataLogging?.let { systemTweaks.carDataLogging = it }
-        configData.systemTweaks.autoVolume?.let { systemTweaks.autoVolume = it }
-        configData.systemTweaks.maxVolume?.let { systemTweaks.maxVolume = it }
-        configData.systemTweaks.hideTopBar?.let { systemTweaks.hideTopBar = it }
-        configData.systemTweaks.shrinkTopBar?.let { systemTweaks.shrinkTopBar = it }
-        configData.systemTweaks.dpi?.let { systemTweaks.dpi = it }
-        configData.systemTweaks.logMcuEvent?.let { systemTweaks.logMcuEvent = it }
-        configData.systemTweaks.interceptMcuCommand?.let { systemTweaks.interceptMcuCommand = it }
+        configData.systemOptions.startAtBoot?.let { systemOptions.startAtBoot = it }
+        configData.systemOptions.hijackCS?.let { systemOptions.hijackCS = it }
+        configData.systemOptions.soundRestorer?.let { systemOptions.soundRestorer = it }
+        configData.systemOptions.autoTheme?.let { systemOptions.autoTheme = it }
+        configData.systemOptions.autoVolume?.let { systemOptions.autoVolume = it }
+        configData.systemOptions.maxVolume?.let { systemOptions.maxVolume = it }
+        configData.systemOptions.logMcuEvent?.let { systemOptions.logMcuEvent = it }
+        configData.systemOptions.interceptMcuCommand?.let { systemOptions.interceptMcuCommand = it }
+        configData.systemOptions.extraMediaButtonHandle?.let { systemOptions.extraMediaButtonHandle = it }
+        configData.systemOptions.nightBrightness?.let { systemOptions.nightBrightness = it }
+        configData.systemOptions.nightBrightnessLevel?.let { systemOptions.nightBrightnessLevel = it }
+        configData.systemOptions.mcuPath?.let { systemOptions.mcuPath = it }
 
         for (type in configData.eventManagers) {
-            configData.eventManagers[type.key]!!.eventMode?.let { eventManagers[type.key]?.eventMode = it }
-            configData.eventManagers[type.key]!!.mcuCommandMode?.let { eventManagers[type.key]?.mcuCommandMode = it }
-            configData.eventManagers[type.key]!!.appName?.let { eventManagers[type.key]?.appName = it }
-            configData.eventManagers[type.key]!!.keyCode?.let { eventManagers[type.key]?.keyCode = it }
+            configData.eventManagers[type.key]?.eventMode!!.let { eventManagers[type.key]?.eventMode = it }
+            configData.eventManagers[type.key]?.mcuCommandMode!!.let { eventManagers[type.key]?.mcuCommandMode = it }
+            configData.eventManagers[type.key]?.appName!!.let { eventManagers[type.key]?.appName = it }
+            configData.eventManagers[type.key]?.keyCode!!.let { eventManagers[type.key]?.keyCode = it }
         }
     }
 
@@ -60,31 +55,12 @@ class ConfigManager private constructor() : IConfigBean {
                 return config
             }
             config.configFile = File("$filePath/$fileName")
-            if (!config.configFile!!.isFile)
+            if (!config.configFile!!.isFile) {
                 config.configFile!!.createNewFile()
-            config.initBeans()
-            try {
-                config.readConfig()
+                config.saveConfig()
             }
-            catch (ioe: Exception) {
-                config.initBeans()
-            }
-            IConfigBean.configManager = config
+            config.readConfig()
             return config
-        }
-
-        @Throws(UnsupportedEncodingException::class)
-        fun importConfig(applicationFilePath: String, toImportFilePath: String) : ConfigManager {
-            val inputFile = File(toImportFilePath)
-            inputFile.copyTo(File("$applicationFilePath/$fileName"), true)
-            config.configFile = null
-            getConfig(applicationFilePath)
-            return config
-        }
-
-        fun exportConfig(filePath: String) {
-            val outputFile = File(filePath)
-            config.configFile!!.copyTo(outputFile, true)
         }
     }
 }

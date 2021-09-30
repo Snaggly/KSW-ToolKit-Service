@@ -8,6 +8,7 @@ import com.snaggly.ksw_toolkit.util.commander.KeyInjector
 import com.snaggly.ksw_toolkit.util.commander.McuCommander
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
+import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
 
 open class EventAction(private val context: Context) {
@@ -16,13 +17,14 @@ open class EventAction(private val context: Context) {
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
-                    KeyInjector.sendKey(eventConfig.keyCode.data)
+                    if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
+                        KeyInjector.sendKey(eventConfig.keyCode!!)
                 }
                 EventMode.StartApp -> {
-                    AppStarter.launchAppById(eventConfig.appName.data, context)
+                    AppStarter.launchAppById(eventConfig.appName!!, context)
                 }
                 EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode.data], McuLogic.mcuCommunicator, context)
+                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode!!], McuLogic.mcuCommunicator, context)
                 }
                 else -> {}
             }

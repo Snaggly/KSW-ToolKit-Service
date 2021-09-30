@@ -1,102 +1,86 @@
 package com.snaggly.ksw_toolkit.core.service
 
-import android.app.*
-import android.content.Context
+import android.app.AlertDialog
+import android.app.Service
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import com.snaggly.ksw_toolkit.BuildConfig
+import android.widget.Toast
 import com.snaggly.ksw_toolkit.R
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
-import java.util.*
+import com.snaggly.ksw_toolkit.core.service.remote.KSWToolKitService
+import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
 
 class CoreService : Service() {
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun startMyOwnForeground() {
-        val notificationChannelId = BuildConfig.APPLICATION_ID
-        val channelName = "McuListenerService"
-        val chan = NotificationChannel(notificationChannelId, channelName, NotificationManager.IMPORTANCE_NONE)
-        chan.lightColor = Color.BLACK
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-        manager.createNotificationChannel(chan)
-        val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
-        val notification: Notification = notificationBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_stat_name)
-                .setContentTitle("KSW-Toolkit running in background...")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build()
-        startForeground(2, notification)
-    }
-
-    inner class McuServiceBinder : Binder() {
-        fun getService(): CoreService = this@CoreService
-    }
-
-    private val binder = McuServiceBinder()
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
-
-    val adbConnection = AdbServiceConnection
-    val mcuLogic = McuLogic
-    var mcuReaderHandler : McuReaderHandler? = null
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startMyOwnForeground()
-
+    override fun onBind(intent: Intent): IBinder? {
         try {
-            mcuReaderHandler = McuReaderHandler(applicationContext)
-            mcuReaderHandler!!.startMcuReader()
-        } catch (e: Exception) {
-            return crashOut("Could not start McuReader!\n\n${e.localizedMessage}")
+            ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
         }
-
-        return START_STICKY
+        catch (e : Exception) {}
+        ServiceValidation.hasAuthenticated = false
+        return kswToolKitService
     }
+
+    override fun onRebind(intent: Intent?) {
+        if (intent != null) {
+            try {
+                ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+            }
+            catch (e : Exception) {}
+        }
+        else
+            ServiceValidation.signature = null
+        ServiceValidation.hasAuthenticated = false
+        super.onRebind(intent)
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        ServiceValidation.signature = null
+        ServiceValidation.hasAuthenticated = false
+        return super.onUnbind(intent)
+    }
+
+    val mcuLogic = McuLogic
+    private var mcuReaderHandler : McuReaderHandler? = null
+    private var kswToolKitService : KSWToolKitService? = null
 
     override fun onCreate() {
-        super.onCreate()
-
         try {
-            adbConnection.connect(applicationContext)
-            checkPermission()
+            mcuReaderHandler = McuReaderHandler(applicationContext)
+            if (mcuReaderHandler == null)
+                throw Exception("Unable to initiate McuReaderHandler")
+
+            mcuReaderHandler!!.startMcuReader()
+            kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
         } catch (e: Exception) {
-            crashOut("Could not connect to Adb!\n\n${e.localizedMessage}")
+            crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
+
+        "KSW-ToolKit-Service started".showMessage()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        adbConnection.startKsw()
+        kswToolKitService = null
+        showAlertMessage("KSW-ToolKit-Service stopped")
+        AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
-        adbConnection.disconnect()
+        super.onDestroy()
     }
 
-    private fun checkPermission() {
-        if (applicationContext.checkSelfPermission("android.permission.READ_LOGS") != PackageManager.PERMISSION_GRANTED) {
-            adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.READ_LOGS")
-            adbConnection.sendCommand("pm grant ${BuildConfig.APPLICATION_ID} android.permission.INJECT_EVENTS")
-            val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-McuService").setMessage("Granted system permissions.\nPlease restart the app for effects to take in place").create()
-            alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-            alert.show()
-        }
+    private fun String.showMessage() {
+        Toast.makeText(this@CoreService, this, Toast.LENGTH_SHORT).show()
     }
 
-    private fun crashOut(message: String) : Int {
+    private fun showAlertMessage(message: String) {
         val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
         alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         alert.show()
+    }
+
+    private fun crashOut(message: String) {
+        showAlertMessage(message)
         stopSelf()
-        return START_NOT_STICKY
     }
 }

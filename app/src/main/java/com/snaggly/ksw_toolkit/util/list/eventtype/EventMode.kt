@@ -6,8 +6,5 @@ enum class EventMode(val value: Int) {
     StartApp(2),
     McuCommand(3);
 
-    companion object {
-        private val types = values().associateBy { it.value }
-        fun findByValue(value: Int) = types[value]
-    }
+    companion object
 }

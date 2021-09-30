@@ -6,30 +6,28 @@ import android.content.Intent
 import android.media.AudioManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
-import com.snaggly.ksw_toolkit.core.service.CoreService
+import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.wits.pms.statuscontrol.PowerManagerApp
-
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (Intent.ACTION_BOOT_COMPLETED == intent!!.action) {
-            try {
-                val armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol")
-                val armPhoneVol = PowerManagerApp.getManager().getSettingsInt("Android_phone_vol")
-                val carPhoneVol = PowerManagerApp.getManager().getSettingsInt("Car_phone_vol")
-                val carNaviVol = PowerManagerApp.getManager().getSettingsInt("Car_navi_vol")
-
-                PowerManagerApp.getManager().setSettingsInt("Android_media_vol", armPhoneVol)
-                PowerManagerApp.getManager().setSettingsInt("Android_phone_vol", armMediaVol)
-                PowerManagerApp.getManager().setSettingsInt("Car_phone_vol", carPhoneVol)
-                PowerManagerApp.getManager().setSettingsInt("Car_navi_vol", carNaviVol)
-            } catch (ex : Exception) {
-                Toast.makeText(context, "Unable to connect to Wits!", Toast.LENGTH_LONG).show()
-            }
-
             val config = ConfigManager.getConfig(context?.filesDir!!.absolutePath)
 
-            if (config.systemTweaks.maxVolume.data) {
+            if (config.systemOptions.maxVolume!!) {
+                try {
+                    val armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol")
+                    val armPhoneVol = PowerManagerApp.getManager().getSettingsInt("Android_phone_vol")
+                    val carPhoneVol = PowerManagerApp.getManager().getSettingsInt("Car_phone_vol")
+                    val carNaviVol = PowerManagerApp.getManager().getSettingsInt("Car_navi_vol")
+
+                    PowerManagerApp.getManager().setSettingsInt("Android_media_vol", armPhoneVol)
+                    PowerManagerApp.getManager().setSettingsInt("Android_phone_vol", armMediaVol)
+                    PowerManagerApp.getManager().setSettingsInt("Car_phone_vol", carPhoneVol)
+                    PowerManagerApp.getManager().setSettingsInt("Car_navi_vol", carNaviVol)
+                } catch (ex: Exception) {
+                    Toast.makeText(context, "Unable to connect to Wits!", Toast.LENGTH_LONG).show()
+                }
                 val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
                 audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION), 0)
@@ -41,8 +39,8 @@ class BootReceiver : BroadcastReceiver() {
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), 0)
             }
 
-            if (config.systemTweaks.startAtBoot.data) {
-                context.startForegroundService(Intent(context, CoreService::class.java))
+            if (config.systemOptions.startAtBoot!!) {
+                AdbServiceConnection.startThisService(context)
             }
         }
     }

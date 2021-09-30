@@ -1,49 +1,21 @@
 package com.snaggly.ksw_toolkit.core.service.adb
 
 import android.content.Context
+import com.snaggly.ksw_toolkit.BuildConfig
+import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.util.adb.AdbManager
 
 object AdbServiceConnection {
-    private val adbShellListeners = ArrayList<ShellObserver>()
-
-    fun connect(context: Context) {
-        AdbManager.connect(context, "shell:", object : AdbManager.OnAdbShellDataReceived {
-            override fun onDataReceived(text: String) {
-                for (listener in adbShellListeners)
-                    listener.update(text)
-            }
-        })
+    fun stopKsw(context: Context) {
+        AdbManager.sendCommand("am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService\nappops set com.wits.pms SYSTEM_ALERT_WINDOW deny", context)
     }
 
-    fun disconnect() {
-        AdbManager.disconnect()
+    fun startKsw(context: Context) {
+        AdbManager.sendCommand("am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService\nappops set com.wits.pms SYSTEM_ALERT_WINDOW allow", context)
     }
 
-    fun sendCommand(command: String) {
-        AdbManager.sendCommand(command)
+    fun startThisService(context: Context) {
+        AdbManager.sendCommand("am startservice --user 0 ${BuildConfig.APPLICATION_ID}/${CoreService::class.java.name}", context)
     }
 
-    fun stopKsw() {
-        sendCommand("am stopservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService\nappops set com.wits.pms SYSTEM_ALERT_WINDOW deny")
-    }
-
-    fun startKsw() {
-        sendCommand("am startservice --user 0 com.wits.pms/com.wits.pms.mcu.McuService\nappops set com.wits.pms SYSTEM_ALERT_WINDOW allow")
-    }
-
-    fun sendKeyEvent(code: Int) {
-        sendCommand("input keyevent $code")
-    }
-
-    fun startApp(appId: String) {
-        sendCommand("monkey -p $appId -c android.intent.category.LAUNCHER 1")
-    }
-
-    fun registerShellListener(listener: ShellObserver) {
-        adbShellListeners.add(listener)
-    }
-
-    fun unregisterShellListener(listener: ShellObserver) {
-        adbShellListeners.remove(listener)
-    }
 }

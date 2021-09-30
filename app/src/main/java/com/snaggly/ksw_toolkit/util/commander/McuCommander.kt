@@ -15,21 +15,19 @@ object McuCommander {
             }
 
             McuCommandsEnum.BrightnessInc -> {
-                var currentBrightness = (Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 255) * 100) / 255
-                currentBrightness += 10
-                if (currentBrightness > 100)
-                    currentBrightness = 100
-                Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness * 255 / 100)
-                mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(currentBrightness.toByte()))
+                var currentBrightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0xFF)
+                currentBrightness = (currentBrightness * 1.5).toInt()
+                if (currentBrightness > 0xFF)
+                    currentBrightness = 0xFF
+                Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness)
             }
 
             McuCommandsEnum.BrightnessDec -> {
-                var currentBrightness = (Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 255) * 100) / 255
-                currentBrightness -= 10
-                if (currentBrightness < 0)
-                    currentBrightness = 0
-                Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness * 255 / 100)
-                mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(currentBrightness.toByte()))
+                var currentBrightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0xFF)
+                currentBrightness = (currentBrightness / 1.5).toInt()
+                if (currentBrightness < 10)
+                    currentBrightness = 10
+                Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, currentBrightness)
             }
 
             McuCommandsEnum.CarInfo -> mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_OEM)

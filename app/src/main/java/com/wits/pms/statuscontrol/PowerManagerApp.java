@@ -13,6 +13,7 @@ import com.wits.pms.ICmdListener;
 import com.wits.pms.IContentObserver;
 import com.wits.pms.IPowerManagerAppService;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class PowerManagerApp {
     private static ICmdListener cmdListener;
@@ -26,7 +27,7 @@ public class PowerManagerApp {
                     PowerManagerApp.registerICmdListener(PowerManagerApp.cmdListener);
                 }
                 for (String key : PowerManagerApp.maps.keySet()) {
-                    PowerManagerApp.registerIContentObserver(key, (IContentObserver) PowerManagerApp.maps.get(key));
+                    PowerManagerApp.registerIContentObserver(key, Objects.requireNonNull(PowerManagerApp.maps.get(key)));
                 }
             }
         });
@@ -42,7 +43,7 @@ public class PowerManagerApp {
             if (getManager() != null) {
                 getManager().registerCmdListener(listener);
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException ignored) {
         }
     }
 
@@ -53,7 +54,7 @@ public class PowerManagerApp {
             if (getManager() != null) {
                 getManager().registerObserver(key, contentObserver);
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException ignored) {
         }
     }
 
@@ -67,7 +68,7 @@ public class PowerManagerApp {
             if (getManager() != null) {
                 getManager().unregisterObserver(contentObserver);
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException ignored) {
         }
     }
 
@@ -95,8 +96,8 @@ public class PowerManagerApp {
     public static void sendStatus(WitsStatus witsStatus) {
         if (getManager() != null) {
             try {
-                getManager().sendStatus(new Gson().toJson((Object) witsStatus));
-            } catch (RemoteException e) {
+                getManager().sendStatus(new Gson().toJson(witsStatus));
+            } catch (RemoteException ignored) {
             }
         }
     }

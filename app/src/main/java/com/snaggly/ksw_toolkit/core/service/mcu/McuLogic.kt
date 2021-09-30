@@ -1,7 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.media.AudioManager
-import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -14,12 +13,12 @@ object McuLogic {
 
     //Intern
     private var autoVolume = false
-    var senderInterval: Long = 1000
-    var backTapper : BackTapper? = null
+    private var senderInterval: Long = 1000
 
     //Param
-    var speedMaxVolume = 80
-    var minVolume = 0.75f
+    private var speedMaxVolume = 80
+    private var minVolume = 0.75f
+    var actionLock = false
 
     init {
         try{

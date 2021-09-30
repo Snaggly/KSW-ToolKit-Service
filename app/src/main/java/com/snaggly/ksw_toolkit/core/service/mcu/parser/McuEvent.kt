@@ -1,9 +1,9 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
-import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
+import android.content.Context
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
-class McuEvent(screenSwitchEvent: IScreenSwitchEvent, carDataEvent: ICarDataEvent, benzDataEvent: IBenzDataEvent) : IMcuEvent(screenSwitchEvent, carDataEvent, benzDataEvent) {
+class McuEvent(context: Context) : IMcuEvent(context) {
     override fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes? {
         when (cmdType) {
             0xA1 -> {
@@ -11,8 +11,10 @@ class McuEvent(screenSwitchEvent: IScreenSwitchEvent, carDataEvent: ICarDataEven
                     return buttonClickEvent.getClickEvent(data)
                 } else if (data[0] == 0x1A.toByte() && data.size > 1) {
                     return screenSwitchEvent.getScreenSwitch(data)
+                } else if (data.size > 1) {
+                    return carDataEvent.getCarDataEvent(data)
                 }
-                return carDataEvent.getCarDataEvent(data)
+                return EventManagerTypes.CarData
             }
             0x1D -> return benzDataEvent.getBenzDataEvent(data)
             0x1C -> return idleEvent.getIdleEvent(data)

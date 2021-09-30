@@ -13,18 +13,13 @@ import java.net.Socket
 import java.security.NoSuchAlgorithmException
 
 object AdbManager {
-    private lateinit var socket : Socket
     private var isConnected = false
-    private lateinit var adbConnection: AdbConnection
-    private lateinit var shellStream: AdbStream
-    private var previousShellText = ""
-
-    interface OnAdbShellDataReceived {
-        fun onDataReceived(text: String)
-    }
+    private var socket : Socket? = null
+    private var adbConnection: AdbConnection? = null
+    private var shellStream: AdbStream? = null
 
     @Throws(AdbConnectionException::class)
-    fun connect(context: Context, destination: String, callback: OnAdbShellDataReceived) {
+    private fun connect(context: Context) {
         if (isConnected)
             disconnect()
         var outerException: Exception? = null
@@ -33,10 +28,10 @@ object AdbManager {
                 TrafficStats.setThreadStatsTag(Thread.currentThread().id.toInt())
                 val adbCrypto = setupCrypto(context.filesDir)
                 socket = Socket()
-                socket.connect(InetSocketAddress("localhost", 5555), 5000)
+                socket!!.connect(InetSocketAddress("localhost", 5555), 5000)
                 adbConnection = AdbConnection.create(socket, adbCrypto)
-                adbConnection.connect()
-                shellStream = adbConnection.open(destination)
+                adbConnection!!.connect()
+                shellStream = adbConnection!!.open("shell:")
             } catch (e: Exception) {
                 outerException = e
             }
@@ -47,40 +42,43 @@ object AdbManager {
         if (outerException != null) {
             throw AdbConnectionException(outerException!!)
         }
-
-        Thread {
-            while (!shellStream.isClosed) {
-                try {
-                    Thread.sleep(100)
-                    var shellText = String(shellStream.read(), Charsets.US_ASCII)
-                    if (shellText != previousShellText) {
-                        previousShellText = shellText
-                        callback.onDataReceived(shellText)
-                    }
-                }
-                catch (e : Exception) {
-                    isConnected = false
-                    e.printStackTrace()
-                }
-            }
-        }.start()
-        isConnected = true
+        isConnected = shellStream != null
     }
 
-    fun disconnect() {
-        if (isConnected) {
-            shellStream.close()
-            adbConnection.close()
-            socket.close()
+    private fun disconnect() {
+        val disconnecter = Thread {
+            shellStream?.close()
+            adbConnection?.close()
+            socket?.close()
         }
+        disconnecter.start()
+        disconnecter.join()
+
         isConnected = false
     }
 
-    fun sendCommand(command: String) {
+    private fun writeCommand(command: String) {
+        val writer = Thread {
+            try {
+                shellStream?.write(" $command\n")
+            }
+            catch (e : Exception) {
+                isConnected = false
+            }
+        }
+        writer.start()
+        writer.join()
+    }
+
+    fun sendCommand(command: String, context: Context) {
         if (isConnected) {
-            Thread {
-                shellStream.write(" $command\n")
-            }.start()
+            writeCommand(command)
+        } else {
+            connect(context)
+            if (isConnected) {
+                writeCommand(command)
+            }
+            disconnect()
         }
     }
 
@@ -111,4 +109,5 @@ object AdbManager {
             return outerException.stackTrace
         }
     }
+
 }
