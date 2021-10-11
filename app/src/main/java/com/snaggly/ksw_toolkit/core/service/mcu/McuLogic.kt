@@ -9,6 +9,7 @@ import kotlin.math.roundToInt
 object McuLogic {
     //Lib
     var mcuCommunicator : McuCommunicator? = null
+    var realSysMode : Int = 1
     val mcuStat = McuStatus()
 
     //Intern

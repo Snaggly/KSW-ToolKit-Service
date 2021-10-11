@@ -20,6 +20,7 @@ class IdleEvent(val context: Context) {
     }
 
     fun getIdleEvent(data: ByteArray) : EventManagerTypes {
+        McuLogic.realSysMode = data[0].toInt()
         if (data[0] == 0x1.toByte()) {
             backTapper?.removeBackWindow()
             if (wasInSys2) {

@@ -14,7 +14,8 @@ object ScreenSwitchMediaHack : IScreenSwitchEvent {
         if (data[1] == 0x1.toByte()) {
             switchLock = false
             McuLogic.mcuCommunicator!!.sendCommand(0x70, disableOEM, false)
-            McuLogic.mcuCommunicator!!.sendCommand(McuCommands.SetMusicSource(SOUND_SRC_TYPE.SRC_ATSL_AIRCONSOLE))
+            if (thisHasSoundRestorer)
+                McuLogic.mcuCommunicator!!.sendCommand(McuCommands.SetMusicSource(SOUND_SRC_TYPE.SRC_ATSL_AIRCONSOLE))
         } else if (data[1] == 0x2.toByte() && !switchLock) {
             switchLock = true
             McuLogic.mcuCommunicator!!.sendCommand(0x70, enableOEM, false)

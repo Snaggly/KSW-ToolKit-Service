@@ -11,6 +11,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
+import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -124,6 +125,48 @@ class McuReaderHandler(private val context: Context) {
 
                 //Get current CarData
                 McuLogic.mcuCommunicator!!.sendCommand(104, byteArrayOf(5, 0), false)
+
+                //Reset Data on PowerOff/PowerOn
+                parseMcuEvent.powerEvent = object : IPowerEvent {
+                    override fun getPowerEvent(data: ByteArray): EventManagerTypes {
+                        if (data.size <= 1)
+                            return EventManagerTypes.Dummy
+
+                        //PowerOff
+                        if (data[0].toInt() == 5) {
+                            //Restore NightBrightness
+                            if (config.systemOptions.nightBrightness!!
+                                && PowerManagerApp.getSettingsInt("Backlight_auto_set") != 0) {
+                                McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
+                            }
+
+                            //Restore MediaButton
+                            if (config.systemOptions.extraMediaButtonHandle!!
+                                && PowerManagerApp.getSettingsInt("CarDisplay") != 0) {
+                                val dataBytes = byteArrayOf(0x0e, 0x01)
+                                McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
+                                if (McuLogic.realSysMode == 1)
+                                    McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
+                            }
+                        }
+                        //PowerOn
+                        else if (data[0].toInt() == 4) {
+                            //Reset NightBrightness
+                            if (config.systemOptions.nightBrightness!!
+                                && PowerManagerApp.getSettingsInt("Backlight_auto_set") != 0) {
+                                McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
+                            }
+
+                            //Reset MediaButton
+                            if (config.systemOptions.extraMediaButtonHandle!!
+                                && PowerManagerApp.getSettingsInt("CarDisplay") != 0) {
+                                val dataBytes = byteArrayOf(0x0e, 0x00)
+                                McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
+                            }
+                        }
+                        return EventManagerTypes.Dummy
+                    }
+                }
             }
         }
     }

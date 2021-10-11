@@ -18,6 +18,7 @@ class McuEvent(context: Context) : IMcuEvent(context) {
             }
             0x1D -> return benzDataEvent.getBenzDataEvent(data)
             0x1C -> return idleEvent.getIdleEvent(data)
+            0x11 -> return powerEvent.getPowerEvent(data)
             else -> return null
         }
     }
