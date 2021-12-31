@@ -54,22 +54,6 @@ class McuReaderHandler(private val context: Context) {
                 McuLogic.mcuCommunicator!!.mcuReader.stopReading()
                 AdbServiceConnection.stopKsw(context)
 
-                //Initialize SerialReader
-                when {
-                    config.systemOptions.mcuPath != "" -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader(config.systemOptions.mcuPath)
-                    }
-                    Build.VERSION.RELEASE.contains("11") -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
-                    }
-                    Build.DISPLAY.contains("8937") -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
-                    }
-                    else -> {
-                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
-                    }
-                }
-
                 //Check if Service should handle extra Media Buttons
                 if (PowerManagerApp.getSettingsInt("CarDisplay") == 0) {
                     parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen
@@ -109,7 +93,30 @@ class McuReaderHandler(private val context: Context) {
                 if (config.systemOptions.logMcuEvent!!)
                     eventAction = EventActionLogger(context)
 
+                //Initialize SerialReader
+                when {
+                    config.systemOptions.mcuPath != "" -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader(config.systemOptions.mcuPath)
+                    }
+                    Build.VERSION.RELEASE.contains("11") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHS1")
+                    }
+                    Build.DISPLAY.contains("8937") -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader("/dev/ttyHSL1")
+                    }
+                    else -> {
+                        McuLogic.mcuCommunicator!!.mcuReader = SerialReader()
+                    }
+                }
                 McuLogic.mcuCommunicator!!.mcuReader.startReading(onMcuEventAction)
+
+                //Get current CarData
+                Thread{
+                    while (!McuLogic.hasInterceptedCarData) {
+                        McuLogic.mcuCommunicator!!.sendCommand(104, byteArrayOf(5, 0), false)
+                    }
+                    Thread.sleep(500)
+                }.start()
 
                 //Should this service intercept what CenterService tries to send to Mcu? Replicated core CenterService commands.
                 if (config.systemOptions.interceptMcuCommand!!) {
@@ -122,9 +129,6 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 parseMcuEvent.idleEvent.armBackTapper()
-
-                //Get current CarData
-                McuLogic.mcuCommunicator!!.sendCommand(104, byteArrayOf(5, 0), false)
 
                 //Reset Data on PowerOff/PowerOn
                 parseMcuEvent.powerEvent = object : IPowerEvent {

@@ -13,6 +13,7 @@ object McuLogic {
     val mcuStat = McuStatus()
 
     //Intern
+    var hasInterceptedCarData = false
     private var autoVolume = false
     private var senderInterval: Long = 1000
 
@@ -33,7 +34,7 @@ object McuLogic {
     }
 
     fun sendCarData() {
-        //WitsStatus.logMcuStatus(mcuStat)
+        hasInterceptedCarData = true
         WitsStatus.sendOutMcuStatus(mcuStat)
     }
 
