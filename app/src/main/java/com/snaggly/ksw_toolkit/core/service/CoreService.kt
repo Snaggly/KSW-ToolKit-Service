@@ -12,6 +12,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.core.service.remote.KSWToolKitService
 import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
+import kotlin.random.Random
 
 class CoreService : Service() {
     override fun onBind(intent: Intent): IBinder? {
@@ -49,15 +50,13 @@ class CoreService : Service() {
     override fun onCreate() {
         try {
             mcuReaderHandler = McuReaderHandler(applicationContext)
-            if (mcuReaderHandler == null)
-                throw Exception("Unable to initiate McuReaderHandler")
-
             mcuReaderHandler!!.startMcuReader()
             kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
             "KSW-ToolKit-Service started".showMessage()
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
+        //startTest()
     }
 
     override fun onDestroy() {
@@ -70,6 +69,19 @@ class CoreService : Service() {
 
     private fun String.showMessage() {
         Toast.makeText(this@CoreService, this, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun startTest() {
+        mcuReaderHandler = McuReaderHandler(applicationContext)
+        kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
+        McuLogic.mcuCommunicator = null
+
+        Thread {
+            while(kswToolKitService != null){
+                mcuReaderHandler?.onMcuEventAction?.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1,22)))
+                Thread.sleep(1500)
+            }
+        }.start()
     }
 
     private fun showAlertMessage(message: String) {

@@ -3,6 +3,7 @@ package com.snaggly.ksw_toolkit.util.list.eventtype
 enum class EventManagerTypes {
     VoiceCommandButton,
     TelephoneButton,
+    TelephoneButtonPickUp,
     TelephoneButtonHangUp,
     TelephoneButtonLongPress,
     VolumeDecrease,
@@ -22,11 +23,22 @@ enum class EventManagerTypes {
     BackButton,
     OptionsButton,
     NavigationButton,
+    HiCarAppButton,
+    HiCarVoiceButton,
     Idle,
     CarData,
     BenzData,
     ScreenSwitch,
-    Dummy;
-
-    companion object
+    Dummy,
+    Time,
+    AccEvent,
+    PowerEvent,
+    McuVersionEvent,
+    TouchEvent,
+    CanStatusCheck,
+    MediaDataEvent,
+    BluetoothStatusEvent,
+    EQDataEvent,
+    TxzInfoEvent,
+    SystemStatusEvent
 }

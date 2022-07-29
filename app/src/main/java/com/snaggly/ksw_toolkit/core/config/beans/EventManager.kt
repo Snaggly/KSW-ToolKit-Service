@@ -142,39 +142,15 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                     "",
                     -1
                 ),
+                EventManagerTypes.TelephoneButtonPickUp to EventManager(
+                    EventMode.KeyEvent,
+                    KeyCode.CALL.keycode,
+                    "",
+                    -1
+                ),
                 EventManagerTypes.TelephoneButtonHangUp to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
-                    "",
-                    -1
-                ),
-                EventManagerTypes.Idle to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
-                    "",
-                    -1
-                ),
-                EventManagerTypes.ScreenSwitch to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
-                    "",
-                    -1
-                ),
-                EventManagerTypes.Dummy to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
-                    "",
-                    -1
-                ),
-                EventManagerTypes.CarData to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
-                    "",
-                    -1
-                ),
-                EventManagerTypes.BenzData to EventManager(
-                    EventMode.NoAssignment,
-                    -1,
+                    EventMode.KeyEvent,
+                    KeyCode.ENDCALL.keycode,
                     "",
                     -1
                 )

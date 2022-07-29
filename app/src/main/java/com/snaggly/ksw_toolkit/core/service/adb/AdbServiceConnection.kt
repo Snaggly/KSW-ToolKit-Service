@@ -17,5 +17,4 @@ object AdbServiceConnection {
     fun startThisService(context: Context) {
         AdbManager.sendCommand("am startservice --user 0 ${BuildConfig.APPLICATION_ID}/${CoreService::class.java.name}", context)
     }
-
 }

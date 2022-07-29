@@ -2,7 +2,9 @@ package com.snaggly.ksw_toolkit.core.config
 
 import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
-import java.io.*
+import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
 
 class ConfigManager private constructor() {
     private var configFile: File? = null

@@ -2,28 +2,27 @@ package com.snaggly.ksw_toolkit.core.service.remote
 
 import android.app.Service
 import android.content.Context
-import android.content.Intent
 import com.snaggly.ksw_toolkit.IKSWToolKitService
 import com.snaggly.ksw_toolkit.IMcuListener
+import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
-import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 
-class KSWToolKitService(private val serviceContext: Context, private val coreReaderHandler: McuReaderHandler) : IKSWToolKitService.Stub() {
+class KSWToolKitService(private val serviceContext: Context, private val coreReaderHandler: McuReaderHandler?) : IKSWToolKitService.Stub() {
 
-    private val configManager = coreReaderHandler.config
+    private val configManager = ConfigManager.getConfig(serviceContext.filesDir.absolutePath)
 
     override fun sendMcuCommand(cmdType: Int, data: ByteArray?): Boolean {
-        if (!authenticate())
+        if (!authenticate() || data == null)
             return false
 
         return if (McuLogic.mcuCommunicator == null)
             false
         else {
-            McuLogic.mcuCommunicator!!.sendCommand(cmdType, data, false)
+            McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
             true
         }
     }
@@ -112,7 +111,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
 
         configManager.saveConfig()
 
-        coreReaderHandler.restartReader()
+        coreReaderHandler?.restartReader()
         return true
     }
 
@@ -134,7 +133,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
     override fun setMcuPath(path: String?) : Boolean {
         return if (path != null) {
             configManager.systemOptions.mcuPath = path
-            coreReaderHandler.restartReader()
+            coreReaderHandler?.restartReader()
             true
         } else {
             false
@@ -145,14 +144,14 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         if (!authenticate())
             return false
         return if (listener != null) {
-            coreReaderHandler.registerMcuEventListener(listener)
+            coreReaderHandler?.registerMcuEventListener(listener)
             true
         } else false
     }
 
     override fun unregisterMcuListener(listener: IMcuListener?): Boolean {
         return if (listener != null) {
-            coreReaderHandler.unregisterMcuEventListener(listener)
+            coreReaderHandler?.unregisterMcuEventListener(listener)
             true
         } else false
     }
@@ -164,7 +163,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
     override fun setNightBrightnessSetting(value: Int) {
         configManager.systemOptions.nightBrightnessLevel = value
         configManager.saveConfig()
-        coreReaderHandler.restartReader()
+        coreReaderHandler?.restartReader()
     }
 
     private fun authenticate() : Boolean {

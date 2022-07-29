@@ -1,7 +1,10 @@
 package com.snaggly.ksw_toolkit.util.list.keyevent
 
 enum class KeyCode(val keycode : Int) {
+    APP_SWITCH(187),
     BACK(4),
+    CALL(5),
+    ENDCALL(6),
     DPAD_DOWN( 20),
     DPAD_LEFT(  21),
     DPAD_RIGHT(22),

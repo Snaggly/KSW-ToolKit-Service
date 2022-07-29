@@ -1,27 +1,30 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
+import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.IScreenSwitchEvent
+import com.snaggly.ksw_toolkit.core.service.view.BackTapper
+import com.snaggly.ksw_toolkit.util.commander.KeyInjector
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
-import projekt.auto.mcu.ksw.serial.collection.McuCommands
-import projekt.auto.mcu.ksw.serial.enums.SOUND_SRC_TYPE
+import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 
-object ScreenSwitchEventNoOEMScreen : IScreenSwitchEvent {
+class ScreenSwitchEventNoOEMScreen(private val context: Context, private val backTapper: BackTapper) : IScreenSwitchEvent() {
     override fun getScreenSwitch(data: ByteArray): EventManagerTypes {
-        if (data[1] == 0x1.toByte()) {
-            McuLogic.mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_ON)
-            if (thisHasSoundRestorer) {
-                McuLogic.mcuCommunicator!!.sendCommand(McuCommands.SetMusicSource(SOUND_SRC_TYPE.SRC_ATSL_AIRCONSOLE))
-            }
-        } else if (data[1] == 0x2.toByte()) {
-            McuLogic.mcuCommunicator!!.sendCommand(McuCommands.SYS_SCREEN_OFF)
+
+        McuLogic.setRealSysMode(data[1].toInt(), backTapper)
+        if (McuLogic.realSysMode == 0x1) {
+            super.processToAndroid()
+            KeyInjector.sendKey(KeyCode.HOME.keycode)
+        } else if (McuLogic.realSysMode == 0x2) {
+            val intent = Intent()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.component = ComponentName("com.wits.pms", "com.wits.pms.ClockActivity")
+            context.startActivity(intent)
+            super.processToOEM()
         }
 
         return EventManagerTypes.ScreenSwitch
     }
-
-    override var hasSoundRestorer: Boolean
-        get() = thisHasSoundRestorer
-        set(value) {thisHasSoundRestorer = value}
-
-    private var thisHasSoundRestorer : Boolean = false
 }

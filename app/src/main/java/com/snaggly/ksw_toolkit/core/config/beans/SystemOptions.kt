@@ -1,7 +1,5 @@
 package com.snaggly.ksw_toolkit.core.config.beans
 
-import com.wits.pms.statuscontrol.PowerManagerApp
-
 class SystemOptions(
     var startAtBoot: Boolean?,
     var hijackCS: Boolean?,
@@ -27,7 +25,7 @@ class SystemOptions(
                     maxVolume = true,
                     logMcuEvent = true,
                     interceptMcuCommand = true,
-                    extraMediaButtonHandle = PowerManagerApp.getSettingsInt("CarDisplay") == 0,
+                    extraMediaButtonHandle = false,
                     nightBrightness = false,
                     nightBrightnessLevel = 65,
                     mcuPath = ""

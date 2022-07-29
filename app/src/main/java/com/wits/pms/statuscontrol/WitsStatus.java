@@ -1,11 +1,11 @@
 package com.wits.pms.statuscontrol;
 
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
 import projekt.auto.mcu.ksw.model.McuStatus;
+import projekt.auto.mcu.ksw.model.SystemStatus;
 
 public class WitsStatus {
     public String jsonArg;
@@ -44,19 +44,96 @@ public class WitsStatus {
         PowerManagerApp.sendStatus(new WitsStatus(5, new Gson().toJson(mcuStatus)));
     }
 
-    public static McuStatus.CarData getCarDataStatus() throws RemoteException {
-        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("carData"), McuStatus.CarData.class);
+    public static void sendOutSystemStatus(SystemStatus systemStatus) {
+        PowerManagerApp.sendStatus(new WitsStatus(1, new Gson().toJson(systemStatus)));
     }
 
-    public static McuStatus.BenzData getBenzDataStatus() throws RemoteException {
-        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("benzData"), McuStatus.BenzData.class);
+    public static McuStatus.CarData getCarDataStatus() {
+        return new Gson().fromJson(PowerManagerApp.getStatusString("carData"), McuStatus.CarData.class);
     }
 
-    public static McuStatus.ACData getACDataStatus() throws RemoteException {
-        return new Gson().fromJson(PowerManagerApp.getManager().getStatusString("acData"), McuStatus.ACData.class);
+    public static McuStatus.BenzData getBenzDataStatus() {
+        return new Gson().fromJson(PowerManagerApp.getStatusString("benzData"), McuStatus.BenzData.class);
     }
 
-    public static String getMcuVersion() throws RemoteException {
+    public static McuStatus.ACData getACDataStatus() {
+        return new Gson().fromJson(PowerManagerApp.getStatusString("acData"), McuStatus.ACData.class);
+    }
+
+    public static String getMcuVersion() {
         return PowerManagerApp.getStatusString("mcuVerison");
+    }
+
+    public static String getTopApp() {
+        String result = PowerManagerApp.getStatusString("topApp");
+        if (result != null)
+            return result;
+        else
+            return "";
+    }
+
+    public static SystemStatus getSystemStatus() {
+        SystemStatus sysStatus = new SystemStatus();
+        sysStatus.topApp = PowerManagerApp.getStatusString("topApp");
+        sysStatus.screenSwitch = PowerManagerApp.getStatusInt("screenSwitch");
+        sysStatus.lastMode = PowerManagerApp.getStatusInt("lastMode");
+        sysStatus.ill = PowerManagerApp.getStatusInt("ill");
+        sysStatus.acc = PowerManagerApp.getStatusInt("acc");
+        sysStatus.epb = PowerManagerApp.getStatusInt("epb");
+        sysStatus.ccd = PowerManagerApp.getStatusInt("ccd");
+        sysStatus.dormant = PowerManagerApp.getStatusBoolean("dormant");
+        sysStatus.rlight = PowerManagerApp.getStatusInt("rlight");
+        return sysStatus;
+    }
+
+    public static void sendOutIll(int newVal) {
+        PowerManagerApp.setSettingsInt("ill", newVal);
+    }
+
+    public static void sendOutEpb(int newVal) {
+        PowerManagerApp.setSettingsInt("epb", newVal);
+    }
+
+    public static void setAcc(SystemStatus systemStatus, int newVal) {
+        systemStatus.acc = newVal;
+        PowerManagerApp.setSettingsInt("acc", newVal);
+    }
+
+    public static void setCcd(SystemStatus systemStatus, int newVal) {
+        systemStatus.ccd = newVal;
+        PowerManagerApp.setSettingsInt("ccd", newVal);
+    }
+
+    public static void setScreenSwitch(SystemStatus systemStatus, int newVal) {
+        systemStatus.screenSwitch = newVal;
+        PowerManagerApp.setSettingsInt("screenSwitch", newVal);
+    }
+
+    public static void sendOutMcuMedia(McuStatus.MediaData mediaData) {
+        PowerManagerApp.setStatusString("mcuMediaJson", new Gson().toJson(mediaData));
+    }
+
+    public static void sendOutMcuBTStatus(McuStatus.CarBluetoothStatus bluetoothStatus) {
+        PowerManagerApp.setStatusString("mcuBluetoothStatus", new Gson().toJson(bluetoothStatus));
+    }
+
+    public static void sendOutMcuMediaPlayStatus(McuStatus.MediaPlayStatus playStatus) {
+        PowerManagerApp.setStatusString("mcuMediaPlayStatus", new Gson().toJson(playStatus));
+    }
+
+    public static void sendOutMcuDiscStatus(McuStatus.DiscStatus discStatus) {
+        PowerManagerApp.setStatusString("mcuDiscStatus", new Gson().toJson(discStatus));
+    }
+
+    public static void sendOutMcuEqData(McuStatus.EqData eqData) {
+        PowerManagerApp.setStatusString("mcuEqData", new Gson().toJson(eqData));
+    }
+
+    public static void setMcuVolumeLevel(int level) {
+        PowerManagerApp.setStatusInt("mcu_volume_level", level);
+    }
+
+    public static void setMcuVolumeMute(boolean mute) {
+        PowerManagerApp.setBooleanStatus("mcu_volume_mute", mute);
     }
 }

@@ -5,7 +5,9 @@ import android.app.Instrumentation
 object KeyInjector {
     private val instrumentation = Instrumentation()
 
-    fun sendKey(keyCode: Int) {
-        instrumentation.sendKeyDownUpSync(keyCode)
+    fun sendKey(keyCode: Int?) {
+        if (keyCode != null) {
+            instrumentation.sendKeyDownUpSync(keyCode)
+        }
     }
 }

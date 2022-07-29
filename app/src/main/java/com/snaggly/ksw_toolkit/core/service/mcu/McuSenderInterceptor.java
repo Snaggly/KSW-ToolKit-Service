@@ -13,9 +13,6 @@ public class McuSenderInterceptor implements Reader {
     private Process logProc;
     private boolean isReading = false;
 
-    public McuSenderInterceptor() {
-    }
-
     public McuSenderInterceptor(int readerInterval) {
         this.readerInterval = readerInterval;
     }

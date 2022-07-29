@@ -1,16 +1,17 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.media.AudioManager
+import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
-import projekt.auto.mcu.ksw.serial.McuCommunicator
+import projekt.auto.mcu.ksw.model.SystemStatus
 import kotlin.math.roundToInt
 
 object McuLogic {
     //Lib
-    var mcuCommunicator : McuCommunicator? = null
-    var realSysMode : Int = 1
+    var mcuCommunicator : CustomMcuCommunicator? = null
     val mcuStat = McuStatus()
+    var systemStatus: SystemStatus = SystemStatus()
 
     //Intern
     var hasInterceptedCarData = false
@@ -20,17 +21,21 @@ object McuLogic {
     //Param
     private var speedMaxVolume = 80
     private var minVolume = 0.75f
-    var actionLock = false
+    var actionLock = false @Synchronized get @Synchronized set
+    var hasNoOEMScreen = false @Synchronized get @Synchronized set
+    var hasBacklightAuto = false @Synchronized get @Synchronized set
+    var nightBrightness = -1 @Synchronized get @Synchronized set
+    var isReversing = false @Synchronized get @Synchronized set
+    var turnedOffScreen = false @Synchronized get private set
+    var realSysMode : Int = 1 @Synchronized private set
 
     init {
-        try{
-            mcuStat.systemMode = 1
-            mcuStat.mcuVerison = WitsStatus.getMcuVersion()
-            mcuStat.carData = WitsStatus.getCarDataStatus()
-            mcuStat.acData = WitsStatus.getACDataStatus()
-            mcuStat.benzData = WitsStatus.getBenzDataStatus()
-        }
-        catch (exc : Exception) {}
+        mcuStat.systemMode = 1
+        WitsStatus.getMcuVersion()?.let { mcuStat.mcuVerison = it }
+        WitsStatus.getCarDataStatus()?.let { mcuStat.carData = it }
+        WitsStatus.getACDataStatus()?.let { mcuStat.acData = it }
+        WitsStatus.getBenzDataStatus()?.let { mcuStat.benzData = it }
+        WitsStatus.getSystemStatus()?.let { systemStatus = it }
     }
 
     fun sendCarData() {
@@ -57,5 +62,28 @@ object McuLogic {
 
     fun stopAutoVolume() {
         autoVolume = false
+    }
+
+    @Synchronized fun setRealSysMode(value: Int, backTapper: BackTapper) {
+        if (realSysMode != value) {
+            realSysMode = value
+            if (value == 1) {
+                backTapper.removeBackWindow()
+            } else {
+                backTapper.drawBackWindow()
+            }
+        }
+    }
+
+    @Synchronized fun setTurnedOffScreen(value: Boolean, backTapper: BackTapper) {
+        if (turnedOffScreen != value) {
+            turnedOffScreen = value
+            if (turnedOffScreen) {
+                backTapper.drawBackWindow()
+            }
+            else {
+                backTapper.removeBackWindow()
+            }
+        }
     }
 }

@@ -18,6 +18,8 @@ import java.util.Objects;
 public class PowerManagerApp {
     private static ICmdListener cmdListener;
     private static final HashMap<String, IContentObserver> maps = new HashMap<>();
+    private static final String TAG = "WitsStatus";
+    private static final String ERROR_MSG = "No PowerManagerApp found";
 
     public static void init(Context context) {
         context.getContentResolver().registerContentObserver(Settings.System.getUriFor("bootTimes"), true, new ContentObserver(new Handler(context.getMainLooper())) {
@@ -102,43 +104,98 @@ public class PowerManagerApp {
         }
     }
 
-    public static void setBooleanStatus(String key, boolean value) throws RemoteException {
-        getManager().addBooleanStatus(key, value);
+    public static void setBooleanStatus(String key, boolean value) {
+        try {
+            getManager().addBooleanStatus(key, value);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+        }
     }
 
-    public static void setStatusString(String key, String value) throws RemoteException {
-        getManager().addStringStatus(key, value);
+    public static void setStatusString(String key, String value) {
+        try {
+            getManager().addStringStatus(key, value);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+        }
     }
 
-    public static void setStatusInt(String key, int value) throws RemoteException {
-        getManager().addIntStatus(key, value);
+    public static void setStatusInt(String key, int value) {
+        try {
+            getManager().addIntStatus(key, value);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+        }
     }
 
-    public static boolean getStatusBoolean(String key) throws RemoteException {
-        return getManager().getStatusBoolean(key);
+    public static boolean getStatusBoolean(String key) {
+        try {
+            return getManager().getStatusBoolean(key);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+            return false;
+        }
     }
 
-    public static String getStatusString(String key) throws RemoteException {
-        return getManager().getStatusString(key);
+    public static String getStatusString(String key) {
+        try {
+            return getManager().getStatusString(key);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+            return null;
+        }
     }
 
-    public static int getStatusInt(String key) throws RemoteException {
-        return getManager().getStatusInt(key);
+    public static int getStatusInt(String key) {
+        try {
+            return getManager().getStatusInt(key);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+            return -1;
+        }
     }
 
-    public static int getSettingsInt(String key) throws RemoteException {
-        return getManager().getSettingsInt(key);
+    public static int getSettingsInt(String key)  {
+        try {
+            return getManager().getSettingsInt(key);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+            return -1;
+        }
     }
 
-    public static String getSettingsString(String key) throws RemoteException {
-        return getManager().getSettingsString(key);
+    public static String getSettingsString(String key) {
+        try {
+            return getManager().getSettingsString(key);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+            return null;
+        }
     }
 
-    public static void setSettingsInt(String key, int value) throws RemoteException {
-        getManager().setSettingsInt(key, value);
+    public static void setSettingsInt(String key, int value) {
+        try {
+            getManager().setSettingsInt(key, value);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+        }
     }
 
-    public static void setSettingsString(String key, String value) throws RemoteException {
-        getManager().setSettingsString(key, value);
+    public static void setSettingsString(String key, String value) {
+        try {
+            getManager().setSettingsString(key, value);
+        }
+        catch (Exception e) {
+            Log.e(TAG, ERROR_MSG);
+        }
     }
 }

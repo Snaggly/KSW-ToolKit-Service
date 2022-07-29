@@ -1,6 +1,8 @@
 package com.wits.pms.statuscontrol;
 
 import android.os.RemoteException;
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 public class WitsCommand {
@@ -158,6 +160,7 @@ public class WitsCommand {
         try {
             PowerManagerApp.getManager().sendCommand(new Gson().toJson(new WitsCommand(command2, subCommand2, arg)));
         } catch (RemoteException e) {
+            Log.e("WitsCommand", "Unable to send command");
             e.printStackTrace();
         }
     }
@@ -166,6 +169,7 @@ public class WitsCommand {
         try {
             PowerManagerApp.getManager().sendCommand(new Gson().toJson(new WitsCommand(command2, subCommand2, "")));
         } catch (RemoteException e) {
+            Log.e("WitsCommand", "Unable to send command");
             e.printStackTrace();
         }
     }
