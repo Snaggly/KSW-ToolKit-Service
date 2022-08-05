@@ -1,22 +1,6 @@
-# KSW-ToolKit
+# KSW-ToolKit-Service
 
-![screenshot](/images/screenshot-eventmanager.png)
-
-KSW-ToolKit is capable of reading and understanding your Mcu. For example it can detect the Telefon button on your steering wheel and you determine to start whatever App you wish. Aside from starting apps, you can also invoke a set of global Android KeyEvents or McuCommands. This way you could remap your car buttons with just a few clicks! To check what Car button causes what Event, an Mcu Listener is included to show live every Event the Mcu posts. Additionally this App has easy tweaks, like being able to fully hide your TopBar with just a toggle. A built in ADB Shell is also included.
-
-To achieve the remapping of your existing buttons, this App will have to hijack the Mcu by shutting down the internal KSW McuService and starting its own reader service. Once shut down, only this app will be able to receive and send data to your Mcu!
-
-## Example
-
-* 1- Install the Apk and start it.
-* 2- Go to System Tweaks and disable "KSW Service". After this point you'll be no longer able to navigate with your iDrive as the mcu has been hijacked by this app.
-* 3- Navigate to Mcu Event Manager and Scroll down to "Drive Knob Buttons".
-* 4- Sequentially assign for each button the correct DPAD KeyEvent.
-
-Optional in System Tweaks:
-* 5a - Enable Log CarData to wrap CarData to the System for Dashboards and Climate Control (Benz only).
-* 5b - Enable Log McuEvent if you want to capture Mcu Events with Tasker via Logcat.
-* 5c - Enable Intercept McuCommands to redirect the commands to Mcu from the hijacked KSW-Service.
+This is the background service to go along with [KSW-ToolKit](https://github.com/Snaggly/KSW-ToolKit). It will install itself as a background system service and hijacks the original McuService of the KSW Android screens. When hijacked, this program serves as a full replacement to the original software which you can highly tweak and customize using the KSW-ToolKit GUI frontend.
 
 
 ## Building
@@ -25,7 +9,7 @@ Android Studio was used to write and compile this App. For the core functionalit
 
 ## Contributing
 
-As the App is still in development, contributions of any sorts is highly welcome! To contribute open a new pull request or open an issue to discuss new ideas.
+Contributions of any sorts is highly welcome! To contribute open a new pull request or open an issue to discuss new ideas.
 
 ## Credits
 
