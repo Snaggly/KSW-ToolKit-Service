@@ -13,9 +13,9 @@ Contributions of any sorts is highly welcome! To contribute open a new pull requ
 
 ## Credits
 
-[McuCommunicator](https://github.com/KswCarProject/McuCommunicator) - To communicate to Mcu
-[AdbLib](https://github.com/cgutman/AdbLib) - To access the Adb shell
+* [McuCommunicator](https://github.com/KswCarProject/McuCommunicator) - To communicate to Mcu
+* [AdbLib](https://github.com/cgutman/AdbLib) - To access the Adb shell
 
 ## License
 
-[GPL v3.0](https://choosealicense.com/licenses/gpl-3.0/)
+* [GPL v3.0](https://choosealicense.com/licenses/gpl-3.0/)
