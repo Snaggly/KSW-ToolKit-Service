@@ -153,6 +153,18 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                     KeyCode.ENDCALL.keycode,
                     "",
                     -1
+                ),
+                EventManagerTypes.HiCarAppButton to EventManager(
+                    EventMode.KeyEvent,
+                    KeyCode.APP_SWITCH.keycode,
+                    "",
+                    -1
+                ),
+                EventManagerTypes.HiCarVoiceButton to EventManager(
+                    EventMode.KeyEvent,
+                    KeyCode.VOICE_ASSIST.keycode,
+                    "",
+                    -1
                 )
             )
         }
