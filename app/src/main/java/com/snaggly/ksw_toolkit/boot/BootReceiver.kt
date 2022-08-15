@@ -7,6 +7,7 @@ import android.media.AudioManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
+import com.snaggly.ksw_toolkit.util.adb.DensityUtil
 import com.wits.pms.statuscontrol.PowerManagerApp
 
 class BootReceiver : BroadcastReceiver() {
@@ -37,6 +38,10 @@ class BootReceiver : BroadcastReceiver() {
                 audioManager.setStreamVolume(AudioManager.STREAM_RING, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING), 0)
                 audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM), 0)
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), 0)
+            }
+
+            if (config.systemOptions.tabletMode!!) {
+                DensityUtil.turnOnTabletMode(context)
             }
 
             if (config.systemOptions.startAtBoot!!) {
