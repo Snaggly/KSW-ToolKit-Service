@@ -4,14 +4,16 @@ import android.content.ComponentName
 import android.content.Intent
 import android.util.Log
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
+import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.IScreenSwitchEvent
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.wits.pms.statuscontrol.CallBackBinder
+import com.wits.pms.statuscontrol.PowerManagerApp
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
 class PowerEvent(private val backTapper: BackTapper) {
-    fun getPowerEvent(data: ByteArray): EventManagerTypes {
+    fun getPowerEvent(data: ByteArray, screenSwitchEvent: IScreenSwitchEvent): EventManagerTypes {
         if (data.size <= 1) {
             return EventManagerTypes.Dummy
         }
@@ -50,6 +52,12 @@ class PowerEvent(private val backTapper: BackTapper) {
             if (data[0] == 1.toByte()) {
                 McuLogic.isReversing = data[1] == 1.toByte()
                 backTapper.drawBackWindow()
+                if (PowerManagerApp.getSettingsInt("RearCamType") == 1) {
+                    if (data[1] == 1.toByte())
+                        screenSwitchEvent.getScreenSwitch(byteArrayOf(0, 2))
+                    else
+                        screenSwitchEvent.getScreenSwitch(byteArrayOf(0, 1))
+                }
             } else if (data[0] == 2.toByte()) {
                 Log.d("CallBackServiceImpl", "start360");
                 val intent = Intent()

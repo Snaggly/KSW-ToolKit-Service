@@ -37,7 +37,7 @@ class McuEvent(context: Context, backTapper: BackTapper) : IMcuEvent(context, ba
                 }
             }
             0x10 -> return accEvent.getAccEvent(data)
-            0x11 -> return powerEvent.getPowerEvent(data)
+            0x11 -> return powerEvent.getPowerEvent(data, screenSwitchEvent)
             0x1F -> return mediaEvent.getMediaEvent(data)
             0x20 -> return mediaStringEvent.getMediaEvent(data)
             0x21 -> return mediaStateEvent.getMediaEvent(data)
