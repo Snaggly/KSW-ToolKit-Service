@@ -82,6 +82,7 @@ class McuReaderHandler(private val context: Context) {
                     SoundRestorer.HasSoundRestorer
                 else
                     SoundRestorer.NoSoundRestorer
+                parseMcuEvent.screenSwitchEvent.soundRestorer.reEnableSound()
 
                 //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
                 if (config.systemOptions.nightBrightness!!) {
