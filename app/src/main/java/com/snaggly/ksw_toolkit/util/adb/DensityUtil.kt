@@ -29,9 +29,6 @@ object DensityUtil {
         } catch (e: Exception) {
             false
         }
-        if (tabletModeTurnedOn) {
-            restartHome(context)
-        }
     }
 
     fun turnOffTabletMode(context: Context) {
@@ -50,21 +47,6 @@ object DensityUtil {
             false
         } catch (e: Exception) {
             true
-        }
-        if (!tabletModeTurnedOn) {
-            restartHome(context)
-        }
-    }
-
-    private fun restartHome(context: Context) {
-        val homeIntent = Intent(Intent.ACTION_MAIN)
-        homeIntent.addCategory(Intent.CATEGORY_HOME)
-        val resolveInfo = context.packageManager.resolveActivity(homeIntent, PackageManager.MATCH_DEFAULT_ONLY)
-
-        val homePackageName = resolveInfo?.activityInfo?.packageName
-        homePackageName?.let {
-            AdbManager.sendCommand("am force-stop $it", context)
-            AppStarter.launchAppById(it, context)
         }
     }
 }
