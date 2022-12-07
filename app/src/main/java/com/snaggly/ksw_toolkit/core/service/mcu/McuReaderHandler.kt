@@ -36,7 +36,7 @@ class McuReaderHandler(private val context: Context) {
             config.systemOptions.mcuPath != "" -> {
                 McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter(config.systemOptions.mcuPath), LogcatReader())
             }
-            Build.VERSION.RELEASE.contains("11") -> {
+            Build.VERSION.SDK_INT >= 30 -> {
                 McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHS1"), LogcatReader())
             }
             Build.DISPLAY.contains("8937") -> {
@@ -115,7 +115,7 @@ class McuReaderHandler(private val context: Context) {
                     config.systemOptions.mcuPath != "" -> {
                         McuLogic.mcuCommunicator?.mcuReader = SerialReader(config.systemOptions.mcuPath)
                     }
-                    Build.VERSION.RELEASE.contains("11") -> {
+                    Build.VERSION.SDK_INT >= 30 -> {
                         McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHS1")
                     }
                     Build.DISPLAY.contains("8937") -> {
