@@ -6,7 +6,7 @@ import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
 class McuEvent(context: Context, backTapper: BackTapper) : IMcuEvent(context, backTapper) {
-    override fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes {
+    override fun getMcuEvent(cmdType: Int, data: ByteArray, context: Context): EventManagerTypes {
         when (cmdType) {
             0xA1 -> {
                 return if (data.size > 2 && data[0] == 0x17.toByte() && data[2] == 0x01.toByte()) {
@@ -16,7 +16,7 @@ class McuEvent(context: Context, backTapper: BackTapper) : IMcuEvent(context, ba
                 } else if (data[0] == 0x18.toByte() && data.size > 6) {
                     timeEvent.getTimeEvent(data)
                 } else {
-                    carDataEvent.getCarDataEvent(data)
+                    carDataEvent.getCarDataEvent(data, context)
                 }
             }
             0x1B -> return touchEvent.getTouchEvent(data)

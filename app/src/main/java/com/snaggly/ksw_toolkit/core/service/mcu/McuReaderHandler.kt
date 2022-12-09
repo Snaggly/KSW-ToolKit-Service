@@ -151,7 +151,7 @@ class McuReaderHandler(private val context: Context) {
     val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
         Thread {
             if (cmdType != 0 || data.isNotEmpty()) {
-                val event = parseMcuEvent.getMcuEvent(cmdType, data)
+                val event = parseMcuEvent.getMcuEvent(cmdType, data, context)
                 eventAction?.processAction(cmdType, data, event, config)
 
                 mcuEventListeners.forEach {

@@ -27,5 +27,5 @@ abstract class IMcuEvent(context: Context, backTapper: BackTapper) {
     val bluetoothNameEvent = BluetoothNameEvent()
     val eqDataEvent = EQDataEvent(context)
     val txzInfoEvent = TxzInfoEvent(context)
-    abstract fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes
+    abstract fun getMcuEvent(cmdType: Int, data: ByteArray, context: Context): EventManagerTypes
 }

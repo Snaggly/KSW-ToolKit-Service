@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
+import android.content.Context
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.ICarDataEvent
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
@@ -7,13 +8,13 @@ import com.wits.pms.statuscontrol.CallBackBinder
 import com.wits.pms.statuscontrol.WitsStatus
 
 object CarDataEventLogger : ICarDataEvent() {
-    override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
+    override fun getCarDataEvent(data: ByteArray, context: Context): EventManagerTypes {
         when {
             data[0] == 0x19.toByte() && data.size > 15 -> {
                 McuLogic.mcuStat.carData.parseFromCarDataEvent(data)
             }
             data[0] == 0x10.toByte() && data.size > 2 -> {
-                lightEvent.getCarDataEvent(data)
+                lightEvent.getCarDataEvent(data, context)
                 McuLogic.mcuStat.carData.parseFromBrakeBeltEvent(data)
                 McuLogic.systemStatus.parseFromMcuEvent(data)
                 WitsStatus.sendOutIll(McuLogic.systemStatus.ill)
