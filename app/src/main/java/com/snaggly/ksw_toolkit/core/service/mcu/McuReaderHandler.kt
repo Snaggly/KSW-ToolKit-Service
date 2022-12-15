@@ -142,7 +142,10 @@ class McuReaderHandler(private val context: Context) {
                     })
                 } else {
                     McuLogic.mcuCommunicator?.startBeat()
-                    brightnessObserver.startObservingBrightness()
+                    //Commented out because even if the light is on, it is only momentarily turned to normal brightness
+                    // when KSW-ToolKit is started
+                    //No sign of being called even when the service is running
+                    //brightnessObserver.startObservingBrightness()
                 }
             }
         }
@@ -185,7 +188,7 @@ class McuReaderHandler(private val context: Context) {
     }
 
     fun stopReader() {
-        brightnessObserver.stopObservingBrightness()
+        //brightnessObserver.stopObservingBrightness()
         backTapper.removeBackWindow()
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()
