@@ -2,7 +2,6 @@ package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
 import android.content.Context
 import android.provider.Settings
-import android.util.Log
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.ILightEvent
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
@@ -29,7 +28,6 @@ object LightEvent : ILightEvent {
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(newBrightness.toByte()))
             }
         }
-
 
         return EventManagerTypes.CarData
     }
