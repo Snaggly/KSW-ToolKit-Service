@@ -21,15 +21,11 @@ open class EventAction(private val context: Context) {
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
-                    if (AutoKitCallBackImpl.isUsing()) when (event) {
-                        EventManagerTypes.KnobTurnLeft -> eventConfig.keyCode = KeyCode.DPAD_LEFT.keycode
-                        EventManagerTypes.KnobTurnRight -> eventConfig.keyCode = KeyCode.DPAD_RIGHT.keycode
-                    }
                     if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
                         KeyInjector.sendKey(eventConfig.keyCode)
                     when (eventConfig.keyCode) {
-                        KeyCode.DPAD_UP.keycode -> AutoKitCallBackImpl.drapUp(context.applicationContext)
-                        KeyCode.DPAD_DOWN.keycode -> AutoKitCallBackImpl.drapDown(context.applicationContext)
+                        KeyCode.DPAD_UP.keycode -> AutoKitCallBackImpl.drapUp(context.applicationContext, event)
+                        KeyCode.DPAD_DOWN.keycode -> AutoKitCallBackImpl.drapDown(context.applicationContext, event)
                         KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
                         KeyCode.DPAD_RIGHT.keycode -> {
                             AutoKitCallBackImpl.drapRight(context.applicationContext)
@@ -55,7 +51,11 @@ open class EventAction(private val context: Context) {
                     AppStarter.launchAppById(eventConfig.appName, context)
                 }
                 EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode!!], McuLogic.mcuCommunicator, context)
+                    McuCommander.executeCommand(
+                        McuCommandsEnum.values[eventConfig.mcuCommandMode!!],
+                        McuLogic.mcuCommunicator,
+                        context
+                    )
                 }
                 else -> {}
             }
