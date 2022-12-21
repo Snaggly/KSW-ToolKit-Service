@@ -21,9 +21,14 @@ open class EventAction(private val context: Context) {
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
-                    if (AutoKitCallBackImpl.isUsing()) when (event) {
-                        EventManagerTypes.KnobTurnLeft -> eventConfig.keyCode = KeyCode.DPAD_LEFT.keycode
-                        EventManagerTypes.KnobTurnRight -> eventConfig.keyCode = KeyCode.DPAD_RIGHT.keycode
+                    var storeKeyCode = null as Int?
+                    // AutoKit assigns dialing to the left and right DPADs
+                    if (AutoKitCallBackImpl.isUsing()) {
+                        storeKeyCode = eventConfig.keyCode
+                        when (event) {
+                            EventManagerTypes.KnobTurnLeft -> eventConfig.keyCode = KeyCode.DPAD_LEFT.keycode
+                            EventManagerTypes.KnobTurnRight -> eventConfig.keyCode = KeyCode.DPAD_RIGHT.keycode
+                        }
                     }
                     if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
                         KeyInjector.sendKey(eventConfig.keyCode)
@@ -50,12 +55,19 @@ open class EventAction(private val context: Context) {
                         KeyCode.APP_SWITCH.keycode -> WitsCommand.sendCommand(7, 101, "")
                         KeyCode.VOICE_ASSIST.keycode -> WitsCommand.sendCommand(7, 102, "")
                     }
+                    if (storeKeyCode != null) {
+                        eventConfig.keyCode = storeKeyCode
+                    }
                 }
                 EventMode.StartApp -> {
                     AppStarter.launchAppById(eventConfig.appName, context)
                 }
                 EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode!!], McuLogic.mcuCommunicator, context)
+                    McuCommander.executeCommand(
+                        McuCommandsEnum.values[eventConfig.mcuCommandMode!!],
+                        McuLogic.mcuCommunicator,
+                        context
+                    )
                 }
                 else -> {}
             }
