@@ -19,6 +19,9 @@ interface IKSWToolKitService {
     boolean getTabletMode();
     void setTabletMode(boolean value);
 
+    boolean getHideStartMessage();
+    void setHideStartMessage(boolean value);
+
     boolean getStartAtBoot();
     void setStartAtBoot(boolean value);
 

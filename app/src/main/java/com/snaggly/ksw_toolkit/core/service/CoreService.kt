@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.view.WindowManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.R
+import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
@@ -18,8 +19,8 @@ class CoreService : Service() {
     override fun onBind(intent: Intent): IBinder? {
         try {
             ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+        } catch (e: Exception) {
         }
-        catch (e : Exception) {}
         ServiceValidation.hasAuthenticated = false
         return kswToolKitService
     }
@@ -28,10 +29,9 @@ class CoreService : Service() {
         if (intent != null) {
             try {
                 ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
+            } catch (e: Exception) {
             }
-            catch (e : Exception) {}
-        }
-        else
+        } else
             ServiceValidation.signature = null
         ServiceValidation.hasAuthenticated = false
         super.onRebind(intent)
@@ -44,15 +44,18 @@ class CoreService : Service() {
     }
 
     val mcuLogic = McuLogic
-    private var mcuReaderHandler : McuReaderHandler? = null
-    private var kswToolKitService : KSWToolKitService? = null
+    private var mcuReaderHandler: McuReaderHandler? = null
+    private var kswToolKitService: KSWToolKitService? = null
 
     override fun onCreate() {
         try {
             mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()
             kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
-            "KSW-ToolKit-Service started".showMessage()
+            val config = ConfigManager.getConfig(getApplicationContext().filesDir.absolutePath)
+            if (config.systemOptions.hideStartMessage == false) {
+                "KSW-ToolKit-Service started".showMessage()
+            }
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
@@ -77,15 +80,17 @@ class CoreService : Service() {
         McuLogic.mcuCommunicator = null
 
         Thread {
-            while(kswToolKitService != null){
-                mcuReaderHandler?.onMcuEventAction?.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1,22)))
+            while (kswToolKitService != null) {
+                mcuReaderHandler?.onMcuEventAction?.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1, 22)))
                 Thread.sleep(1500)
             }
         }.start()
     }
 
     private fun showAlertMessage(message: String) {
-        val alert = AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message).create()
+        val alert =
+            AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message)
+                .create()
         alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         alert.show()
     }
