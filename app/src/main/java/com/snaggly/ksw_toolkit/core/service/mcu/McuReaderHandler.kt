@@ -4,6 +4,7 @@ import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
+import android.widget.Toast
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
@@ -97,11 +98,11 @@ class McuReaderHandler(private val context: Context) {
 
                 //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
                 if (config.systemOptions.autoTheme!!) {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch.apply {
+                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch(context).apply {
                         uiModeManager = context.getSystemService(UiModeManager::class.java)
                     }
                 } else {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEvent
+                    parseMcuEvent.carDataEvent.lightEvent = LightEvent(context)
                 }
 
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
@@ -223,5 +224,15 @@ class McuReaderHandler(private val context: Context) {
 
     fun unregisterAllMcuEventListeners() {
         mcuEventListeners.clear()
+    }
+
+    fun showStartMessage() {
+        if (config.systemOptions.hideStartMessage == false) {
+            "KSW-ToolKit-Service started".showMessage()
+        }
+    }
+
+    fun String.showMessage() {
+        Toast.makeText(context ,this, Toast.LENGTH_LONG).show();
     }
 }

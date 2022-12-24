@@ -11,11 +11,11 @@ import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import kotlin.experimental.and
 import kotlin.math.roundToInt
 
-object LightEventSwitch : ILightEvent {
+class LightEventSwitch(private val context: Context) : ILightEvent {
 
     var uiModeManager: UiModeManager? = null
 
-    override fun getCarDataEvent(data: ByteArray, context: Context): EventManagerTypes {
+    override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
         if (data[1].and(7) > 1) {
             uiModeManager?.nightMode = UiModeManager.MODE_NIGHT_YES
             if (McuLogic.nightBrightness >= 0) {
@@ -26,7 +26,8 @@ object LightEventSwitch : ILightEvent {
             if (McuLogic.nightBrightness >= 0) {
                 val newBrightness = (100.0 * BrightnessUtils.getPercentage(
                     BrightnessUtils.convertLinearToGamma(
-                        Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS), 10, 255
+                        Settings.System.getInt(context.contentResolver,
+                            Settings.System.SCREEN_BRIGHTNESS), 10, 255
                     ).toDouble(), 0, 1023
                 )).roundToInt()
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(newBrightness.toByte()))

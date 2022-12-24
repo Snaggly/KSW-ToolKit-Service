@@ -16,7 +16,7 @@ class McuEvent(private val context: Context, backTapper: BackTapper) : IMcuEvent
                 } else if (data[0] == 0x18.toByte() && data.size > 6) {
                     timeEvent.getTimeEvent(data)
                 } else {
-                    carDataEvent.getCarDataEvent(data, context)
+                    carDataEvent.getCarDataEvent(data)
                 }
             }
             0x1B -> return touchEvent.getTouchEvent(data)

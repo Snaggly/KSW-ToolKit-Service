@@ -11,8 +11,8 @@ import kotlin.experimental.and
 import kotlin.math.roundToInt
 
 
-object LightEvent : ILightEvent {
-    override fun getCarDataEvent(data: ByteArray, context: Context): EventManagerTypes {
+class LightEvent(private val context: Context) : ILightEvent {
+    override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
 
         if (McuLogic.nightBrightness >= 0) {
             if (data[1].and(7) > 1) {

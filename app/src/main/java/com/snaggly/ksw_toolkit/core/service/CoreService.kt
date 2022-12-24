@@ -52,10 +52,7 @@ class CoreService : Service() {
             mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()
             kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
-            val config = ConfigManager.getConfig(getApplicationContext().filesDir.absolutePath)
-            if (config.systemOptions.hideStartMessage == false) {
-                "KSW-ToolKit-Service started".showMessage()
-            }
+            mcuReaderHandler!!.showStartMessage()
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
