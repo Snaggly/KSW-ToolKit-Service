@@ -15,9 +15,9 @@ import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.PowerManagerApp
-import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
+import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
@@ -35,13 +35,17 @@ class McuReaderHandler(private val context: Context) {
     init {
         when {
             config.systemOptions.mcuPath != "" -> {
-                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter(config.systemOptions.mcuPath), LogcatReader())
+                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper,
+                    SerialWriter(config.systemOptions.mcuPath),
+                    LogcatReader())
             }
-            Build.VERSION.SDK_INT >= 30 -> {
-                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHS1"), LogcatReader())
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                McuLogic.mcuCommunicator =
+                    CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHS1"), LogcatReader())
             }
             Build.DISPLAY.contains("8937") -> {
-                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHSL1"), LogcatReader())
+                McuLogic.mcuCommunicator =
+                    CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHSL1"), LogcatReader())
             }
             else -> {
                 McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter(), LogcatReader())
@@ -114,9 +118,10 @@ class McuReaderHandler(private val context: Context) {
                 //Initialize SerialReader
                 when {
                     config.systemOptions.mcuPath != "" -> {
-                        McuLogic.mcuCommunicator?.mcuReader = SerialReader(config.systemOptions.mcuPath)
+                        McuLogic.mcuCommunicator?.mcuReader =
+                            SerialReader(config.systemOptions.mcuPath)
                     }
-                    Build.VERSION.SDK_INT >= 30 -> {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                         McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHS1")
                     }
                     Build.DISPLAY.contains("8937") -> {
@@ -233,6 +238,6 @@ class McuReaderHandler(private val context: Context) {
     }
 
     fun String.showMessage() {
-        Toast.makeText(context ,this, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, this, Toast.LENGTH_LONG).show()
     }
 }
