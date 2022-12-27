@@ -1,0 +1,17 @@
+msm8953_64:/ # dumpsys activity services McuService
+ACTIVITY MANAGER SERVICES (dumpsys activity services)
+  User 0 active services:
+  * ServiceRecord{4520007 u0 com.wits.pms/.mcu.McuService}
+    intent={cmp=com.wits.pms/.mcu.McuService}
+    packageName=com.wits.pms
+    processName=com.wits.pms
+    baseDir=/system/priv-app/CenterService/CenterService.apk
+    dataDir=/data/user/0/com.wits.pms
+    app=ProcessRecord{12926b 1853:com.wits.pms/1000}
+    createTime=-1m7s529ms startingBgTimeout=--
+    lastActivity=-1m6s441ms restartTime=-1m7s447ms createdFromFg=true
+    startRequested=true delayedStop=false stopIfKilled=false callStart=true lastStartId=2
+	
+msm8953_64:/ # dumpsys activity services McuService
+ACTIVITY MANAGER SERVICES (dumpsys activity services)
+  (nothing)
