@@ -24,10 +24,10 @@ open class EventAction(private val context: Context) {
                     if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
                         KeyInjector.sendKey(eventConfig.keyCode)
                     when (eventConfig.keyCode) {
-                        KeyCode.DPAD_UP.keycode -> AutoKitCallBackImpl.drapUp(context.applicationContext)
-                        KeyCode.DPAD_DOWN.keycode -> AutoKitCallBackImpl.drapDown(context.applicationContext)
+                        KeyCode.DPAD_UP.keycode -> AutoKitCallBackImpl.drapUp(context.applicationContext, event)
+                        KeyCode.DPAD_DOWN.keycode -> AutoKitCallBackImpl.drapDown(context.applicationContext, event)
                         KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
-                        KeyCode.DPAD_RIGHT.keycode ->  {
+                        KeyCode.DPAD_RIGHT.keycode -> {
                             AutoKitCallBackImpl.drapRight(context.applicationContext)
                             AutoNavi.dragRight(context.applicationContext)
                         }
@@ -36,11 +36,11 @@ open class EventAction(private val context: Context) {
                             AutoNavi.dragLeft(context.applicationContext)
                         }
                         KeyCode.CALL.keycode -> {
-                            WitsCommand.sendCommand(7, 113, "");
+                            WitsCommand.sendCommand(7, 113, "")
                             CallHandler.handleAccept(context.applicationContext)
                         }
                         KeyCode.ENDCALL.keycode -> {
-                            WitsCommand.sendCommand(7, 113, "");
+                            WitsCommand.sendCommand(7, 113, "")
                             CallHandler.handleReject(context.applicationContext)
                         }
                         KeyCode.APP_SWITCH.keycode -> WitsCommand.sendCommand(7, 101, "")
@@ -51,7 +51,11 @@ open class EventAction(private val context: Context) {
                     AppStarter.launchAppById(eventConfig.appName, context)
                 }
                 EventMode.McuCommand -> {
-                    McuCommander.executeCommand(McuCommandsEnum.values[eventConfig.mcuCommandMode!!], McuLogic.mcuCommunicator, context)
+                    McuCommander.executeCommand(
+                        McuCommandsEnum.values[eventConfig.mcuCommandMode!!],
+                        McuLogic.mcuCommunicator,
+                        context
+                    )
                 }
                 else -> {}
             }

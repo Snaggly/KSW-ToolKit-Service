@@ -40,6 +40,7 @@ class ConfigManager private constructor() {
         configData.systemOptions.nightBrightnessLevel?.let { systemOptions.nightBrightnessLevel = it }
         configData.systemOptions.mcuPath?.let { systemOptions.mcuPath = it }
         configData.systemOptions.tabletMode?.let { systemOptions.tabletMode = it }
+        configData.systemOptions.hideStartMessage?.let { systemOptions.hideStartMessage = it }
 
         for (type in configData.eventManagers) {
             configData.eventManagers[type.key]?.eventMode!!.let { eventManagers[type.key]?.eventMode = it }

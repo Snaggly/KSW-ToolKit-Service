@@ -5,7 +5,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.IMcuEvent
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 
-class McuEvent(context: Context, backTapper: BackTapper) : IMcuEvent(context, backTapper) {
+class McuEvent(private val context: Context, backTapper: BackTapper) : IMcuEvent(context, backTapper) {
     override fun getMcuEvent(cmdType: Int, data: ByteArray): EventManagerTypes {
         when (cmdType) {
             0xA1 -> {

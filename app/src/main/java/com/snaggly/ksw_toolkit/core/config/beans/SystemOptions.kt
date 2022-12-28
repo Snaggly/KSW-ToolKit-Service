@@ -13,7 +13,8 @@ class SystemOptions(
     var nightBrightness: Boolean? = false,
     var nightBrightnessLevel: Int? = 65,
     var mcuPath: String? = "",
-    var tabletMode: Boolean? = false
+    var tabletMode: Boolean? = false,
+    var hideStartMessage: Boolean? = false
 ) {
     companion object {
         fun initSystemTweaks() : SystemOptions {
@@ -30,7 +31,8 @@ class SystemOptions(
                     nightBrightness = false,
                     nightBrightnessLevel = 65,
                     mcuPath = "",
-                    tabletMode = false
+                    tabletMode = false,
+                    hideStartMessage = false
             )
         }
     }

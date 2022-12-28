@@ -95,7 +95,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
             return false
         if (allSettings == null)
             return false
-        if (allSettings.size < 10) {
+        if (allSettings.size < 11) {
             return false
         }
 
@@ -109,6 +109,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         configManager.systemOptions.interceptMcuCommand = allSettings[7]
         configManager.systemOptions.extraMediaButtonHandle = allSettings[8]
         configManager.systemOptions.nightBrightness = allSettings[9]
+        configManager.systemOptions.hideStartMessage = allSettings[10]
 
         configManager.saveConfig()
 
@@ -127,7 +128,8 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
             "LogMcuEvents",
             "InterceptMcuCommands",
             "EnableExtendedIDrive",
-            "NightBrightness"
+            "NightBrightness",
+            "HideStartMessage"
         )
     }
 
@@ -178,6 +180,15 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
             DensityUtil.turnOnTabletMode(serviceContext)
         else
             DensityUtil.turnOffTabletMode(serviceContext)
+    }
+
+    override fun getHideStartMessage(): Boolean {
+        return configManager.systemOptions.hideStartMessage!!
+    }
+
+    override fun setHideStartMessage(value: Boolean) {
+        configManager.systemOptions.hideStartMessage = value
+        configManager.saveConfig()
     }
 
     override fun getStartAtBoot(): Boolean {
