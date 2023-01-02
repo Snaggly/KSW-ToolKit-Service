@@ -2,7 +2,6 @@ package com.wits.pms.receiver;
 
 import android.content.Context;
 
-import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes;
 import com.wits.pms.bean.AutoKitMessage;
 import com.wits.pms.statuscontrol.PowerManagerApp;
 
@@ -41,23 +40,15 @@ public class AutoKitCallBackImpl {
         return PowerManagerApp.getStatusString("topApp").equals(AutoKitPkgName);
     }
 
-    public static void drapUp(Context mContext, EventManagerTypes event) {
+    public static void drapUp(Context mContext) {
         if (isUsing()) {
-            if (event == EventManagerTypes.KnobTurnLeft) {
-                AutoKitMessage.obtainMsgSendOut(mContext, 3);
-            } else {
-                AutoKitMessage.obtainMsgSendOut(mContext, 5);
-            }
+            AutoKitMessage.obtainMsgSendOut(mContext, 5);
         }
     }
 
-    public static void drapDown(Context mContext, EventManagerTypes event) {
+    public static void drapDown(Context mContext) {
         if (isUsing()) {
-            if (event == EventManagerTypes.KnobTurnRight) {
-                AutoKitMessage.obtainMsgSendOut(mContext, 4);
-            } else {
-                AutoKitMessage.obtainMsgSendOut(mContext, 6);
-            }
+            AutoKitMessage.obtainMsgSendOut(mContext, 6);
         }
     }
 

@@ -74,4 +74,11 @@ public class ZlinkMessage {
     public String toString() {
         return "status:" + this.status + " - command:" + this.command + "-" + this.bundle.toString();
     }
+
+    public static void sendZlinkMessage(int keyCode, Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString("command", "REQ_SPEC_FUNC_CMD");
+        bundle.putInt("specFuncCode", keyCode);
+        new ZlinkMessage(ZlinkMessage.ZLINK_NORMAL_ACTION, "REQ_SPEC_FUNC_CMD", bundle).sendBroadCast(context);
+    }
 }

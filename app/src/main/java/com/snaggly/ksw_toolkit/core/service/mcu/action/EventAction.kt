@@ -10,31 +10,85 @@ import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
+import com.wits.pms.bean.ZlinkMessage
 import com.wits.pms.receiver.AutoKitCallBackImpl
 import com.wits.pms.receiver.AutoNavi
 import com.wits.pms.receiver.CallHandler
+import com.wits.pms.receiver.ZLinkHandler
 import com.wits.pms.statuscontrol.WitsCommand
+import com.wits.pms.utils.SystemProperties
 
 open class EventAction(private val context: Context) {
+    private val zLinkHandler = ZLinkHandler(context)
     open fun processAction(cmdType: Int, data: ByteArray, event: EventManagerTypes?, config: ConfigManager) {
+        var keyBypass = false
         if (event != null) {
+            if (event == EventManagerTypes.NavigationButton && ZLinkHandler.isUsing()) {
+                zLinkHandler.navigation()
+                return
+            }
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
+                    if (ZLinkHandler.isUsing()) {
+                        keyBypass = true
+                        when (eventConfig.keyCode) {
+                            KeyCode.DPAD_UP.keycode -> {
+                                if (event == EventManagerTypes.KnobTiltUp)
+                                    zLinkHandler.tiltUp()
+                                else
+                                    zLinkHandler.turnLeft()
+                            }
+                            KeyCode.DPAD_DOWN.keycode -> {
+                                if (event == EventManagerTypes.KnobTiltDown)
+                                    zLinkHandler.tiltDown()
+                                else
+                                    zLinkHandler.turnRight()
+                            }
+                            KeyCode.ENTER.keycode -> zLinkHandler.knobPress()
+                            KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
+                            KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
+                            KeyCode.CALL.keycode -> {
+                                if (event == EventManagerTypes.TelephoneButton && SystemProperties.get(ZlinkMessage.ZLINK_CALL_ING) == "1")
+                                    zLinkHandler.telHangUp()
+                                else
+                                    zLinkHandler.telPick()
+                            }
+                            KeyCode.ENDCALL.keycode -> zLinkHandler.telHangUp()
+                            KeyCode.MEDIA_PREVIOUS.keycode -> zLinkHandler.mediaPrev()
+                            KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
+                            KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
+                            else -> keyBypass = false
+                        }
+                    }
+                    else if (AutoKitCallBackImpl.isUsing()) {
+                        keyBypass = true
+                        when (eventConfig.keyCode) {
+                            KeyCode.DPAD_UP.keycode -> {
+                                if (event == EventManagerTypes.KnobTurnLeft)
+                                    AutoKitCallBackImpl.drapLeft(context.applicationContext)
+                                else
+                                    AutoKitCallBackImpl.drapUp(context.applicationContext)
+                            }
+                            KeyCode.DPAD_DOWN.keycode -> {
+                                if (event == EventManagerTypes.KnobTurnRight)
+                                    AutoKitCallBackImpl.drapRight(context.applicationContext)
+                                else
+                                    AutoKitCallBackImpl.drapDown(context.applicationContext)
+                            }
+                            KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
+                            KeyCode.DPAD_RIGHT.keycode -> AutoKitCallBackImpl.drapRight(context.applicationContext)
+                            KeyCode.DPAD_LEFT.keycode -> AutoKitCallBackImpl.drapLeft(context.applicationContext)
+                            else -> keyBypass = false
+                        }
+                    }
+                    if (keyBypass)
+                        return
                     if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
                         KeyInjector.sendKey(eventConfig.keyCode)
                     when (eventConfig.keyCode) {
-                        KeyCode.DPAD_UP.keycode -> AutoKitCallBackImpl.drapUp(context.applicationContext, event)
-                        KeyCode.DPAD_DOWN.keycode -> AutoKitCallBackImpl.drapDown(context.applicationContext, event)
-                        KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
-                        KeyCode.DPAD_RIGHT.keycode -> {
-                            AutoKitCallBackImpl.drapRight(context.applicationContext)
-                            AutoNavi.dragRight(context.applicationContext)
-                        }
-                        KeyCode.DPAD_LEFT.keycode -> {
-                            AutoKitCallBackImpl.drapLeft(context.applicationContext)
-                            AutoNavi.dragLeft(context.applicationContext)
-                        }
+                        KeyCode.DPAD_RIGHT.keycode -> AutoNavi.dragRight(context.applicationContext)
+                        KeyCode.DPAD_LEFT.keycode -> AutoNavi.dragLeft(context.applicationContext)
                         KeyCode.CALL.keycode -> {
                             WitsCommand.sendCommand(7, 113, "")
                             CallHandler.handleAccept(context.applicationContext)
