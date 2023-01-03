@@ -46,8 +46,8 @@ open class EventAction(private val context: Context) {
                                     zLinkHandler.turnRight()
                             }
                             KeyCode.ENTER.keycode -> zLinkHandler.knobPress()
-                            KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
-                            KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
+                            //KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
+                            //KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
                             KeyCode.CALL.keycode -> {
                                 if (event == EventManagerTypes.TelephoneButton && SystemProperties.get(ZlinkMessage.ZLINK_CALL_ING) == "1")
                                     zLinkHandler.telHangUp()
@@ -58,6 +58,7 @@ open class EventAction(private val context: Context) {
                             KeyCode.MEDIA_PREVIOUS.keycode -> zLinkHandler.mediaPrev()
                             KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
                             KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
+                            KeyCode.BACK.keycode -> zLinkHandler.back()
                             else -> keyBypass = false
                         }
                     }
