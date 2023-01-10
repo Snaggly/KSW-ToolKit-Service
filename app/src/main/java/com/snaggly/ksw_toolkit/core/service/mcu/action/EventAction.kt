@@ -6,6 +6,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.util.commander.AppStarter
 import com.snaggly.ksw_toolkit.util.commander.KeyInjector
 import com.snaggly.ksw_toolkit.util.commander.McuCommander
+import com.snaggly.ksw_toolkit.util.commander.TaskerTaskStarter
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
@@ -63,23 +64,20 @@ open class EventAction(private val context: Context) {
                         }
                     }
                     else if (AutoKitCallBackImpl.isUsing()) {
-                        keyBypass = true
                         when (eventConfig.keyCode) {
                             KeyCode.DPAD_UP.keycode -> {
-                                if (event == EventManagerTypes.KnobTurnLeft)
+                                if (event == EventManagerTypes.KnobTurnLeft) {
+                                    keyBypass = true
                                     AutoKitCallBackImpl.drapLeft(context.applicationContext)
-                                else
-                                    AutoKitCallBackImpl.drapUp(context.applicationContext)
+                                }
                             }
                             KeyCode.DPAD_DOWN.keycode -> {
-                                if (event == EventManagerTypes.KnobTurnRight)
+                                if (event == EventManagerTypes.KnobTurnRight) {
+                                    keyBypass = true
                                     AutoKitCallBackImpl.drapRight(context.applicationContext)
-                                else
-                                    AutoKitCallBackImpl.drapDown(context.applicationContext)
+                                }
                             }
                             KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
-                            KeyCode.DPAD_RIGHT.keycode -> AutoKitCallBackImpl.drapRight(context.applicationContext)
-                            KeyCode.DPAD_LEFT.keycode -> AutoKitCallBackImpl.drapLeft(context.applicationContext)
                             else -> keyBypass = false
                         }
                     }
@@ -111,6 +109,9 @@ open class EventAction(private val context: Context) {
                         McuLogic.mcuCommunicator,
                         context
                     )
+                }
+                EventMode.TaskerTask -> {
+                    TaskerTaskStarter.launchTaskerTaskById(eventConfig.taskerTaskName, context)
                 }
                 else -> {}
             }

@@ -47,6 +47,7 @@ class ConfigManager private constructor() {
             configData.eventManagers[type.key]?.mcuCommandMode!!.let { eventManagers[type.key]?.mcuCommandMode = it }
             configData.eventManagers[type.key]?.appName!!.let { eventManagers[type.key]?.appName = it }
             configData.eventManagers[type.key]?.keyCode!!.let { eventManagers[type.key]?.keyCode = it }
+            configData.eventManagers[type.key]?.taskerTaskName!!.let { eventManagers[type.key]?.taskerTaskName = it }
         }
     }
 
