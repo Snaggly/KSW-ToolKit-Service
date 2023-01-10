@@ -42,6 +42,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
                     eventConfig.appName = ""
                     eventConfig.keyCode = -1
                     eventConfig.mcuCommandMode = -1
+                    eventConfig.taskerTaskName = ""
                 }
                 EventMode.KeyEvent -> {
                     try {
@@ -49,6 +50,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
                         eventConfig.appName = ""
                         eventConfig.keyCode = cmdValueInt
                         eventConfig.mcuCommandMode = -1
+                        eventConfig.taskerTaskName = ""
                     } catch (e: Exception) {
                         eventConfig.eventMode = EventMode.NoAssignment
                         return false
@@ -59,6 +61,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
                         eventConfig.appName = cmdValue!!
                         eventConfig.keyCode = -1
                         eventConfig.mcuCommandMode = -1
+                        eventConfig.taskerTaskName = ""
                     } catch (e: Exception) {
                         eventConfig.eventMode = EventMode.NoAssignment
                         return false
@@ -70,6 +73,18 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
                         eventConfig.appName = ""
                         eventConfig.keyCode = -1
                         eventConfig.mcuCommandMode = cmdValueInt
+                        eventConfig.taskerTaskName = ""
+                    } catch (e: Exception) {
+                        eventConfig.eventMode = EventMode.NoAssignment
+                        return false
+                    }
+                }
+                EventMode.TaskerTask -> {
+                    try {
+                        eventConfig.appName = ""
+                        eventConfig.keyCode = -1
+                        eventConfig.mcuCommandMode = -1
+                        eventConfig.taskerTaskName = cmdValue!!
                     } catch (e: Exception) {
                         eventConfig.eventMode = EventMode.NoAssignment
                         return false
