@@ -15,8 +15,9 @@ class LightEvent(private val context: Context) : ILightEvent {
     override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
 
         if (McuLogic.nightBrightness >= 0) {
-            if (data[1].and(7) > 1) {
+            if (data[1].and(7) >= 1) {  // Maybe bit2 for parking lights, bit0 for headlights
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(McuLogic.nightBrightness.toByte()))
+                McuLogic.isAnyLightOn = true
             } else {
                 val newBrightness = (100.0 * BrightnessUtils.getPercentage(
                     BrightnessUtils.convertLinearToGamma(
@@ -26,6 +27,7 @@ class LightEvent(private val context: Context) : ILightEvent {
                     ).toDouble(), 0, 1023
                 )).roundToInt()
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(newBrightness.toByte()))
+                McuLogic.isAnyLightOn = false
             }
         }
 

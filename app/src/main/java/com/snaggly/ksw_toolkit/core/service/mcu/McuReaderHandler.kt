@@ -93,6 +93,10 @@ class McuReaderHandler(private val context: Context) {
                 if (config.systemOptions.nightBrightness!!) {
                     McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
                     McuLogic.nightBrightness = config.systemOptions.nightBrightnessLevel!!
+                    if ((McuLogic.isAnyLightOn || McuLogic.isAnyLightOnBeforeStartup) && McuLogic.nightBrightness >= 0) {
+                        McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(McuLogic.nightBrightness.toByte()))
+                        McuLogic.isAnyLightOnBeforeStartup = false
+                    }
                 } else {
                     if (McuLogic.hasBacklightAuto) {
                         McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)

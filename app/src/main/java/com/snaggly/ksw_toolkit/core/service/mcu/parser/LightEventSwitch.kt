@@ -16,11 +16,12 @@ class LightEventSwitch(private val context: Context) : ILightEvent {
     var uiModeManager: UiModeManager? = null
 
     override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
-        if (data[1].and(7) > 1) {
+        if (data[1].and(7) >= 1) {
             uiModeManager?.nightMode = UiModeManager.MODE_NIGHT_YES
             if (McuLogic.nightBrightness >= 0) {
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(McuLogic.nightBrightness.toByte()))
             }
+            McuLogic.isAnyLightOn = true
         } else {
             uiModeManager?.nightMode = UiModeManager.MODE_NIGHT_NO
             if (McuLogic.nightBrightness >= 0) {
@@ -32,6 +33,7 @@ class LightEventSwitch(private val context: Context) : ILightEvent {
                 )).roundToInt()
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(newBrightness.toByte()))
             }
+            McuLogic.isAnyLightOn = false
         }
         return EventManagerTypes.CarData
     }
