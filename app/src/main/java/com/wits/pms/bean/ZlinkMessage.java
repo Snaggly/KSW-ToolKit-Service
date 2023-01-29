@@ -60,15 +60,15 @@ public class ZlinkMessage {
     }
 
     public void sendBroadCast(Context context) {
-        Intent txzIntent = new Intent();
-        txzIntent.setAction(this.action);
+        Intent zlinkIntent = new Intent();
+        zlinkIntent.setAction(this.action);
         if (this.bundle != null) {
-            txzIntent.putExtras(this.bundle);
+            zlinkIntent.putExtras(this.bundle);
         }
-        txzIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-        txzIntent.setPackage(ZLINK_NORMAL_ACTION);
-        Log.v("ZlinkMessage", "action: " + txzIntent.getAction() + " command = " + txzIntent.getStringExtra("command"));
-        context.sendBroadcastAsUser(txzIntent, UserHandle.getUserHandleForUid(CenterServiceManager.getUid(context)));
+        zlinkIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        zlinkIntent.setPackage(ZLINK_NORMAL_ACTION);
+        Log.v("ZlinkMessage", "action: " + zlinkIntent.getAction() + " command = " + zlinkIntent.getStringExtra("command"));
+        context.sendBroadcastAsUser(zlinkIntent, UserHandle.getUserHandleForUid(CenterServiceManager.getUid(context)));
     }
 
     public String toString() {
