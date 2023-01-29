@@ -21,9 +21,7 @@ public class McuSenderInterceptor implements Reader {
         if (getReading()) return;
         Thread readerThread = new Thread(() -> {
             try {
-                //Commented out to check the light status by KSW before starting KSW-ToolKit
-                //Return if there is a problem with startup
-                //Runtime.getRuntime().exec("logcat -c\n");
+                Runtime.getRuntime().exec("logcat -c\n");
                 logProc = Runtime.getRuntime().exec("logcat McuSendMessage:I *:S");
                 setReading(true);
             } catch (IOException e) {

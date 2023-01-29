@@ -11,6 +11,7 @@ import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
+import com.snaggly.ksw_toolkit.core.service.mcu.PreCheckLogcat
 import com.snaggly.ksw_toolkit.core.service.remote.KSWToolKitService
 import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
 import kotlin.random.Random
@@ -48,6 +49,7 @@ class CoreService : Service() {
     private var kswToolKitService: KSWToolKitService? = null
 
     override fun onCreate() {
+        PreCheckLogcat().getLightsStatus()
         try {
             mcuReaderHandler = McuReaderHandler(applicationContext)
             mcuReaderHandler!!.startMcuReader()

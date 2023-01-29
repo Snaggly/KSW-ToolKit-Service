@@ -17,6 +17,8 @@ object McuLogic {
     var hasInterceptedCarData = false
     private var autoVolume = false
     private var senderInterval: Long = 1000
+    var isAnyLightOn = false
+    var isAnyLightOnBeforeStartup = false
 
     //Param
     private var speedMaxVolume = 80
