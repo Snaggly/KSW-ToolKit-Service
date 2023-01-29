@@ -11,11 +11,9 @@ import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
+import com.wits.pms.bean.TxzMessage
 import com.wits.pms.bean.ZlinkMessage
-import com.wits.pms.receiver.AutoKitCallBackImpl
-import com.wits.pms.receiver.AutoNavi
-import com.wits.pms.receiver.CallHandler
-import com.wits.pms.receiver.ZLinkHandler
+import com.wits.pms.receiver.*
 import com.wits.pms.statuscontrol.WitsCommand
 import com.wits.pms.utils.SystemProperties
 
@@ -47,8 +45,10 @@ open class EventAction(private val context: Context) {
                                     zLinkHandler.turnRight()
                             }
                             KeyCode.ENTER.keycode -> zLinkHandler.knobPress()
-                            //KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
-                            //KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
+                            /* Not letting ZLink itself handling the Left/Right commands enabled tilting to sidebar for AA
+                            KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
+                            KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
+                            */
                             KeyCode.CALL.keycode -> {
                                 if (event == EventManagerTypes.TelephoneButton && SystemProperties.get(ZlinkMessage.ZLINK_CALL_ING) == "1")
                                     zLinkHandler.telHangUp()
@@ -60,6 +60,7 @@ open class EventAction(private val context: Context) {
                             KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
                             KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
                             KeyCode.BACK.keycode -> zLinkHandler.back()
+                            KeyCode.VOICE_ASSIST.keycode -> zLinkHandler.voiceAssist()
                             else -> keyBypass = false
                         }
                     }
@@ -81,8 +82,17 @@ open class EventAction(private val context: Context) {
                             else -> keyBypass = false
                         }
                     }
+                    else if (KeyCode.VOICE_ASSIST.keycode == KeyCode.VOICE_ASSIST.keycode && TxzHandler.isUsing()) {
+                        keyBypass = true
+                        if (TxzHandler.isShowing())
+                            TxzHandler.closeSpeech(context)
+                        else
+                            TxzHandler.openSpeech(context)
+                    }
+
                     if (keyBypass)
                         return
+
                     if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
                         KeyInjector.sendKey(eventConfig.keyCode)
                     when (eventConfig.keyCode) {

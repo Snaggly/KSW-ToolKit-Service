@@ -71,4 +71,8 @@ public class ZLinkHandler {
     public void turnLeft() {
         ZlinkMessage.sendZlinkMessage(1501, mContext);
     }
+
+    public void voiceAssist() {
+        ZlinkMessage.sendZlinkMessage(1500, mContext);
+    }
 }
