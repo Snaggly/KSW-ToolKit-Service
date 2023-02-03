@@ -1,6 +1,6 @@
 package com.snaggly.ksw_toolkit.core.config
 
-import android.util.Log
+import android.content.Context
 import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
 import java.io.File
@@ -11,11 +11,12 @@ class ConfigManager private constructor() {
     private var configFile: File? = null
     var systemOptions = SystemOptions.initSystemTweaks()
     var eventManagers = EventManager.initialButtons()
+    var advancedBrightness = AdvancedBrightness.initDefault()
     var json : String? = null
     private val gson = Gson()
 
     fun saveConfig() {
-        json = gson.toJson(ConfigData(systemOptions, eventManagers))
+        json = gson.toJson(ConfigData(systemOptions, eventManagers, advancedBrightness))
 
         val fileWriter = FileWriter(configFile!!)
         fileWriter.write(json)
@@ -60,13 +61,26 @@ class ConfigManager private constructor() {
                 evtMgr[type.key]?.taskerTaskName?.let { eventManagers[type.key]?.taskerTaskName = it }
             }
         }
+
+        configData.advancedBrightness?.let { confAdvBrightness ->
+            confAdvBrightness.isTimeBasedEnabled?.let { advancedBrightness.isTimeBasedEnabled = it }
+            confAdvBrightness.isUSBBasedEnabled?.let {  advancedBrightness.isUSBBasedEnabled = it }
+            confAdvBrightness.sunriseAt?.let {  advancedBrightness.sunriseAt = it }
+            confAdvBrightness.sunsetAt?.let {  advancedBrightness.sunsetAt = it }
+            confAdvBrightness.autoTimes?.let {  advancedBrightness.autoTimes = it }
+            confAdvBrightness.daylightBrightness?.let {  advancedBrightness.daylightBrightness = it }
+            confAdvBrightness.daylightHLBrightness?.let {  advancedBrightness.daylightHLBrightness = it }
+            confAdvBrightness.nightBrightnessLevel?.let {  advancedBrightness.nightBrightnessLevel = it }
+            confAdvBrightness.nightHLBrightnessLevel?.let {  advancedBrightness.nightHLBrightnessLevel = it }
+        }
     }
 
     companion object {
         private const val fileName = "ksw-tk_config.json"
         private val config = ConfigManager()
 
-        fun getConfig(filePath: String) : ConfigManager{
+        fun getConfig(context: Context) : ConfigManager{
+            val filePath = context.filesDir!!.absolutePath
             if (config.configFile != null) {
                 return config
             }

@@ -11,9 +11,9 @@ import com.snaggly.ksw_toolkit.util.adb.DensityUtil
 import com.wits.pms.statuscontrol.PowerManagerApp
 
 class BootReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (Intent.ACTION_BOOT_COMPLETED == intent!!.action) {
-            val config = ConfigManager.getConfig(context?.filesDir!!.absolutePath)
+    override fun onReceive(context: Context, intent: Intent) {
+        if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
+            val config = ConfigManager.getConfig(context)
 
             if (config.systemOptions.maxVolume!!) {
                 try {

@@ -60,7 +60,7 @@ class PreCheckLogcat {
         var data = findMcuListner(0xA1, 0x10)
         if (data.size >= 3) {
             if (data[1].and(7) >= 1) {
-                McuLogic.isAnyLightOnBeforeStartup = true
+                McuLogic.isAnyLightOn = true
             }
         }
     }

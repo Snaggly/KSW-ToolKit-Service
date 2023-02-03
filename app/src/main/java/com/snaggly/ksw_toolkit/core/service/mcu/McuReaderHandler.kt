@@ -16,14 +16,18 @@ import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.*
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
+import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
+import kotlin.collections.ArrayList
 
 class McuReaderHandler(private val context: Context) {
+    val config = ConfigManager.getConfig(context)
+
     private val backTapper = BackTapper(context)
     private var mcuEventListeners = ArrayList<IMcuListener>()
     private val brightnessObserver = BrightnessObserver(context)
@@ -32,7 +36,6 @@ class McuReaderHandler(private val context: Context) {
     private var parseMcuEvent = McuEvent(context, backTapper)
     private var hasSerialInit = false @Synchronized get @Synchronized set
 
-    private val config = ConfigManager.getConfig(context.filesDir.absolutePath)
 
     init {
         when {
@@ -92,29 +95,17 @@ class McuReaderHandler(private val context: Context) {
                 //Perform screen switch commands.
                 parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 
-                //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
-                if (config.systemOptions.nightBrightness == true) {
-                    McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
-                    McuLogic.nightBrightness = config.systemOptions.nightBrightnessLevel ?: 100
-                    if ((McuLogic.isAnyLightOn || McuLogic.isAnyLightOnBeforeStartup) && McuLogic.nightBrightness >= 0) {
-                        McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(McuLogic.nightBrightness.toByte()))
-                        McuLogic.isAnyLightOnBeforeStartup = false
-                    }
-                } else {
-                    if (McuLogic.hasBacklightAuto) {
-                        McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
-                    }
-                    McuLogic.nightBrightness = -1
-                }
-
                 //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
                 if (config.systemOptions.autoTheme == true) {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch(context).apply {
+                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch().apply {
                         uiModeManager = context.getSystemService(UiModeManager::class.java)
                     }
                 } else {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEvent(context)
+                    parseMcuEvent.carDataEvent.lightEvent = LightEvent()
                 }
+
+                //Toggle AdvancedBrightness
+                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, config)
 
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
                 eventAction = if (config.systemOptions.logMcuEvent == true)
@@ -202,6 +193,8 @@ class McuReaderHandler(private val context: Context) {
 
     fun stopReader() {
         parseMcuEvent.screenSwitchEvent.clearActions()
+        //brightnessObserver.stopObservingBrightness()
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler.destroy()
         backTapper.removeBackWindow()
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()

@@ -1,13 +1,13 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
-import android.content.Context
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.ICarDataEvent
+import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.wits.pms.statuscontrol.CallBackBinder
 import com.wits.pms.statuscontrol.WitsStatus
 
-class CarDataEventLogger(context: Context) : ICarDataEvent(context) {
+class CarDataEventLogger : ICarDataEvent() {
     override fun getCarDataEvent(data: ByteArray): EventManagerTypes {
         when {
             data[0] == 0x19.toByte() && data.size > 15 -> {
