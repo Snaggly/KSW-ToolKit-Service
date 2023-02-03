@@ -24,11 +24,8 @@ class PowerEvent(private val backTapper: BackTapper) {
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
             }
 
-            //Reset MediaButton
-            if (!McuLogic.hasNoOEMScreen) {
-                val dataBytes = byteArrayOf(0x0e, 0x00)
-                McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
-            }
+            //Reset Screen State
+            screenSwitchEvent.getScreenSwitch(byteArrayOf(0, McuLogic.realSysMode.toByte()))
 
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_ON)
             WitsStatus.setScreenSwitch(McuLogic.systemStatus, 1)
@@ -41,10 +38,7 @@ class PowerEvent(private val backTapper: BackTapper) {
             }
 
             //Restore MediaButton
-            if (!McuLogic.hasNoOEMScreen) {
-                val dataBytes = byteArrayOf(0x0e, 0x01)
-                McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
-            }
+            screenSwitchEvent.restoreState()
 
             WitsStatus.setAcc(McuLogic.systemStatus, data[1].toInt())
         } else if (data[0] <= 3.toByte()) {
@@ -53,7 +47,7 @@ class PowerEvent(private val backTapper: BackTapper) {
                 McuLogic.isReversing = data[1] == 1.toByte()
                 backTapper.drawBackWindow()
                 if (PowerManagerApp.getSettingsInt("RearCamType") == 1) {
-                    if (data[1] == 1.toByte())
+                    if (McuLogic.isReversing)
                         screenSwitchEvent.getScreenSwitch(byteArrayOf(0, 2))
                     else
                         screenSwitchEvent.getScreenSwitch(byteArrayOf(0, 1))

@@ -7,6 +7,8 @@ abstract class IScreenSwitchEvent {
 
     abstract fun getScreenSwitch(data: ByteArray) : EventManagerTypes
 
+    abstract fun restoreState()
+
     protected fun processToAndroid() {
         soundRestorer.reEnableSound()
     }

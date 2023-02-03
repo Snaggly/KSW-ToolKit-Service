@@ -9,6 +9,7 @@ import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.commander.KeyInjector
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
+import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
 class ScreenSwitchEventNoOEMScreen(private val context: Context, private val backTapper: BackTapper) : IScreenSwitchEvent() {
     override fun getScreenSwitch(data: ByteArray): EventManagerTypes {
@@ -26,5 +27,9 @@ class ScreenSwitchEventNoOEMScreen(private val context: Context, private val bac
         }
 
         return EventManagerTypes.ScreenSwitch
+    }
+
+    override fun restoreState() {
+        McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
     }
 }

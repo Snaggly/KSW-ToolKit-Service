@@ -27,4 +27,12 @@ class ScreenSwitchMediaHack(val backTapper: BackTapper) : IScreenSwitchEvent() {
 
         return EventManagerTypes.ScreenSwitch
     }
+
+    override fun restoreState() {
+        McuLogic.mcuCommunicator?.sendCommand(0x70, enableOEM, false)
+        if (McuLogic.realSysMode == 2)
+            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_OEM)
+        else
+            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
+    }
 }
