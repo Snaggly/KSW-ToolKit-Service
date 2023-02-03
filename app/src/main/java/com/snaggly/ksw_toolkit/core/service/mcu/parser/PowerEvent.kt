@@ -28,7 +28,7 @@ class PowerEvent(private val backTapper: BackTapper) {
             screenSwitchEvent.getScreenSwitch(byteArrayOf(0, McuLogic.realSysMode.toByte()))
 
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_ON)
-            WitsStatus.setScreenSwitch(McuLogic.systemStatus, 1)
+            WitsStatus.setScreenSwitch(McuLogic.systemStatus, McuLogic.realSysMode)
         }
         //PowerOff
         else if (data[0].toInt() == 5) {
@@ -41,6 +41,7 @@ class PowerEvent(private val backTapper: BackTapper) {
             screenSwitchEvent.restoreState()
 
             WitsStatus.setAcc(McuLogic.systemStatus, data[1].toInt())
+            WitsStatus.setScreenSwitch(McuLogic.systemStatus, McuLogic.realSysMode)
         } else if (data[0] <= 3.toByte()) {
             WitsStatus.setCcd(McuLogic.systemStatus, data[1].toInt())
             if (data[0] == 1.toByte()) {
