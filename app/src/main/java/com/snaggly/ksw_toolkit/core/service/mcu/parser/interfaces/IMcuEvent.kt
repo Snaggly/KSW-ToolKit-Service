@@ -8,7 +8,7 @@ import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 abstract class IMcuEvent(context: Context, backTapper: BackTapper) {
     var benzDataEvent : IBenzDataEvent = BenzDataEventLogger
     var carDataEvent : ICarDataEvent = CarDataEventLogger(context)
-    var screenSwitchEvent : IScreenSwitchEvent = ScreenSwitchEvent(backTapper)
+    var screenSwitchEvent : ScreenSwitchEvent = ScreenSwitchEvent(backTapper)
     var powerEvent = PowerEvent(backTapper)
     val buttonClickEvent = ButtonClickEvent
     val idleEvent = IdleEvent(backTapper)

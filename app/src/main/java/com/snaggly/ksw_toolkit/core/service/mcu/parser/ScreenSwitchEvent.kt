@@ -1,27 +1,41 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.parser
 
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
-import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.IScreenSwitchEvent
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.IScreenSwitchAction
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
-import projekt.auto.mcu.ksw.serial.collection.McuCommands
+import java.util.LinkedList
 
-class ScreenSwitchEvent(private val backTapper: BackTapper) : IScreenSwitchEvent() {
-    override fun getScreenSwitch(data: ByteArray): EventManagerTypes {
+class ScreenSwitchEvent(private val backTapper: BackTapper) {
+    private var switchActions : LinkedList<IScreenSwitchAction> = LinkedList()
+
+    fun clearActions() {
+        for(action in switchActions)
+            action.restoreState()
+        switchActions.clear()
+    }
+
+    fun addAction(action: IScreenSwitchAction) {
+        switchActions.add(action)
+    }
+
+    fun getScreenSwitch(data: ByteArray) : EventManagerTypes {
 
         McuLogic.setRealSysMode(data[1].toInt(), backTapper)
-        if (McuLogic.realSysMode == 0x1)
-            super.processToAndroid()
-        else if (McuLogic.realSysMode == 0x2)
-            super.processToOEM()
+        if (McuLogic.realSysMode == 0x1) {
+            for (action in switchActions)
+                action.performOnAndroidSwitch()
+        }
+        else if (McuLogic.realSysMode == 0x2) {
+            for (action in switchActions)
+                action.performOnOEMSwitch()
+        }
 
         return EventManagerTypes.ScreenSwitch
     }
 
-    override fun restoreState() {
-        if (McuLogic.realSysMode == 2)
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_OEM)
-        else
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
+    fun restoreState() {
+        for (action in switchActions)
+            action.restoreState()
     }
 }

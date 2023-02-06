@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.util.Log
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
-import com.snaggly.ksw_toolkit.core.service.mcu.parser.interfaces.IScreenSwitchEvent
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.wits.pms.statuscontrol.CallBackBinder
@@ -13,7 +12,7 @@ import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
 class PowerEvent(private val backTapper: BackTapper) {
-    fun getPowerEvent(data: ByteArray, screenSwitchEvent: IScreenSwitchEvent): EventManagerTypes {
+    fun getPowerEvent(data: ByteArray, screenSwitchEvent: ScreenSwitchEvent): EventManagerTypes {
         if (data.size <= 1) {
             return EventManagerTypes.Dummy
         }

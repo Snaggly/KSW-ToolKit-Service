@@ -10,7 +10,7 @@ import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
-import com.snaggly.ksw_toolkit.core.service.mcu.action.SoundRestorer
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.*
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
@@ -64,30 +64,28 @@ class McuReaderHandler(private val context: Context) {
                 McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
                 McuLogic.hasBacklightAuto =  PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0
 
+                //Create new ScreenSwitchEvent object to make sure old one dies.
+                parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
+
                 //Check if Service should handle extra Media Buttons - If no OEM screen this already is active
-                val dataBytes : ByteArray
                 if (!McuLogic.hasNoOEMScreen) {
                     if (config.systemOptions.extraMediaButtonHandle!!) {
-                        parseMcuEvent.screenSwitchEvent = ScreenSwitchMediaHack(backTapper)
-                        dataBytes = byteArrayOf(0x0e, 0x00)
+                        parseMcuEvent.screenSwitchEvent.addAction(MediaBtnHack())
                     }
                     else {
-                        parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
-                        dataBytes = byteArrayOf(0x0e, 0x01)
+                        parseMcuEvent.screenSwitchEvent.addAction(NormalScreenSwitch())
                     }
                 }
                 else {
-                    parseMcuEvent.screenSwitchEvent = ScreenSwitchEventNoOEMScreen(context, backTapper)
-                    dataBytes = byteArrayOf(0x0e, 0x00)
+                    parseMcuEvent.screenSwitchEvent.addAction(NoOEMScreen(context))
                 }
-                McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
 
                 //Is SoundRestorer active?
-                parseMcuEvent.screenSwitchEvent.soundRestorer = if (config.systemOptions.soundRestorer!!)
-                    SoundRestorer.HasSoundRestorer
-                else
-                    SoundRestorer.NoSoundRestorer
-                parseMcuEvent.screenSwitchEvent.soundRestorer.reEnableSound()
+                if (config.systemOptions.soundRestorer!!)
+                    parseMcuEvent.screenSwitchEvent.addAction(SoundRestorer())
+
+                //Perform screen switch commands.
+                parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 
                 //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
                 if (config.systemOptions.nightBrightness!!) {
@@ -198,7 +196,7 @@ class McuReaderHandler(private val context: Context) {
     }
 
     fun stopReader() {
-        //brightnessObserver.stopObservingBrightness()
+        parseMcuEvent.screenSwitchEvent.clearActions()
         backTapper.removeBackWindow()
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()
