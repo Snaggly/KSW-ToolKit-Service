@@ -42,6 +42,7 @@ class ConfigManager private constructor() {
             sysOpt.mcuPath?.let { systemOptions.mcuPath = it }
             sysOpt.tabletMode?.let { systemOptions.tabletMode = it }
             sysOpt.hideStartMessage?.let { systemOptions.hideStartMessage = it }
+            sysOpt.decoupleNAVBtn?.let { systemOptions.decoupleNAVBtn = it }
         }
 
         configData.eventManagers?.let { eventManagers ->

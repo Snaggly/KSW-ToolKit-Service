@@ -206,6 +206,16 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         configManager.saveConfig()
     }
 
+    override fun getDecoupleNAVBtn(): Boolean {
+        return configManager.systemOptions.decoupleNAVBtn?:false
+    }
+
+    override fun setDecoupleNAVBtn(value: Boolean) {
+        configManager.systemOptions.decoupleNAVBtn = value
+        configManager.saveConfig()
+        coreReaderHandler?.restartReader()
+    }
+
     override fun getStartAtBoot(): Boolean {
         return configManager.systemOptions.startAtBoot!!
     }

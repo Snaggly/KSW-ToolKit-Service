@@ -84,6 +84,10 @@ class McuReaderHandler(private val context: Context) {
                 if (config.systemOptions.soundRestorer!!)
                     parseMcuEvent.screenSwitchEvent.addAction(SoundRestorer())
 
+                //Is NavBtnDecoupler on?
+                if (config.systemOptions.decoupleNAVBtn == true)
+                    parseMcuEvent.screenSwitchEvent.addAction(NAVBtnDecoupler())
+
                 //Perform screen switch commands.
                 parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 

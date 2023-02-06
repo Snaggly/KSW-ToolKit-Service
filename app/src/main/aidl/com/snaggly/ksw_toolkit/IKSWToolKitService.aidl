@@ -53,4 +53,7 @@ interface IKSWToolKitService {
 
     boolean getHideStartMessage();
     void setHideStartMessage(boolean value);
+
+    boolean getDecoupleNAVBtn();
+    void setDecoupleNAVBtn(boolean value);
 }
