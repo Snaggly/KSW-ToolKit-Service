@@ -7,6 +7,7 @@ import android.os.Build
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
+import com.snaggly.ksw_toolkit.core.config.beans.SystemOptions
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
@@ -69,7 +70,7 @@ class McuReaderHandler(private val context: Context) {
 
                 //Check if Service should handle extra Media Buttons - If no OEM screen this already is active
                 if (!McuLogic.hasNoOEMScreen) {
-                    if (config.systemOptions.extraMediaButtonHandle!!) {
+                    if (config.systemOptions.extraMediaButtonHandle == true) {
                         parseMcuEvent.screenSwitchEvent.addAction(MediaBtnHack())
                     }
                     else {
@@ -81,7 +82,7 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is SoundRestorer active?
-                if (config.systemOptions.soundRestorer!!)
+                if (config.systemOptions.soundRestorer == true)
                     parseMcuEvent.screenSwitchEvent.addAction(SoundRestorer())
 
                 //Is NavBtnDecoupler on?
@@ -92,9 +93,9 @@ class McuReaderHandler(private val context: Context) {
                 parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 
                 //Is NightBrightness on? This once Headlights turn on, the screen will dim to a given level.
-                if (config.systemOptions.nightBrightness!!) {
+                if (config.systemOptions.nightBrightness == true) {
                     McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On)
-                    McuLogic.nightBrightness = config.systemOptions.nightBrightnessLevel!!
+                    McuLogic.nightBrightness = config.systemOptions.nightBrightnessLevel ?: 100
                     if ((McuLogic.isAnyLightOn || McuLogic.isAnyLightOnBeforeStartup) && McuLogic.nightBrightness >= 0) {
                         McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetBrightnessLevel(McuLogic.nightBrightness.toByte()))
                         McuLogic.isAnyLightOnBeforeStartup = false
@@ -107,7 +108,7 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
-                if (config.systemOptions.autoTheme!!) {
+                if (config.systemOptions.autoTheme == true) {
                     parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch(context).apply {
                         uiModeManager = context.getSystemService(UiModeManager::class.java)
                     }
@@ -116,7 +117,7 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
-                eventAction = if (config.systemOptions.logMcuEvent!!)
+                eventAction = if (config.systemOptions.logMcuEvent == true)
                     EventActionLogger(context)
                 else
                     EventAction(context)
@@ -148,7 +149,7 @@ class McuReaderHandler(private val context: Context) {
                 }.start()
 
                 //Should this service intercept what CenterService tries to send to Mcu? Replicated core CenterService commands.
-                if (config.systemOptions.interceptMcuCommand!!) {
+                if (config.systemOptions.interceptMcuCommand == true) {
                     sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
                         McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
                     })
@@ -194,7 +195,7 @@ class McuReaderHandler(private val context: Context) {
         }
 
         //Is AutoVolume on? Start on it on its separate thread. This only works when CarData get parsed!
-        if (config.systemOptions.autoVolume!!) {
+        if (config.systemOptions.autoVolume == true) {
             McuLogic.startAutoVolume(context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
         }
     }
@@ -209,7 +210,7 @@ class McuReaderHandler(private val context: Context) {
         if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
         }
-        if (config.systemOptions.extraMediaButtonHandle!! && !McuLogic.hasNoOEMScreen) {
+        if (config.systemOptions.extraMediaButtonHandle == true && !McuLogic.hasNoOEMScreen) {
             val dataBytes = byteArrayOf(0x0e, 0x01)
             McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
         }
