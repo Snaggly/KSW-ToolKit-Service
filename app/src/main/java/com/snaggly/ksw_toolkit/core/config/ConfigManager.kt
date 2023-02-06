@@ -27,27 +27,31 @@ class ConfigManager private constructor() {
         fileReader.close()
 
         val configData = gson.fromJson(json, ConfigData::class.java)
-        configData.systemOptions.startAtBoot?.let { systemOptions.startAtBoot = it }
-        configData.systemOptions.hijackCS?.let { systemOptions.hijackCS = it }
-        configData.systemOptions.soundRestorer?.let { systemOptions.soundRestorer = it }
-        configData.systemOptions.autoTheme?.let { systemOptions.autoTheme = it }
-        configData.systemOptions.autoVolume?.let { systemOptions.autoVolume = it }
-        configData.systemOptions.maxVolume?.let { systemOptions.maxVolume = it }
-        configData.systemOptions.logMcuEvent?.let { systemOptions.logMcuEvent = it }
-        configData.systemOptions.interceptMcuCommand?.let { systemOptions.interceptMcuCommand = it }
-        configData.systemOptions.extraMediaButtonHandle?.let { systemOptions.extraMediaButtonHandle = it }
-        configData.systemOptions.nightBrightness?.let { systemOptions.nightBrightness = it }
-        configData.systemOptions.nightBrightnessLevel?.let { systemOptions.nightBrightnessLevel = it }
-        configData.systemOptions.mcuPath?.let { systemOptions.mcuPath = it }
-        configData.systemOptions.tabletMode?.let { systemOptions.tabletMode = it }
-        configData.systemOptions.hideStartMessage?.let { systemOptions.hideStartMessage = it }
+        configData.systemOptions?.let { sysOpt ->
+            sysOpt.startAtBoot?.let { systemOptions.startAtBoot = it }
+            sysOpt.hijackCS?.let { systemOptions.hijackCS = it }
+            sysOpt.soundRestorer?.let { systemOptions.soundRestorer = it }
+            sysOpt.autoTheme?.let { systemOptions.autoTheme = it }
+            sysOpt.autoVolume?.let { systemOptions.autoVolume = it }
+            sysOpt.maxVolume?.let { systemOptions.maxVolume = it }
+            sysOpt.logMcuEvent?.let { systemOptions.logMcuEvent = it }
+            sysOpt.interceptMcuCommand?.let { systemOptions.interceptMcuCommand = it }
+            sysOpt.extraMediaButtonHandle?.let { systemOptions.extraMediaButtonHandle = it }
+            sysOpt.nightBrightness?.let { systemOptions.nightBrightness = it }
+            sysOpt.nightBrightnessLevel?.let { systemOptions.nightBrightnessLevel = it }
+            sysOpt.mcuPath?.let { systemOptions.mcuPath = it }
+            sysOpt.tabletMode?.let { systemOptions.tabletMode = it }
+            sysOpt.hideStartMessage?.let { systemOptions.hideStartMessage = it }
+        }
 
-        for (type in configData.eventManagers) {
-            configData.eventManagers[type.key]?.eventMode!!.let { eventManagers[type.key]?.eventMode = it }
-            configData.eventManagers[type.key]?.mcuCommandMode!!.let { eventManagers[type.key]?.mcuCommandMode = it }
-            configData.eventManagers[type.key]?.appName!!.let { eventManagers[type.key]?.appName = it }
-            configData.eventManagers[type.key]?.keyCode!!.let { eventManagers[type.key]?.keyCode = it }
-            configData.eventManagers[type.key]?.taskerTaskName!!.let { eventManagers[type.key]?.taskerTaskName = it }
+        configData.eventManagers?.let { eventManagers ->
+            for (type in eventManagers) {
+                eventManagers[type.key]?.eventMode!!.let { eventManagers[type.key]?.eventMode = it }
+                eventManagers[type.key]?.mcuCommandMode!!.let { eventManagers[type.key]?.mcuCommandMode = it }
+                eventManagers[type.key]?.appName!!.let { eventManagers[type.key]?.appName = it }
+                eventManagers[type.key]?.keyCode!!.let { eventManagers[type.key]?.keyCode = it }
+                eventManagers[type.key]?.taskerTaskName!!.let { eventManagers[type.key]?.taskerTaskName = it }
+            }
         }
     }
 
