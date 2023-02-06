@@ -210,10 +210,6 @@ class McuReaderHandler(private val context: Context) {
         if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
         }
-        if (config.systemOptions.extraMediaButtonHandle == true && !McuLogic.hasNoOEMScreen) {
-            val dataBytes = byteArrayOf(0x0e, 0x01)
-            McuLogic.mcuCommunicator?.sendCommand(0x70, dataBytes, false)
-        }
         hasSerialInit = false
     }
 
