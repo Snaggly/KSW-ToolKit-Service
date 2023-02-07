@@ -10,8 +10,7 @@ class ScreenSwitchEvent(private val backTapper: BackTapper) {
     private var switchActions : LinkedList<IScreenSwitchAction> = LinkedList()
 
     fun clearActions() {
-        for(action in switchActions)
-            action.restoreState()
+        restoreState()
         switchActions.clear()
     }
 
