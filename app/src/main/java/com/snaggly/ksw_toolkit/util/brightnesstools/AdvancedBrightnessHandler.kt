@@ -20,10 +20,11 @@ abstract class AdvancedBrightnessHandler {
             return emptyHandler
         }
 
-        fun getHandler(context: Context, config: ConfigManager) : AdvancedBrightnessHandler {
+        fun getHandler(context: Context) : AdvancedBrightnessHandler {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_On) //Set MCU to manual brightness, so this handler manages
+            val config = ConfigManager.getConfig(context)
             return if (config.advancedBrightness.isTimeBasedEnabled!!) {
-                TimeBasedBrightness(context, config)
+                TimeBasedBrightness(context)
             }
             /*else if (config.advancedBrightness.isUSBBasedEnabled!!) {
                 //TODO Not yet implemented, maybe will look into Yocto-Light.

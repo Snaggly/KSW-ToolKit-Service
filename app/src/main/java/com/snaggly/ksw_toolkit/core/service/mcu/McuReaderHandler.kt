@@ -105,7 +105,7 @@ class McuReaderHandler(private val context: Context) {
                 }
 
                 //Toggle AdvancedBrightness
-                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, config)
+                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context)
 
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
                 eventAction = if (config.systemOptions.logMcuEvent == true)

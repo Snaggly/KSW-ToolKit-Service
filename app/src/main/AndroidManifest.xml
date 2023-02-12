@@ -61,6 +61,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".util.brightnesstools.TimeToggleReceiver" />
     </application>
 
 </manifest>
