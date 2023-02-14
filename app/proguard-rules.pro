@@ -33,6 +33,7 @@
 -keep class com.wits.pms.receiver.** {*;}
 -keep class com.wits.pms.statuscontrol.* {*;}
 -keep class com.wits.pms.utils.** {*;}
+-keep class net.dinglisch.android.taskerm.** {*;}
 -keep class projekt.auto.mcu.** {*;}
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
