@@ -13,9 +13,8 @@ class TouchEvent(context: Context) {
             return EventManagerTypes.Dummy
         val x = TouchControl.getXFromData(data)
         val y = TouchControl.getYFromData(data)
-        val buttonState = data[4]
-        val buttonDown = buttonState == 1.toByte()
-        var action = 0
+        val buttonDown = data[4] == 1.toByte()
+        var action = 2
         if (buttonDown) {
             if (!mTouchControl.isDown) {
                 action = 0
