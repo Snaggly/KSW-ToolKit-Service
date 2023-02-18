@@ -7,16 +7,12 @@ import com.snaggly.ksw_toolkit.util.commander.AppStarter
 import kotlin.math.min
 
 object DensityUtil {
-    private var originalDpi = -1
     private var tabletModeTurnedOn = false
 
     fun turnOnTabletMode(context: Context) {
         if (tabletModeTurnedOn)
             return
         val displayMetrics = context.resources.displayMetrics
-        if (originalDpi < 0) {
-            originalDpi = displayMetrics.densityDpi
-        }
         val tabletDpi = Integer.max(
             (min(
                 displayMetrics.widthPixels,
@@ -34,13 +30,11 @@ object DensityUtil {
     fun turnOffTabletMode(context: Context) {
         if (!tabletModeTurnedOn)
             return
-        val dpi = if (originalDpi < 0) {
+        val dpi = {
             if (context.resources.displayMetrics.heightPixels > 480)
                 240
             else
                 160
-        } else {
-            originalDpi
         }
         tabletModeTurnedOn = try {
             AdbManager.sendCommand("wm density $dpi", context)
