@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.config
 
+import android.util.Log
 import com.google.gson.Gson
 import com.snaggly.ksw_toolkit.core.config.beans.*
 import java.io.File
@@ -21,11 +22,16 @@ class ConfigManager private constructor() {
         fileWriter.close()
     }
 
+
     fun readConfig() {
         val fileReader = FileReader(configFile!!)
         json = fileReader.readText()
         fileReader.close()
 
+        readConfig(json!!)
+    }
+
+    fun readConfig(json: String) {
         val configData = gson.fromJson(json, ConfigData::class.java)
         configData.systemOptions?.let { sysOpt ->
             sysOpt.startAtBoot?.let { systemOptions.startAtBoot = it }
@@ -45,13 +51,13 @@ class ConfigManager private constructor() {
             sysOpt.decoupleNAVBtn?.let { systemOptions.decoupleNAVBtn = it }
         }
 
-        configData.eventManagers?.let { eventManagers ->
+        configData.eventManagers?.let { evtMgr ->
             for (type in eventManagers) {
-                eventManagers[type.key]?.eventMode!!.let { eventManagers[type.key]?.eventMode = it }
-                eventManagers[type.key]?.mcuCommandMode!!.let { eventManagers[type.key]?.mcuCommandMode = it }
-                eventManagers[type.key]?.appName!!.let { eventManagers[type.key]?.appName = it }
-                eventManagers[type.key]?.keyCode!!.let { eventManagers[type.key]?.keyCode = it }
-                eventManagers[type.key]?.taskerTaskName!!.let { eventManagers[type.key]?.taskerTaskName = it }
+                evtMgr[type.key]?.eventMode?.let { eventManagers[type.key]?.eventMode = it }
+                evtMgr[type.key]?.mcuCommandMode?.let { eventManagers[type.key]?.mcuCommandMode = it }
+                evtMgr[type.key]?.appName?.let { eventManagers[type.key]?.appName = it }
+                evtMgr[type.key]?.keyCode?.let { eventManagers[type.key]?.keyCode = it }
+                evtMgr[type.key]?.taskerTaskName?.let { eventManagers[type.key]?.taskerTaskName = it }
             }
         }
     }
@@ -69,6 +75,7 @@ class ConfigManager private constructor() {
                 config.configFile!!.createNewFile()
                 config.saveConfig()
             }
+
             config.readConfig()
             return config
         }
