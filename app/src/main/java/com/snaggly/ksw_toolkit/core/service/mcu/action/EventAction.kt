@@ -82,7 +82,7 @@ open class EventAction(private val context: Context) {
                             else -> keyBypass = false
                         }
                     }
-                    else if (KeyCode.VOICE_ASSIST.keycode == KeyCode.VOICE_ASSIST.keycode && TxzHandler.isUsing()) {
+                    else if (eventConfig.keyCode == KeyCode.VOICE_ASSIST.keycode && TxzHandler.isUsing()) {
                         keyBypass = true
                         if (TxzHandler.isShowing())
                             TxzHandler.closeSpeech(context)
