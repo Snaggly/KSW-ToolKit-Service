@@ -105,27 +105,13 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         return configManager.json
     }
 
-    override fun setOptions(allSettings: BooleanArray?): Boolean {
+    override fun setConfig(configJson: String?): Boolean {
         if (!authenticate())
             return false
-        if (allSettings == null)
+        if (configJson == null)
             return false
-        if (allSettings.size < 11) {
-            return false
-        }
 
-        configManager.systemOptions.startAtBoot = allSettings[0]
-        configManager.systemOptions.hijackCS = allSettings[1]
-        configManager.systemOptions.soundRestorer = allSettings[2]
-        configManager.systemOptions.autoTheme = allSettings[3]
-        configManager.systemOptions.autoVolume = allSettings[4]
-        configManager.systemOptions.maxVolume = allSettings[5]
-        configManager.systemOptions.logMcuEvent = allSettings[6]
-        configManager.systemOptions.interceptMcuCommand = allSettings[7]
-        configManager.systemOptions.extraMediaButtonHandle = allSettings[8]
-        configManager.systemOptions.nightBrightness = allSettings[9]
-        configManager.systemOptions.hideStartMessage = allSettings[10]
-
+        configManager.readConfig(configJson)
         configManager.saveConfig()
 
         coreReaderHandler?.restartReader()
@@ -174,11 +160,11 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
         } else false
     }
 
-    override fun getNightBrightnessSetting(): Int {
+    override fun getNightBrightnessLevel(): Int {
         return configManager.systemOptions.nightBrightnessLevel!!
     }
 
-    override fun setNightBrightnessSetting(value: Int) {
+    override fun setNightBrightnessLevel(value: Int) {
         configManager.systemOptions.nightBrightnessLevel = value
         configManager.saveConfig()
         coreReaderHandler?.restartReader()
