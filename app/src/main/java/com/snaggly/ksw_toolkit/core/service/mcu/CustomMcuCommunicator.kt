@@ -34,8 +34,12 @@ class CustomMcuCommunicator(private var backTapper: BackTapper, mcuWriter: Write
                 McuLogic.setRealSysMode(1, backTapper)
         }
         else if (cmdType == 0x69) {
-            if (data.size > 1 && data[0] == 18.toByte() && data[1] == 2.toByte()) {
-                McuLogic.setRealSysMode(2, backTapper)
+            if (data.size > 1 && data[0] == 18.toByte()) {
+                if (data[1] > 1)
+                    data[1] = 2
+                if (McuLogic.realSysMode == data[1].toInt())
+                    return
+                McuLogic.setRealSysMode(data[1].toInt(), backTapper)
             }
         }
 

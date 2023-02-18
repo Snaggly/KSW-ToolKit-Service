@@ -1,5 +1,6 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch
 
+import android.util.Log
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
@@ -25,10 +26,5 @@ class MediaBtnHack : IScreenSwitchAction {
     override fun restoreState() {
         if (PowerManagerApp.getSettingsInt("CarDisplay") > 0)
             McuLogic.mcuCommunicator?.sendCommand(0x70, enableOEM, false)
-
-        if (McuLogic.realSysMode == 2)
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_OEM)
-        else
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
     }
 }

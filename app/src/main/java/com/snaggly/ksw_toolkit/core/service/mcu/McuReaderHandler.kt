@@ -4,6 +4,7 @@ import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
@@ -65,6 +66,8 @@ class McuReaderHandler(private val context: Context) {
                 McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
                 McuLogic.hasBacklightAuto =  PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0
 
+                McuLogic.mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_ON) //For debugging :c
+
                 //Create new ScreenSwitchEvent object to make sure old one dies.
                 parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
 
@@ -72,9 +75,6 @@ class McuReaderHandler(private val context: Context) {
                 if (!McuLogic.hasNoOEMScreen) {
                     if (config.systemOptions.extraMediaButtonHandle == true) {
                         parseMcuEvent.screenSwitchEvent.addAction(MediaBtnHack())
-                    }
-                    else {
-                        parseMcuEvent.screenSwitchEvent.addAction(NormalScreenSwitch())
                     }
                 }
                 else {

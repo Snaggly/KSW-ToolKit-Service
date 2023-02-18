@@ -19,7 +19,6 @@ class ScreenSwitchEvent(private val backTapper: BackTapper) {
     }
 
     fun getScreenSwitch(data: ByteArray) : EventManagerTypes {
-
         McuLogic.setRealSysMode(data[1].toInt(), backTapper)
         if (McuLogic.realSysMode == 0x1) {
             for (action in switchActions)
