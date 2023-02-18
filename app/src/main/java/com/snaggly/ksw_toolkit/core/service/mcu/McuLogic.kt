@@ -69,7 +69,7 @@ object McuLogic {
     @Synchronized fun setRealSysMode(value: Int, backTapper: BackTapper) {
         if (realSysMode != value) {
             realSysMode = value
-            if (value == 1) {
+            if (value == 1 && !turnedOffScreen) {
                 backTapper.removeBackWindow()
             } else {
                 backTapper.drawBackWindow()
