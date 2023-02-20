@@ -89,8 +89,6 @@ class McuReaderHandler(private val context: Context) {
                 if (config.systemOptions.decoupleNAVBtn == true)
                     parseMcuEvent.screenSwitchEvent.addAction(NAVBtnDecoupler())
 
-                McuLogic.mcuCommunicator?.screenSwitchEvent = parseMcuEvent.screenSwitchEvent
-
                 //Perform screen switch commands.
                 parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 
@@ -212,7 +210,6 @@ class McuReaderHandler(private val context: Context) {
         if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
         }
-        McuLogic.mcuCommunicator?.screenSwitchEvent = null
         hasSerialInit = false
     }
 

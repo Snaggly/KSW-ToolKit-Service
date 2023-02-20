@@ -8,7 +8,6 @@ import projekt.auto.mcu.ksw.serial.reader.Reader
 import projekt.auto.mcu.ksw.serial.writer.Writer
 
 class CustomMcuCommunicator(private var backTapper: BackTapper, mcuWriter: Writer?, mcuReader: Reader?) : McuCommunicator(mcuWriter, mcuReader) {
-    var screenSwitchEvent: ScreenSwitchEvent? = null
 
     override fun sendCommand(cmdType: Int, data: ByteArray, update: Boolean) {
         if (cmdType == 0xE8 || cmdType == 0x00 || update || data.isEmpty()) { //Prevent MCUUpdates -> WILL BREAK MCU!!
@@ -24,13 +23,10 @@ class CustomMcuCommunicator(private var backTapper: BackTapper, mcuWriter: Write
             }
         }
         else if (cmdType == 0x67) {
-            if (data[0] == 0.toByte() || data[0] == 5.toByte() || data[0] == 6.toByte() || data[0] == 8.toByte() || data[0] == 9.toByte() || data[0] == 11.toByte() || data[0] == 12.toByte()) {
+            if (data[0] == 0.toByte() || data[0] == 5.toByte() || data[0] == 6.toByte() || data[0] == 8.toByte() || data[0] == 9.toByte() || data[0] == 10.toByte() || data[0] == 11.toByte() || data[0] == 12.toByte()) {
                 McuLogic.setRealSysMode(2, backTapper)
-            } else if (data[0] == 10.toByte()) { //Switch to OEM Radio
-                //Preps Mcu before calling super to screen switch below.
-                //Note: Some ScreenSwitch events might try to trigger another screen switch within
-                //but will be hindered by presetting the same SysMode. See Action 0x69
-                screenSwitchEvent?.getScreenSwitch(byteArrayOf(0, 2))
+            } else {
+                McuLogic.setRealSysMode(1, backTapper)
             }
         }
         else if (cmdType == 0x68) {
@@ -43,14 +39,10 @@ class CustomMcuCommunicator(private var backTapper: BackTapper, mcuWriter: Write
                     data[1] = 2
                 if (McuLogic.realSysMode == data[1].toInt())
                     return
-                //Preps Mcu before calling super to screen switch below.
-                //Note: Some ScreenSwitch events might try to trigger another screen switch within
-                //but will be hindered by presetting the same SysMode. See above
-                screenSwitchEvent?.getScreenSwitch(data)
             }
         }
 
-        super.sendCommand(cmdType, data, update)
+        super.sendCommand(cmdType, data, false)
     }
 
     override fun sendCommand(mcuCommands: McuCommands) {
