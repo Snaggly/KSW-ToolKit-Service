@@ -67,8 +67,10 @@ class BackTapper(val context: Context) {
                     }
                 }
                 else {
-                    returnBackToArm()
-                    removeBackWindow()
+                    if (motion.action == MotionEvent.ACTION_DOWN) {
+                        returnBackToArm()
+                        removeBackWindow()
+                    }
                 }
                 performClick()
                 return@setOnTouchListener false
