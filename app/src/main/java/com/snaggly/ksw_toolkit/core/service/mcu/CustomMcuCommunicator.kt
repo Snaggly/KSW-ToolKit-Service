@@ -46,8 +46,14 @@ class CustomMcuCommunicator(private var backTapper: BackTapper, mcuWriter: Write
     }
 
     override fun sendCommand(mcuCommands: McuCommands) {
-        Thread{
+        Thread {
             this.sendCommand(mcuCommands.command, mcuCommands.data, mcuCommands.update)
+        }.start()
+    }
+
+    fun sendForcedCommand(mcuCommands: McuCommands) {
+        Thread {
+            super.sendCommand(mcuCommands.command, mcuCommands.data, false)
         }.start()
     }
 }

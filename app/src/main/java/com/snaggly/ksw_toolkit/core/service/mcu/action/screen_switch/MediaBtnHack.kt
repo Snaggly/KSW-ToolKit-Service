@@ -19,7 +19,7 @@ class MediaBtnHack : IScreenSwitchAction {
         if (!switchLock) {
             switchLock = true
             McuLogic.mcuCommunicator?.sendCommand(0x70, enableOEM, false)
-            McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_OEM)
+            McuLogic.mcuCommunicator?.sendForcedCommand(McuCommands.SWITCH_TO_OEM) //Already in Mode2, force second switch take place
         }
     }
 
