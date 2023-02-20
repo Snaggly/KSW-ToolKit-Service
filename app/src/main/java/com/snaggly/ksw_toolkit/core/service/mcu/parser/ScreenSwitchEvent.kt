@@ -9,6 +9,11 @@ import java.util.LinkedList
 class ScreenSwitchEvent(private val backTapper: BackTapper) {
     private var switchActions : LinkedList<IScreenSwitchAction> = LinkedList()
 
+    companion object {
+        const val ANDROID_MODE = 1
+        const val OEM_MODE = 2
+    }
+
     fun clearActions() {
         restoreState()
         switchActions.clear()
@@ -19,12 +24,17 @@ class ScreenSwitchEvent(private val backTapper: BackTapper) {
     }
 
     fun getScreenSwitch(data: ByteArray) : EventManagerTypes {
-        McuLogic.setRealSysMode(data[1].toInt(), backTapper)
-        if (McuLogic.realSysMode == 0x1) {
+        if (data.size < 2)
+            return EventManagerTypes.Dummy
+
+        val mode = data[1].toInt()
+        McuLogic.setRealSysMode(mode, backTapper)
+
+        if (mode == ANDROID_MODE) {
             for (action in switchActions)
                 action.performOnAndroidSwitch()
         }
-        else if (McuLogic.realSysMode == 0x2) {
+        else if (mode == OEM_MODE) {
             for (action in switchActions)
                 action.performOnOEMSwitch()
         }
