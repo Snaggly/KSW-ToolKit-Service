@@ -199,6 +199,7 @@ class KSWToolKitService(private val serviceContext: Context, private val coreRea
 
     override fun setDecoupleNAVBtn(value: Boolean) {
         configManager.systemOptions.decoupleNAVBtn = value
+    }
 
     override fun getAdvBri_IsTimeBased(): Boolean {
         return configManager.advancedBrightness.isTimeBasedEnabled!!
