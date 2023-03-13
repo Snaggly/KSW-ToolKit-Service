@@ -19,22 +19,30 @@ class PreCheckLogcat {
             while (bufRead.readLine().also { readLine = it } != null) {
                 var line = readLine!!
                 if (line.contains("--Mcu toString-----")) {
-                    line = line.substring(line.lastIndexOf('[') + 2, line.lastIndexOf(']') - 1)
-                    line = line.replace("\\s+".toRegex(), "")
-                    val splitString = line.split("-", limit = 2).toTypedArray()
-                    val commandStr = splitString[0].substring(splitString[0].indexOf(":") + 1)
-                    val command = commandStr.toInt(16)
-                    val byteStrs = splitString[1].substring(splitString[1].indexOf(":") + 1)
-                    val dataStrs = byteStrs.split("-").toTypedArray()
-                    val data0 = dataStrs[0].toInt(16).toByte()
-                    if (command == findCommand && data0 == find1stData) {
-                        lastLine = line
+                    try {
+                        line = line.substring(line.lastIndexOf('[') + 2, line.lastIndexOf(']') - 1)
+                        line = line.replace("\\s+".toRegex(), "")
+                        val splitString = line.split("-", limit = 2).toTypedArray()
+                        val commandStr = splitString[0].substring(splitString[0].indexOf(":") + 1)
+                        val command = commandStr.toInt(16)
+                        val byteStrs = splitString[1].substring(splitString[1].indexOf(":") + 1)
+                        val dataStrs = byteStrs.split("-").toTypedArray()
+                        val data0 = dataStrs[0].toInt(16).toByte()
+                        if (command == findCommand && data0 == find1stData) {
+                            lastLine = line
+                        }
+                    }
+                    catch (e : Exception) {
+                        Log.e("PreCheckLogcat", "Received incorrect data \"$line\"", e)
                     }
                 }
             }
 
             if (lastLine != "") {
                 val splitString = lastLine.split("-", limit = 2).toTypedArray()
+                if (splitString.size < 2) {
+                    Log.e("PreCheckLogcat", "Received incorrect data \"$lastLine\"")
+                }
                 val byteStrs = splitString[1].substring(splitString[1].indexOf(":") + 1)
                 val dataStrs = byteStrs.split("-").toTypedArray()
                 val data = ByteArray(dataStrs.size)
