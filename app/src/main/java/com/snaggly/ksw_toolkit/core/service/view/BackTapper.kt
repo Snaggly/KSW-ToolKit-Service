@@ -159,7 +159,7 @@ class BackTapper(val context: Context) {
 
     @Synchronized fun drawBackWindow() {
         val topApp = WitsStatus.getTopApp()
-        if (getHasAlreadyDrawn() || topApp == "com.wits.ksw" || topApp == "com.wits.ksw.launcher.view.lexus.OEMFMActivity") {
+        if (getHasAlreadyDrawn() /*|| topApp == "com.wits.ksw" || topApp == "com.wits.ksw.launcher.view.lexus.OEMFMActivity"*/) {
             return
         }
 
