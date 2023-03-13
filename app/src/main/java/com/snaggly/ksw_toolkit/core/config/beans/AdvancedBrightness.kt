@@ -20,8 +20,8 @@ class AdvancedBrightness (
                 sunsetAt = "20:00",
                 autoTimes = true,
                 daylightBrightness = 100,
-                daylightHLBrightness = 85,
-                nightBrightnessLevel = 50,
+                daylightHLBrightness = 90,
+                nightBrightnessLevel = 70,
                 nightHLBrightnessLevel = 30
             )
         }

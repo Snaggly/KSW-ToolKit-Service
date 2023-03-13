@@ -7,7 +7,6 @@ import android.os.IBinder
 import android.view.WindowManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.R
-import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
@@ -44,17 +43,17 @@ class CoreService : Service() {
         return super.onUnbind(intent)
     }
 
-    val mcuLogic = McuLogic
-    private var mcuReaderHandler: McuReaderHandler? = null
     private var kswToolKitService: KSWToolKitService? = null
+    private var mcuReaderHandler: McuReaderHandler? = null
 
     override fun onCreate() {
         PreCheckLogcat().getLightsStatus()
         try {
-            mcuReaderHandler = McuReaderHandler(applicationContext)
-            mcuReaderHandler!!.startMcuReader()
-            kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
-            mcuReaderHandler!!.showStartMessage()
+            val lMcuReaderHandler = McuReaderHandler(applicationContext)
+            lMcuReaderHandler.startMcuReader()
+            mcuReaderHandler = lMcuReaderHandler
+            kswToolKitService = KSWToolKitService(lMcuReaderHandler)
+            lMcuReaderHandler.showStartMessage()
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
@@ -74,13 +73,14 @@ class CoreService : Service() {
     }
 
     private fun startTest() {
-        mcuReaderHandler = McuReaderHandler(applicationContext)
-        kswToolKitService = KSWToolKitService(this, mcuReaderHandler!!)
+        val lMcuReaderHandler = McuReaderHandler(applicationContext)
+        mcuReaderHandler = lMcuReaderHandler
+        kswToolKitService = KSWToolKitService(lMcuReaderHandler)
         McuLogic.mcuCommunicator = null
 
         Thread {
             while (kswToolKitService != null) {
-                mcuReaderHandler?.onMcuEventAction?.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1, 22)))
+                lMcuReaderHandler.onMcuEventAction.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1, 22)))
                 Thread.sleep(1500)
             }
         }.start()

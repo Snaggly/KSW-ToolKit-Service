@@ -4,11 +4,10 @@ import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
+import com.snaggly.ksw_toolkit.IAutoTimeListener
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
-import com.snaggly.ksw_toolkit.core.config.beans.SystemOptions
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
@@ -17,6 +16,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
+import com.snaggly.ksw_toolkit.util.brightnesstools.TimeBasedBrightness
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
@@ -25,7 +25,7 @@ import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 import kotlin.collections.ArrayList
 
-class McuReaderHandler(private val context: Context) {
+class McuReaderHandler(val context: Context) {
     val config = ConfigManager.getConfig(context)
 
     private val backTapper = BackTapper(context)
@@ -35,7 +35,6 @@ class McuReaderHandler(private val context: Context) {
     private var eventAction : EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
     private var hasSerialInit = false @Synchronized get @Synchronized set
-
 
     init {
         when {
@@ -104,9 +103,6 @@ class McuReaderHandler(private val context: Context) {
                     parseMcuEvent.carDataEvent.lightEvent = LightEvent()
                 }
 
-                //Toggle AdvancedBrightness
-                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context)
-
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
                 eventAction = if (config.systemOptions.logMcuEvent == true)
                     EventActionLogger(context)
@@ -151,6 +147,9 @@ class McuReaderHandler(private val context: Context) {
                     //No sign of being called even when the service is running
                     //brightnessObserver.startObservingBrightness()
                 }
+
+                //Toggle AdvancedBrightness
+                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context)
             }
         }
     }
@@ -235,5 +234,9 @@ class McuReaderHandler(private val context: Context) {
 
     fun String.showMessage() {
         Toast.makeText(context, this, Toast.LENGTH_LONG).show()
+    }
+
+    fun reTriggerBrightness() {
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler.trigger()
     }
 }
