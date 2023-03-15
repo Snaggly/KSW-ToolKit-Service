@@ -75,4 +75,12 @@ public class ZLinkHandler {
     public void voiceAssist() {
         ZlinkMessage.sendZlinkMessage(1500, mContext);
     }
+
+    public void setDarkTheme() {
+        new ZlinkMessage("com.zjinnova.zlink.action.OUT_DARK_START").sendBroadCast(mContext);
+    }
+
+    public void setLightTheme() {
+        new ZlinkMessage("com.zjinnova.zlink.action.OUT_DARK_STOP").sendBroadCast(mContext);
+    }
 }
