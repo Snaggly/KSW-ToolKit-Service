@@ -36,6 +36,10 @@ public class ZlinkMessage {
     public static final String ZLINK_PATH_KEYCFG = "persist.sys.zlink.path.keycfg";
     public static final String ZLINK_POWER_OFF_ACTION = "com.zjinnova.zlink.action.POWER_OFF";
     public static final String ZLINK_POWER_ON_ACTION = "com.zjinnova.zlink.action.POWER_ON";
+
+    public static final String ZLINK_START_DARKMODE = "com.zjinnova.zlink.action.OUT_DARK_START";
+    public static final String ZLINK_STOP_DARKMODE = "com.zjinnova.zlink.action.OUT_DARK_STOP";
+
     public String action;
     public Bundle bundle;
     public String command;

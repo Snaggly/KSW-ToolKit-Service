@@ -5,9 +5,11 @@ import android.content.Context;
 import com.wits.pms.bean.ZlinkMessage;
 import com.wits.pms.statuscontrol.PowerManagerApp;
 
+import java.util.Objects;
+
 public class ZLinkHandler {
     public static boolean isUsing() {
-        return PowerManagerApp.getStatusString("topApp").equals(ZlinkMessage.ZLINK_NORMAL_ACTION);
+        return Objects.equals(PowerManagerApp.getStatusString("topApp"), ZlinkMessage.ZLINK_NORMAL_ACTION);
     }
 
     private final Context mContext;
@@ -76,11 +78,23 @@ public class ZLinkHandler {
         ZlinkMessage.sendZlinkMessage(1500, mContext);
     }
 
+    public void home() {
+        ZlinkMessage.sendZlinkMessage(3, mContext);
+    }
+
+    public void media() {
+        ZlinkMessage.sendZlinkMessage(209, mContext);
+    }
+
     public void setDarkTheme() {
-        new ZlinkMessage("com.zjinnova.zlink.action.OUT_DARK_START").sendBroadCast(mContext);
+        new ZlinkMessage(ZlinkMessage.ZLINK_START_DARKMODE).sendBroadCast(mContext);
     }
 
     public void setLightTheme() {
-        new ZlinkMessage("com.zjinnova.zlink.action.OUT_DARK_STOP").sendBroadCast(mContext);
+        new ZlinkMessage(ZlinkMessage.ZLINK_STOP_DARKMODE).sendBroadCast(mContext);
+    }
+
+    public void testCommand(int requestCode) {
+        ZlinkMessage.sendZlinkMessage(requestCode, mContext);
     }
 }
