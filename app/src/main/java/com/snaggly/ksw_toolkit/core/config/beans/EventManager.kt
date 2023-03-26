@@ -102,7 +102,7 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                 EventManagerTypes.ModeButton to EventManager(
                     EventMode.StartApp,
                     -1,
-                    "com.spotify.music",
+                    "com.wits.ksw.media",
                     -1,
                     ""
                 ),
@@ -135,9 +135,9 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                     ""
                 ),
                 EventManagerTypes.TelephoneButton to EventManager(
-                    EventMode.StartApp,
-                    -1,
-                    "com.zjinnova.zlink",
+                    EventMode.KeyEvent,
+                    KeyCode.CALL.keycode,
+                    "",
                     -1,
                     ""
                 ),
