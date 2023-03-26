@@ -13,7 +13,7 @@ import java.net.Socket
 import java.security.NoSuchAlgorithmException
 
 object AdbManager {
-    private var isConnected = false
+    private var isConnected = false @Synchronized get @Synchronized set
     private var socket : Socket? = null
     private var adbConnection: AdbConnection? = null
     private var shellStream: AdbStream? = null
