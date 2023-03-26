@@ -14,7 +14,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
-import com.snaggly.ksw_toolkit.util.brightnesstools.TimeBasedBrightness
+import com.snaggly.ksw_toolkit.util.brightnesstools.AutoThemeManager
 import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -34,6 +34,7 @@ class McuReaderHandler(val context: Context) {
     private var eventAction : EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
     private val daytimeObserver = DaytimeObserver(context)
+    private val autoThemeManager = AutoThemeManager(context)
     private var hasSerialInit = false @Synchronized get @Synchronized set
 
     init {
@@ -94,15 +95,6 @@ class McuReaderHandler(val context: Context) {
                 //Perform screen switch commands.
                 parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
 
-                //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
-                if (config.systemOptions.autoTheme == true) {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEventSwitch().apply {
-                        uiModeManager = context.getSystemService(UiModeManager::class.java)
-                    }
-                } else {
-                    parseMcuEvent.carDataEvent.lightEvent = LightEvent()
-                }
-
                 //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
                 eventAction = if (config.systemOptions.logMcuEvent == true)
                     EventActionLogger(context)
@@ -151,6 +143,15 @@ class McuReaderHandler(val context: Context) {
                 //Toggle AdvancedBrightness
                 parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
 
+                //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
+                if (config.systemOptions.autoTheme == true) {
+                    parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = { autoThemeManager.handleThemeChangeByLightEvent(it) }
+                    daytimeObserver.registerDaytimeListener {
+                        autoThemeManager.handleThemeChangeByTime(it != DaytimeObserver.Daytime.Day)
+                    }
+                } else {
+                    parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = null
+                }
             }
         }
     }
@@ -239,6 +240,18 @@ class McuReaderHandler(val context: Context) {
     }
 
     fun reTriggerBrightness() {
-        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler.trigger()
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler?.trigger()
+    }
+
+    fun triggerTestHLOn() {
+        onMcuEventAction.update(0xA1, byteArrayOf(0x10, 7, 1))
+    }
+
+    fun triggerTestHLOff() {
+        onMcuEventAction.update(0xA1, byteArrayOf(0x10, 0, 1))
+    }
+
+    fun testBtnEvent(testCode: Byte) {
+        onMcuEventAction.update(0xA1, byteArrayOf(0x17, testCode, 0x1))
     }
 }
