@@ -11,7 +11,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 
-class KSWToolKitService(private val coreReaderHandler: McuReaderHandler) : IKSWToolKitService.Stub() {
+class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitService.Stub() {
 
     private val configManager = coreReaderHandler.config
     private val systemOptionsController = SystemOptionsController(coreReaderHandler)
@@ -91,6 +91,7 @@ class KSWToolKitService(private val coreReaderHandler: McuReaderHandler) : IKSWT
                         return false
                     }
                 }
+                else -> {}
             }
         }
         configManager.saveConfig()
