@@ -7,14 +7,14 @@ import net.dinglisch.android.taskerm.TaskerIntent.Status
 
 object TaskerTaskStarter {
     fun launchTaskerTaskById(taskId: String?, context: Context) {
-        val status: Status = TaskerIntent.testStatus(context)
 
-        when (status) {
+        when (TaskerIntent.testStatus(context)) {
             Status.OK -> {
                 val i = TaskerIntent(taskId)
                 context.registerReceiver(TaskerBroadcastReceiver(), i.completionFilter)
                 context.sendBroadcast(i)
             }
+            else -> {}
         }
     }
 }
