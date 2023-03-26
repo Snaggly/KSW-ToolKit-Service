@@ -57,7 +57,6 @@ class CoreService : Service() {
         } catch (e: Exception) {
             crashOut("Could not start McuReader!\n\n${e.stackTrace}")
         }
-        //startTest()
     }
 
     override fun onDestroy() {
