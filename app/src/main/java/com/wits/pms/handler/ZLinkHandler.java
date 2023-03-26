@@ -1,4 +1,4 @@
-package com.wits.pms.receiver;
+package com.wits.pms.handler;
 
 import android.content.Context;
 
