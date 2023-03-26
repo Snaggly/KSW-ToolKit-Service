@@ -1,6 +1,7 @@
 package com.snaggly.ksw_toolkit.core.service.mcu.action
 
 import android.content.Context
+import android.os.Handler
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.util.commander.AppStarter
@@ -11,25 +12,34 @@ import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventMode
 import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
-import com.wits.pms.bean.TxzMessage
-import com.wits.pms.bean.ZlinkMessage
-import com.wits.pms.receiver.*
+import com.wits.pms.handler.*
 import com.wits.pms.statuscontrol.WitsCommand
-import com.wits.pms.utils.SystemProperties
 
 open class EventAction(private val context: Context) {
+    companion object {
+        private var zLinkHomeClicked = false
+        private var zLinkHomeDoubleClicked = false
+    }
+
     private val zLinkHandler = ZLinkHandler(context)
     open fun processAction(cmdType: Int, data: ByteArray, event: EventManagerTypes?, config: ConfigManager) {
         var keyBypass = false
+        val isUsingZLink = ZLinkHandler.isUsing()
         if (event != null) {
-            if (event == EventManagerTypes.NavigationButton && ZLinkHandler.isUsing()) {
-                zLinkHandler.navigation()
-                return
+            if (isUsingZLink) {
+                if (event == EventManagerTypes.NavigationButton) {
+                    zLinkHandler.navigation()
+                    return
+                }
+                else if (event == EventManagerTypes.ModeButton){
+                    zLinkHandler.media()
+                    return
+                }
             }
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
-                    if (ZLinkHandler.isUsing()) {
+                    if (isUsingZLink) {
                         keyBypass = true
                         when (eventConfig.keyCode) {
                             KeyCode.DPAD_UP.keycode -> {
@@ -49,16 +59,25 @@ open class EventAction(private val context: Context) {
                             KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
                             KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
                             */
-                            KeyCode.CALL.keycode -> {
-                                if (event == EventManagerTypes.TelephoneButton && SystemProperties.get(ZlinkMessage.ZLINK_CALL_ING) == "1")
-                                    zLinkHandler.telHangUp()
-                                else
-                                    zLinkHandler.telPick()
-                            }
-                            KeyCode.ENDCALL.keycode -> zLinkHandler.telHangUp()
+                            KeyCode.CALL.keycode -> CallHandler.handleAccept(context)
+                            KeyCode.ENDCALL.keycode -> CallHandler.handleReject(context)
                             KeyCode.MEDIA_PREVIOUS.keycode -> zLinkHandler.mediaPrev()
                             KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
                             KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
+                            KeyCode.HOME.keycode -> {
+                                if (!zLinkHomeClicked) {
+                                    zLinkHomeClicked = true
+                                    Handler(context.mainLooper).postDelayed({
+                                        if (!zLinkHomeDoubleClicked)
+                                            zLinkHandler.home()
+                                        zLinkHomeClicked = false
+                                        zLinkHomeDoubleClicked = false
+                                    }, 1000)
+                                } else {
+                                    zLinkHomeDoubleClicked = true
+                                    keyBypass = false
+                                }
+                            }
                             KeyCode.BACK.keycode -> zLinkHandler.back()
                             KeyCode.VOICE_ASSIST.keycode -> zLinkHandler.voiceAssist()
                             else -> keyBypass = false
