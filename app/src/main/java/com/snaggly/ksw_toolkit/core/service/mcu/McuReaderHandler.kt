@@ -1,11 +1,9 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
-import android.app.UiModeManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
 import android.widget.Toast
-import com.snaggly.ksw_toolkit.IAutoTimeListener
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
@@ -17,6 +15,7 @@ import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
 import com.snaggly.ksw_toolkit.util.brightnesstools.TimeBasedBrightness
+import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
@@ -34,6 +33,7 @@ class McuReaderHandler(val context: Context) {
     private val sendingInterceptor = McuSenderInterceptor(100)
     private var eventAction : EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
+    private val daytimeObserver = DaytimeObserver(context)
     private var hasSerialInit = false @Synchronized get @Synchronized set
 
     init {
@@ -149,7 +149,8 @@ class McuReaderHandler(val context: Context) {
                 }
 
                 //Toggle AdvancedBrightness
-                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context)
+                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
+
             }
         }
     }
@@ -191,9 +192,10 @@ class McuReaderHandler(val context: Context) {
     }
 
     fun stopReader() {
+        daytimeObserver.clearAllListeners()
         parseMcuEvent.screenSwitchEvent.clearActions()
         //brightnessObserver.stopObservingBrightness()
-        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler.destroy()
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler?.destroy()
         backTapper.removeBackWindow()
         McuLogic.stopAutoVolume()
         McuLogic.mcuCommunicator?.stopBeat()

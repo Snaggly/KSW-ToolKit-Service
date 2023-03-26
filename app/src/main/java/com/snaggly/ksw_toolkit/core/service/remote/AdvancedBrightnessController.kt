@@ -3,7 +3,7 @@ package com.snaggly.ksw_toolkit.core.service.remote
 import com.snaggly.ksw_toolkit.IAdvancedBrightnessControl
 import com.snaggly.ksw_toolkit.IAutoTimeListener
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
-import com.snaggly.ksw_toolkit.util.brightnesstools.TimeBasedBrightness
+import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
 
 class AdvancedBrightnessController(private val coreReaderHandler: McuReaderHandler) : IAdvancedBrightnessControl.Stub() {
     private val configManager = coreReaderHandler.config
@@ -100,15 +100,15 @@ class AdvancedBrightnessController(private val coreReaderHandler: McuReaderHandl
 
     override fun registerAutoTimeListener(listener : IAutoTimeListener?) {
         listener?.let {
-            TimeBasedBrightness.autoTimeListeners.forEach {
+            DaytimeObserver.AutoTimeListeners.forEach {
                 if (listener.asBinder() == it.asBinder())
                     return
             }
-            TimeBasedBrightness.autoTimeListeners.add(listener)
+            DaytimeObserver.AutoTimeListeners.add(listener)
         }
     }
 
     override fun unregisterAutoTimeListener(listener : IAutoTimeListener?) {
-        TimeBasedBrightness.autoTimeListeners.removeAll{ it.asBinder() == listener?.asBinder() }
+        DaytimeObserver.AutoTimeListeners.removeAll{ it.asBinder() == listener?.asBinder() }
     }
 }
