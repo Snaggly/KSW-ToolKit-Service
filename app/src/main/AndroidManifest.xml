@@ -61,6 +61,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".receiver.ZLinkReceiver" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="com.zjinnova.zlink"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.TestReceiver" android:exported="true" />
     </application>
 
 </manifest>
