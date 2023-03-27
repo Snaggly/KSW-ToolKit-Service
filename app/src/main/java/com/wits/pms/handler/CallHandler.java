@@ -32,15 +32,12 @@ public class CallHandler {
             case 4:
             case 6:
                 handUpPhone();
-                zlinkCallOff(context);
                 return;
             case 5:
                 acceptPhone();
-                zlinkCallOn(context);
                 return;
             default:
                 zlinkCallOn(context);
-                return;
         }
     }
 
@@ -72,8 +69,8 @@ public class CallHandler {
         else if (SystemProperties.get(AutoKitMessage.AUTOBOX_CONNECT).equals("1")) {
             AutoKitCallBackImpl.acceptPhone(context);
         }
-        else if (SystemProperties.get("persist.sys.hicar_connect").equals("true")) {
-            WitsCommand.sendCommand(7, 111);
+        else if (HiCarHandler.isUsing()) {
+            HiCarHandler.acceptCall();
         } else {
             acceptPhone();
         }
@@ -89,8 +86,8 @@ public class CallHandler {
         else if (SystemProperties.get(AutoKitMessage.AUTOBOX_CONNECT).equals("1")) {
             AutoKitCallBackImpl.rejectPhone(context);
         }
-        else if (SystemProperties.get("persist.sys.hicar_connect").equals("true")) {
-            WitsCommand.sendCommand(7, 112);
+        else if (HiCarHandler.isUsing()) {
+            HiCarHandler.rejectCall();
         } else {
             handUpPhone();
         }

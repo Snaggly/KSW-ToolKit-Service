@@ -59,8 +59,8 @@ open class EventAction(private val context: Context) {
                             KeyCode.DPAD_RIGHT.keycode -> zLinkHandler.tiltRight()
                             KeyCode.DPAD_LEFT.keycode -> zLinkHandler.tiltLeft()
                             */
-                            KeyCode.CALL.keycode -> CallHandler.handleAccept(context)
-                            KeyCode.ENDCALL.keycode -> CallHandler.handleReject(context)
+                            //KeyCode.CALL.keycode -> CallHandler.handleAccept(context)
+                            //KeyCode.ENDCALL.keycode -> CallHandler.handleReject(context)
                             KeyCode.MEDIA_PREVIOUS.keycode -> zLinkHandler.mediaPrev()
                             KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
                             KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
@@ -84,21 +84,30 @@ open class EventAction(private val context: Context) {
                         }
                     }
                     else if (AutoKitCallBackImpl.isUsing()) {
+                        keyBypass = true
                         when (eventConfig.keyCode) {
                             KeyCode.DPAD_UP.keycode -> {
                                 if (event == EventManagerTypes.KnobTurnLeft) {
-                                    keyBypass = true
                                     AutoKitCallBackImpl.drapLeft(context.applicationContext)
                                 }
                             }
                             KeyCode.DPAD_DOWN.keycode -> {
                                 if (event == EventManagerTypes.KnobTurnRight) {
-                                    keyBypass = true
                                     AutoKitCallBackImpl.drapRight(context.applicationContext)
                                 }
                             }
-                            KeyCode.ENTER.keycode -> AutoKitCallBackImpl.enter(context.applicationContext)
+                            KeyCode.ENTER.keycode -> {
+                                AutoKitCallBackImpl.enter(context.applicationContext)
+                                keyBypass = false
+                            }
                             else -> keyBypass = false
+                        }
+                    }
+                    else if (AutoNavi.isUsing()) {
+                        keyBypass = false
+                        when (eventConfig.keyCode) {
+                            KeyCode.DPAD_RIGHT.keycode -> AutoNavi.dragRight(context.applicationContext)
+                            KeyCode.DPAD_LEFT.keycode -> AutoNavi.dragLeft(context.applicationContext)
                         }
                     }
                     else if (eventConfig.keyCode == KeyCode.VOICE_ASSIST.keycode && TxzHandler.isUsing()) {
@@ -108,25 +117,22 @@ open class EventAction(private val context: Context) {
                         else
                             TxzHandler.openSpeech(context)
                     }
+                    else if (HiCarHandler.isUsing()) {
+                        keyBypass = true
+                        when (eventConfig.keyCode) {
+                            KeyCode.APP_SWITCH.keycode -> WitsCommand.sendCommand(7, 101, "")
+                            KeyCode.VOICE_ASSIST.keycode -> WitsCommand.sendCommand(7, 102, "")
+                        }
+                    }
 
                     if (keyBypass)
                         return
-
-                    if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode))
-                        KeyInjector.sendKey(eventConfig.keyCode)
-                    when (eventConfig.keyCode) {
-                        KeyCode.DPAD_RIGHT.keycode -> AutoNavi.dragRight(context.applicationContext)
-                        KeyCode.DPAD_LEFT.keycode -> AutoNavi.dragLeft(context.applicationContext)
-                        KeyCode.CALL.keycode -> {
-                            WitsCommand.sendCommand(7, 113, "")
-                            CallHandler.handleAccept(context.applicationContext)
+                    if (!(McuLogic.actionLock && eventConfig.keyCode == KeyCode.HOME.keycode)) {
+                        when (eventConfig.keyCode) {
+                            KeyCode.CALL.keycode -> CallHandler.handleAccept(context.applicationContext)
+                            KeyCode.ENDCALL.keycode -> CallHandler.handleReject(context.applicationContext)
+                            else -> KeyInjector.sendKey(eventConfig.keyCode)
                         }
-                        KeyCode.ENDCALL.keycode -> {
-                            WitsCommand.sendCommand(7, 113, "")
-                            CallHandler.handleReject(context.applicationContext)
-                        }
-                        KeyCode.APP_SWITCH.keycode -> WitsCommand.sendCommand(7, 101, "")
-                        KeyCode.VOICE_ASSIST.keycode -> WitsCommand.sendCommand(7, 102, "")
                     }
                 }
                 EventMode.StartApp -> {

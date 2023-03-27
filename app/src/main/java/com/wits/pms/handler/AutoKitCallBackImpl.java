@@ -5,6 +5,8 @@ import android.content.Context;
 import com.wits.pms.bean.AutoKitMessage;
 import com.wits.pms.statuscontrol.PowerManagerApp;
 
+import java.util.Objects;
+
 public class AutoKitCallBackImpl {
     public static final int AUTO_BOX_CONTROL_CMD_NEXT = 13;
     public static final int AUTO_BOX_CONTROL_CMD_PAUSE = 11;
@@ -37,7 +39,7 @@ public class AutoKitCallBackImpl {
     private static AutoKitCallBackImpl autoKitCallBack;
 
     public static boolean isUsing() {
-        return PowerManagerApp.getStatusString("topApp").equals(AutoKitPkgName);
+        return Objects.equals(PowerManagerApp.getStatusString("topApp"), AutoKitPkgName);
     }
 
     public static void drapUp(Context mContext) {
