@@ -93,16 +93,16 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                     ""
                 ),
                 EventManagerTypes.NavigationButton to EventManager(
-                    EventMode.StartApp,
-                    -1,
-                    "com.google.android.apps.maps",
+                    EventMode.KeyEvent,
+                    KeyCode.NAVIGATION.keycode,
+                    "",
                     -1,
                     ""
                 ),
                 EventManagerTypes.ModeButton to EventManager(
-                    EventMode.StartApp,
-                    -1,
-                    "com.wits.ksw.media",
+                    EventMode.KeyEvent,
+                    KeyCode.MODE_SWITCH.keycode,
+                    "",
                     -1,
                     ""
                 ),
