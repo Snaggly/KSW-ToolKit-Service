@@ -24,7 +24,7 @@ open class EventAction(private val context: Context) {
     private val zLinkHandler = ZLinkHandler(context)
     open fun processAction(cmdType: Int, data: ByteArray, event: EventManagerTypes?, config: ConfigManager) {
         var keyBypass = false
-        val isUsingZLink = ZLinkHandler.isUsing()
+        val isUsingZLink = ZLinkHandler.isUsing() && ZLinkHandler.isConnected()
         if (event != null) {
             if (isUsingZLink) {
                 if (event == EventManagerTypes.NavigationButton) {

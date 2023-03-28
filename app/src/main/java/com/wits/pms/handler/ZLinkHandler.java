@@ -4,12 +4,26 @@ import android.content.Context;
 
 import com.wits.pms.bean.ZlinkMessage;
 import com.wits.pms.statuscontrol.PowerManagerApp;
+import com.wits.pms.utils.SystemProperties;
 
 import java.util.Objects;
 
 public class ZLinkHandler {
     public static boolean isUsing() {
         return Objects.equals(PowerManagerApp.getStatusString("topApp"), ZlinkMessage.ZLINK_NORMAL_ACTION);
+    }
+
+    public static boolean isConnected() {
+        return (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CONNECT), "1"))
+                || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_AUTO_CONNECT), "1"))
+                || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CARPLAY_WRIED_CONNECT), "1"))
+                || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_CONNECT), "1"))
+                || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_WIRED_CONNECT), "1"))
+                || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_MIRROR_CONNECT), "1"));
+    }
+
+    public static boolean isCalling() {
+        return Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CALL), "1") || PowerManagerApp.getStatusInt("callStatus") == 6;
     }
 
     private final Context mContext;
