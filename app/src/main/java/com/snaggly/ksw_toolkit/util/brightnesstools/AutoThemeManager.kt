@@ -23,7 +23,7 @@ class AutoThemeManager(val context: Context) {
 
     private fun handleThemeChange() {
         if (isAnyLightOn || isNightTime) {
-            if (ZLinkReceiver.dataSet.isShowing && ZLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
+            if (zLinkReceiver.dataSet.isShowing && zLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
                 zLinkHandler.setDarkTheme()
                 zLinkReceiver.setReceiverHandler {
                     if (!it.isShowing) {
@@ -43,7 +43,7 @@ class AutoThemeManager(val context: Context) {
             }
         }
         else {
-            if (ZLinkReceiver.dataSet.isShowing && ZLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
+            if (zLinkReceiver.dataSet.isShowing && zLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
                 zLinkHandler.setLightTheme()
                 zLinkReceiver.setReceiverHandler {
                     if (!it.isShowing) {

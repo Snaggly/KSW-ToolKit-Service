@@ -26,24 +26,25 @@ class ZLinkReceiver : BroadcastReceiver(), ICustomReceiver<ZLinkReceiver.ZLinkDa
 
     companion object {
         val CurrentDataSet : ZLinkData
-        get() {
-            return ZLinkData(
-                currentConnection = if (SystemProperties.get(ZlinkMessage.ZLINK_CONNECT) == "1") Connection.CarPlayWireless
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_CARPLAY_WRIED_CONNECT) == "1") Connection.CarPlayWired
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_AUTO_CONNECT) == "1") Connection.AndroidAutoWired
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_WIRED_CONNECT) == "1") Connection.AirPlayWired
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_WIRED_CONNECT) == "0") Connection.AirPlayWireless
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_CONNECT) == "1") Connection.AirPlayWireless
-                else if (SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_MIRROR_CONNECT) == "1") Connection.AndroidMirrorWired
-                else Connection.Disconnected,
-                isShowing = ZLinkHandler.isUsing(),
-                isCalling = ZLinkHandler.isCalling()
-            )
-        }
+            get() {
+                return ZLinkData(
+                    currentConnection = if (SystemProperties.get(ZlinkMessage.ZLINK_CONNECT) == "1") Connection.CarPlayWireless
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_CARPLAY_WRIED_CONNECT) == "1") Connection.CarPlayWired
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_AUTO_CONNECT) == "1") Connection.AndroidAutoWired
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_WIRED_CONNECT) == "1") Connection.AirPlayWired
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_WIRED_CONNECT) == "0") Connection.AirPlayWireless
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_AIRPLAY_CONNECT) == "1") Connection.AirPlayWireless
+                    else if (SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_MIRROR_CONNECT) == "1") Connection.AndroidMirrorWired
+                    else Connection.Disconnected,
+                    isShowing = ZLinkHandler.isUsing(),
+                    isCalling = ZLinkHandler.isCalling()
+                )
+            }
     }
 
     private var callBackHandler : ((ZLinkData) -> Unit)? = null
-    private var dataSet = CurrentDataSet
+    var dataSet = CurrentDataSet
+        private set
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != ZlinkMessage.ZLINK_NORMAL_ACTION)
