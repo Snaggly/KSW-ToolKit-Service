@@ -18,7 +18,8 @@ class ZLinkReceiver : BroadcastReceiver(), ICustomReceiver<ZLinkReceiver.ZLinkDa
         AndroidAutoWired,
         AndroidAutoWireless,
         AndroidMirrorWired,
-        AndroidMirrorWireless
+        AndroidMirrorWireless,
+        Unknown
     }
 
     data class ZLinkData(var currentConnection: Connection, var isShowing: Boolean, var isCalling: Boolean)
@@ -42,6 +43,7 @@ class ZLinkReceiver : BroadcastReceiver(), ICustomReceiver<ZLinkReceiver.ZLinkDa
     }
 
     private var callBackHandler : ((ZLinkData) -> Unit)? = null
+    private var dataSet = CurrentDataSet
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action != ZlinkMessage.ZLINK_NORMAL_ACTION)
@@ -63,7 +65,7 @@ class ZLinkReceiver : BroadcastReceiver(), ICustomReceiver<ZLinkReceiver.ZLinkDa
                     "auto_wireless" -> Connection.AndroidAutoWireless
                     "android_mirror_wired" -> Connection.AndroidMirrorWired
                     "android_mirror_wireless" -> Connection.AndroidMirrorWireless
-                    else -> Connection.CarPlayWired
+                    else -> Connection.Unknown
                 }
             }
             "MAIN_PAGE_SHOW" -> {
