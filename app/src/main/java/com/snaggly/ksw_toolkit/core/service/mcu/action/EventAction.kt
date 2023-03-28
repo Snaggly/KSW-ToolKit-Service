@@ -26,16 +26,6 @@ open class EventAction(private val context: Context) {
         var keyBypass = false
         val isUsingZLink = ZLinkHandler.isUsing() && ZLinkHandler.isConnected()
         if (event != null) {
-            if (isUsingZLink) {
-                if (event == EventManagerTypes.NavigationButton) {
-                    zLinkHandler.navigation()
-                    return
-                }
-                else if (event == EventManagerTypes.ModeButton){
-                    zLinkHandler.media()
-                    return
-                }
-            }
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
@@ -64,6 +54,9 @@ open class EventAction(private val context: Context) {
                             KeyCode.MEDIA_PREVIOUS.keycode -> zLinkHandler.mediaPrev()
                             KeyCode.MEDIA_NEXT.keycode -> zLinkHandler.mediaNext()
                             KeyCode.MEDIA_PLAY_PAUSE.keycode -> zLinkHandler.playPause()
+                            KeyCode.MUSIC.keycode -> zLinkHandler.media()
+                            KeyCode.MODE_SWITCH.keycode -> zLinkHandler.media()
+                            KeyCode.NAVIGATION.keycode -> zLinkHandler.navigation()
                             KeyCode.HOME.keycode -> {
                                 if (!zLinkHomeClicked) {
                                     zLinkHomeClicked = true
