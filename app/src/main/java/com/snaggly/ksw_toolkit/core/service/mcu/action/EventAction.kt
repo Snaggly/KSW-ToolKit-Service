@@ -67,9 +67,8 @@ open class EventAction(private val context: Context) {
                             KeyCode.HOME.keycode -> {
                                 if (!zLinkHomeClicked) {
                                     zLinkHomeClicked = true
+                                    zLinkHandler.home()
                                     Handler(context.mainLooper).postDelayed({
-                                        if (!zLinkHomeDoubleClicked)
-                                            zLinkHandler.home()
                                         zLinkHomeClicked = false
                                         zLinkHomeDoubleClicked = false
                                     }, 1000)
