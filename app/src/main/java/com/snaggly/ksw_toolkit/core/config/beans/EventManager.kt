@@ -142,17 +142,17 @@ class EventManager(var eventMode: EventMode?, var keyCode: Int?, var appName: St
                     ""
                 ),
                 EventManagerTypes.VolumeDecrease to EventManager(
-                    EventMode.KeyEvent,
-                    KeyCode.VOLUME_DOWN.keycode,
-                    "",
+                    EventMode.McuCommand,
                     -1,
+                    "",
+                    McuCommandsEnum.MediaVolumeDec.ordinal,
                     ""
                 ),
                 EventManagerTypes.VolumeIncrease to EventManager(
-                    EventMode.KeyEvent,
-                    KeyCode.VOLUME_UP.keycode,
-                    "",
+                    EventMode.McuCommand,
                     -1,
+                    "",
+                    McuCommandsEnum.MediaVolumeInc.ordinal,
                     ""
                 ),
                 EventManagerTypes.TelephoneButtonLongPress to EventManager(

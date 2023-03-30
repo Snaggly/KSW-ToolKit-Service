@@ -131,8 +131,9 @@ open class EventAction(private val context: Context) {
                     AppStarter.launchAppById(eventConfig.appName, context)
                 }
                 EventMode.McuCommand -> {
+                    val command = eventConfig.mcuCommandMode ?: return
                     McuCommander.executeCommand(
-                        McuCommandsEnum.values[eventConfig.mcuCommandMode!!],
+                        McuCommandsEnum.values[command],
                         McuLogic.mcuCommunicator,
                         context
                     )

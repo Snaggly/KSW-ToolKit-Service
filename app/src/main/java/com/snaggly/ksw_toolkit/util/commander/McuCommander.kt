@@ -3,6 +3,7 @@ package com.snaggly.ksw_toolkit.util.commander
 import android.content.Context
 import android.provider.Settings
 import com.snaggly.ksw_toolkit.util.list.mcu.McuCommandsEnum
+import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.enums.SOUND_SRC_TYPE
@@ -12,6 +13,20 @@ object McuCommander {
         when (mcuCommandsEnum) {
             McuCommandsEnum.ScreenOff -> {
                 mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_OFF)
+            }
+
+            McuCommandsEnum.MediaVolumeInc -> {
+                var armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol") + 1
+                if (armMediaVol > 40)
+                    armMediaVol = 40
+                PowerManagerApp.getManager().setSettingsInt("Android_media_vol", armMediaVol)
+            }
+
+            McuCommandsEnum.MediaVolumeDec -> {
+                var armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol") - 1
+                if (armMediaVol < 0)
+                    armMediaVol = 0
+                PowerManagerApp.getManager().setSettingsInt("Android_media_vol", armMediaVol)
             }
 
             McuCommandsEnum.BrightnessInc -> {
