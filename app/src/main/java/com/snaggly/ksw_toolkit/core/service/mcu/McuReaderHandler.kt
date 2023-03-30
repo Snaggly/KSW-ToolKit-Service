@@ -14,7 +14,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
-import com.snaggly.ksw_toolkit.util.brightnesstools.AutoThemeManager
+import com.snaggly.ksw_toolkit.util.manager.AutoThemeManager
 import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
@@ -179,6 +179,7 @@ class McuReaderHandler(val context: Context) {
         //Start CenterService-McuService. If CenterService has to be hijacked, I need to wait until it's ready.
         AdbServiceConnection.startKsw(context)
         McuLogic.mcuCommunicator?.mcuReader?.stopReading()
+        McuLogic.retainVolumes = config.systemOptions.retainVolume?: false
         McuLogic.mcuCommunicator?.mcuReader = LogcatReader()
         if (config.systemOptions.hijackCS == true) {
             McuLogic.mcuCommunicator?.mcuReader?.startReading(initialSerialStartAction)
@@ -253,5 +254,13 @@ class McuReaderHandler(val context: Context) {
 
     fun testBtnEvent(testCode: Byte) {
         onMcuEventAction.update(0xA1, byteArrayOf(0x17, testCode, 0x1))
+    }
+
+    fun testPowerOff() {
+        onMcuEventAction.update(0x11, byteArrayOf(5, 0))
+    }
+
+    fun testPowerOn() {
+        onMcuEventAction.update(0x11, byteArrayOf(4, 1))
     }
 }

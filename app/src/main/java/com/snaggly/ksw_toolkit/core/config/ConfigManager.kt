@@ -40,7 +40,7 @@ class ConfigManager private constructor() {
             sysOpt.soundRestorer?.let { systemOptions.soundRestorer = it }
             sysOpt.autoTheme?.let { systemOptions.autoTheme = it }
             sysOpt.autoVolume?.let { systemOptions.autoVolume = it }
-            sysOpt.maxVolume?.let { systemOptions.maxVolume = it }
+            sysOpt.retainVolume?.let { systemOptions.retainVolume = it }
             sysOpt.logMcuEvent?.let { systemOptions.logMcuEvent = it }
             sysOpt.interceptMcuCommand?.let { systemOptions.interceptMcuCommand = it }
             sysOpt.extraMediaButtonHandle?.let { systemOptions.extraMediaButtonHandle = it }

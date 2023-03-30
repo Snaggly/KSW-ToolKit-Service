@@ -6,6 +6,7 @@ import android.util.Log
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
+import com.snaggly.ksw_toolkit.util.manager.AndroidVolumeManager
 import com.wits.pms.statuscontrol.CallBackBinder
 import com.wits.pms.statuscontrol.PowerManagerApp
 import com.wits.pms.statuscontrol.WitsStatus
@@ -34,6 +35,10 @@ class PowerEvent(private val backTapper: BackTapper) {
             //Restore NightBrightness
             if (McuLogic.nightBrightness >= 0 && McuLogic.hasBacklightAuto) {
                 McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
+            }
+
+            if (McuLogic.retainVolumes) {
+                AndroidVolumeManager(backTapper.context.applicationContext).saveCurrentVolumes()
             }
 
             //Restore MediaButton

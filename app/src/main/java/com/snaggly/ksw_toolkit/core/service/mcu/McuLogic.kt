@@ -18,6 +18,7 @@ object McuLogic {
     private var autoVolume = false
     private var senderInterval: Long = 1000
     var isAnyLightOn = false
+    var retainVolumes = false
 
     //Param
     private var speedMaxVolume = 80

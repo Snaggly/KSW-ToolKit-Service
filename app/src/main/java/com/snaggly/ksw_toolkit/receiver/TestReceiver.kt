@@ -45,6 +45,8 @@ class TestReceiver : BroadcastReceiver() {
                 }
                 "zlink_out_stop" -> ZLinkHandler(context).setLightTheme()
                 "zlink_out_start" -> ZLinkHandler(context).setDarkTheme()
+                "power_off" -> service.coreReaderHandler.testPowerOff()
+                "power_on" -> service.coreReaderHandler.testPowerOn()
             }
             context?.unbindService(this)
         }

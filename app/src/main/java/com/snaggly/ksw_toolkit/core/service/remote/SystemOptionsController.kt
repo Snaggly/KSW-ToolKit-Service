@@ -1,6 +1,7 @@
 package com.snaggly.ksw_toolkit.core.service.remote
 
 import com.snaggly.ksw_toolkit.ISystemOptionsControl
+import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.util.adb.DensityUtil
 
@@ -14,7 +15,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setNightBrightnessLevel(value: Int) {
         configManager.systemOptions.nightBrightnessLevel = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getTabletMode(): Boolean {
@@ -63,7 +64,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setHijackCS(value: Boolean) {
         configManager.systemOptions.hijackCS = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getSoundRestorer(): Boolean {
@@ -73,7 +74,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setSoundRestorer(value: Boolean) {
         configManager.systemOptions.soundRestorer = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getAutoTheme(): Boolean {
@@ -83,7 +84,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setAutoTheme(value: Boolean) {
         configManager.systemOptions.autoTheme = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getAutoVolume(): Boolean {
@@ -93,15 +94,16 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setAutoVolume(value: Boolean) {
         configManager.systemOptions.autoVolume = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
-    override fun getMaxVolume(): Boolean {
-        return configManager.systemOptions.maxVolume!!
+    override fun getRetainVolume(): Boolean {
+        return configManager.systemOptions.retainVolume!!
     }
 
-    override fun setMaxVolume(value: Boolean) {
-        configManager.systemOptions.maxVolume = value
+    override fun setRetainVolume(value: Boolean) {
+        configManager.systemOptions.retainVolume = value
+        McuLogic.retainVolumes = value
         configManager.saveConfig()
     }
 
@@ -112,7 +114,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setLogMcuEvent(value: Boolean) {
         configManager.systemOptions.logMcuEvent = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getInterceptMcuCommand(): Boolean {
@@ -122,7 +124,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setInterceptMcuCommand(value: Boolean) {
         configManager.systemOptions.interceptMcuCommand = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getExtraMediaButtonHandle(): Boolean {
@@ -132,7 +134,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setExtraMediaButtonHandle(value: Boolean) {
         configManager.systemOptions.extraMediaButtonHandle = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getNightBrightness(): Boolean {
@@ -142,7 +144,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setNightBrightness(value: Boolean) {
         configManager.systemOptions.nightBrightness = value
         configManager.saveConfig()
-        coreReaderHandler?.restartReader()
+        coreReaderHandler.restartReader()
     }
 
     override fun getMcuPath(): String {
@@ -152,7 +154,7 @@ class SystemOptionsController(private val coreReaderHandler: McuReaderHandler) :
     override fun setMcuPath(path: String?) : Boolean {
         return if (path != null) {
             configManager.systemOptions.mcuPath = path
-            coreReaderHandler?.restartReader()
+            coreReaderHandler.restartReader()
             true
         } else {
             false

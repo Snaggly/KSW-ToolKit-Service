@@ -1,4 +1,4 @@
-package com.snaggly.ksw_toolkit.util.brightnesstools
+package com.snaggly.ksw_toolkit.util.manager
 
 import android.app.UiModeManager
 import android.content.Context

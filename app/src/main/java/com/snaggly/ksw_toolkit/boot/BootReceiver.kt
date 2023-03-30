@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.util.adb.DensityUtil
+import com.snaggly.ksw_toolkit.util.manager.AndroidVolumeManager
 import com.wits.pms.statuscontrol.PowerManagerApp
 
 class BootReceiver : BroadcastReceiver() {
@@ -15,29 +16,14 @@ class BootReceiver : BroadcastReceiver() {
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             val config = ConfigManager.getConfig(context)
 
-            if (config.systemOptions.maxVolume!!) {
+            if (config.systemOptions.retainVolume!!) {
                 try {
-                    val armMediaVol = PowerManagerApp.getManager().getSettingsInt("Android_media_vol")
-                    val armPhoneVol = PowerManagerApp.getManager().getSettingsInt("Android_phone_vol")
-                    val carPhoneVol = PowerManagerApp.getManager().getSettingsInt("Car_phone_vol")
-                    val carNaviVol = PowerManagerApp.getManager().getSettingsInt("Car_navi_vol")
-
-                    PowerManagerApp.getManager().setSettingsInt("Android_media_vol", armPhoneVol)
-                    PowerManagerApp.getManager().setSettingsInt("Android_phone_vol", armMediaVol)
-                    PowerManagerApp.getManager().setSettingsInt("Car_phone_vol", carPhoneVol)
-                    PowerManagerApp.getManager().setSettingsInt("Car_navi_vol", carNaviVol)
-                } catch (ex: Exception) {
-                    Toast.makeText(context, "Unable to connect to Wits!", Toast.LENGTH_LONG).show()
+                    AndroidVolumeManager(context.applicationContext).restoreSavedVolumes()
+                } catch (exc: AndroidVolumeManager.WitsConnectionException) {
+                    Toast.makeText(context, "Unable to connect to Wits! ${exc.message}", Toast.LENGTH_LONG).show()
+                } catch (exc: Exception) {
+                    Toast.makeText(context, "Error in restoring volumes! ${exc.message}", Toast.LENGTH_LONG).show()
                 }
-                val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_ACCESSIBILITY, audioManager.getStreamMaxVolume(AudioManager.STREAM_ACCESSIBILITY), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_DTMF, audioManager.getStreamMaxVolume(AudioManager.STREAM_DTMF), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM), 0)
-                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), 0)
             }
 
             if (config.systemOptions.tabletMode!!) {
