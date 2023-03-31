@@ -26,6 +26,16 @@ open class EventAction(private val context: Context) {
         var keyBypass = false
         val isUsingZLink = ZLinkHandler.isUsing() && ZLinkHandler.isConnected()
         if (event != null) {
+            if (isUsingZLink) {
+                if (event == EventManagerTypes.NavigationButton) {
+                    zLinkHandler.navigation()
+                    return
+                }
+                else if (event == EventManagerTypes.ModeButton){
+                    zLinkHandler.media()
+                    return
+                }
+            }
             val eventConfig = config.eventManagers[event]
             when (eventConfig?.eventMode) {
                 EventMode.KeyEvent -> {
