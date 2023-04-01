@@ -21,13 +21,7 @@ class McuEvent(val context: Context, backTapper: BackTapper) : IMcuEvent(context
             }
             0x1B -> return touchEvent.getTouchEvent(data)
             0x1D -> return benzDataEvent.getBenzDataEvent(data)
-            0x1C -> {
-                return if (data[0] == 1.toByte()) {
-                    idleEvent.getIdleEvent(data)
-                } else {
-                    idleEvent.getIdleEvent(byteArrayOf(2))
-                }
-            }
+            0x1C -> return idleEvent.getIdleEvent(data)
             0x15 -> return systemStatusEvent.parseSystemStatusEvent(data)
             0x1A -> {
                 return if (data[0] == 1.toByte()) {
@@ -37,7 +31,7 @@ class McuEvent(val context: Context, backTapper: BackTapper) : IMcuEvent(context
                 }
             }
             0x10 -> return accEvent.getAccEvent(data)
-            0x11 -> return powerEvent.getPowerEvent(data, screenSwitchEvent)
+            0x11 -> return powerEvent.getPowerEvent(data)
             0x1F -> return mediaEvent.getMediaEvent(data)
             0x20 -> return mediaStringEvent.getMediaEvent(data)
             0x21 -> return mediaStateEvent.getMediaEvent(data)

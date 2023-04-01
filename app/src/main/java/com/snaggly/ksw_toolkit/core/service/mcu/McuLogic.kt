@@ -1,10 +1,12 @@
 package com.snaggly.ksw_toolkit.core.service.mcu
 
 import android.media.AudioManager
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.IScreenSwitchAction
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.wits.pms.statuscontrol.WitsStatus
 import projekt.auto.mcu.ksw.model.McuStatus
 import projekt.auto.mcu.ksw.model.SystemStatus
+import java.util.*
 import kotlin.math.roundToInt
 
 object McuLogic {
@@ -12,24 +14,27 @@ object McuLogic {
     var mcuCommunicator : CustomMcuCommunicator? = null
     val mcuStat = McuStatus()
     var systemStatus: SystemStatus = SystemStatus()
+    var screenSwitchActions : LinkedList<IScreenSwitchAction> = LinkedList()
 
     //Intern
-    var hasInterceptedCarData = false
     private var autoVolume = false
     private var senderInterval: Long = 1000
     var isAnyLightOn = false
     var retainVolumes = false
+    const val ANDROID_MODE = 1
+    const val OEM_MODE = 2
 
     //Param
     private var speedMaxVolume = 80
     private var minVolume = 0.75f
+    var hasInterceptedCarData = false @Synchronized get @Synchronized set
     var actionLock = false @Synchronized get @Synchronized set
     var hasNoOEMScreen = false @Synchronized get @Synchronized set
     var hasBacklightAuto = false @Synchronized get @Synchronized set
-    var nightBrightness = -1 @Synchronized get @Synchronized set
+    var advancedBrightnessActive = false @Synchronized get @Synchronized set
     var isReversing = false @Synchronized get @Synchronized set
     var turnedOffScreen = false @Synchronized get private set
-    var realSysMode : Int = 1 @Synchronized private set
+    var realSysMode : Int = -1 @Synchronized private set
 
     init {
         mcuStat.systemMode = 1
@@ -66,15 +71,39 @@ object McuLogic {
         autoVolume = false
     }
 
-    @Synchronized fun setRealSysMode(value: Int, backTapper: BackTapper) {
-        if (realSysMode != value) {
-            realSysMode = value
-            if (value == 1 && !turnedOffScreen) {
-                backTapper.removeBackWindow()
-            } else {
+    @Synchronized fun restoreScreenState() {
+        for (action in screenSwitchActions)
+            action.restoreState()
+    }
+
+    @Synchronized fun resetScreenState(backTapper: BackTapper) {
+        when (realSysMode) {
+            ANDROID_MODE -> {
+                if (!turnedOffScreen) {
+                    backTapper.removeBackWindow()
+                }
+                for (action in screenSwitchActions) {
+                    action.performOnAndroidSwitch()
+                }
+            }
+            OEM_MODE -> {
+                for (action in screenSwitchActions) {
+                    action.performOnOEMSwitch()
+                }
+                backTapper.drawBackWindow()
+            }
+            else -> {
                 backTapper.drawBackWindow()
             }
         }
+    }
+
+    @Synchronized fun setRealSysMode(value: Int, backTapper: BackTapper) {
+        if (realSysMode == value)
+            return
+
+        realSysMode = value
+        resetScreenState(backTapper)
     }
 
     @Synchronized fun setTurnedOffScreen(value: Boolean, backTapper: BackTapper) {

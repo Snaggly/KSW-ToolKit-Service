@@ -35,7 +35,6 @@ class McuReaderHandler(val context: Context) {
     private var parseMcuEvent = McuEvent(context, backTapper)
     private val daytimeObserver = DaytimeObserver(context)
     private val autoThemeManager = AutoThemeManager(context)
-    private var hasSerialInit = false @Synchronized get @Synchronized set
 
     init {
         when {
@@ -58,102 +57,95 @@ class McuReaderHandler(val context: Context) {
         }
     }
 
-    private val initialSerialStartAction = McuCommunicator.McuAction { cmdType, data ->
-        if (!hasSerialInit) {
-            //Only set up serial reader when in Sysmode 1
-            if (data.isNotEmpty() && (cmdType == 0x1C && data[0] == 0x1.toByte())) {
-                hasSerialInit = true
-                McuLogic.mcuCommunicator?.mcuReader?.stopReading()
-                AdbServiceConnection.stopKsw(context)
+    private fun initialSerialStartAction() {
+        McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
+        McuLogic.advancedBrightnessActive = config.advancedBrightness.isTimeBasedEnabled == true || config.advancedBrightness.isUSBBasedEnabled == true
+        McuLogic.retainVolumes = config.systemOptions.retainVolume?: false
 
-                McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
-                McuLogic.hasBacklightAuto =  PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0
+        //Create new ScreenSwitchEvent object to make sure old one dies.
+        parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
 
-                McuLogic.mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_ON) //For debugging :c
-
-                //Create new ScreenSwitchEvent object to make sure old one dies.
-                parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
-
-                //Check if Service should handle extra Media Buttons - If no OEM screen this already is active
-                if (!McuLogic.hasNoOEMScreen) {
-                    if (config.systemOptions.extraMediaButtonHandle == true) {
-                        parseMcuEvent.screenSwitchEvent.addAction(MediaBtnHack())
-                    }
-                }
-                else {
-                    parseMcuEvent.screenSwitchEvent.addAction(NoOEMScreen(context))
-                }
-
-                //Is SoundRestorer active?
-                if (config.systemOptions.soundRestorer == true)
-                    parseMcuEvent.screenSwitchEvent.addAction(SoundRestorer())
-
-                //Is NavBtnDecoupler on?
-                if (config.systemOptions.decoupleNAVBtn == true)
-                    parseMcuEvent.screenSwitchEvent.addAction(NAVBtnDecoupler())
-
-                //Perform screen switch commands.
-                parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
-
-                //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
-                eventAction = if (config.systemOptions.logMcuEvent == true)
-                    EventActionLogger(context)
-                else
-                    EventAction(context)
-
-                //Initialize SerialReader
-                when {
-                    config.systemOptions.mcuPath != "" -> {
-                        McuLogic.mcuCommunicator?.mcuReader =
-                            SerialReader(config.systemOptions.mcuPath)
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                        McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHS1")
-                    }
-                    Build.DISPLAY.contains("8937") -> {
-                        McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHSL1")
-                    }
-                    else -> {
-                        McuLogic.mcuCommunicator?.mcuReader = SerialReader()
-                    }
-                }
-                McuLogic.mcuCommunicator?.mcuReader?.startReading(onMcuEventAction)
-
-                //Get current CarData
-                Thread{
-                    while (!McuLogic.hasInterceptedCarData) {
-                        McuLogic.mcuCommunicator?.sendCommand(104, byteArrayOf(5, 0), false)
-                        Thread.sleep(500)
-                    }
-                }.start()
-
-                //Should this service intercept what CenterService tries to send to Mcu? Replicated core CenterService commands.
-                if (config.systemOptions.interceptMcuCommand == true) {
-                    sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
-                        McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
-                    })
-                } else {
-                    McuLogic.mcuCommunicator?.startBeat()
-                    //Commented out because even if the light is on, it is only momentarily turned to normal brightness
-                    // when KSW-ToolKit is started
-                    //No sign of being called even when the service is running
-                    //brightnessObserver.startObservingBrightness()
-                }
-
-                //Toggle AdvancedBrightness
-                parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
-
-                //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
-                if (config.systemOptions.autoTheme == true) {
-                    parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = { autoThemeManager.handleThemeChangeByLightEvent(it) }
-                    daytimeObserver.registerDaytimeListener {
-                        autoThemeManager.handleThemeChangeByTime(it != DaytimeObserver.Daytime.Day)
-                    }
-                } else {
-                    parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = null
-                }
+        //Check if Service should handle extra Media Buttons - If no OEM screen this already is active
+        if (!McuLogic.hasNoOEMScreen) {
+            if (config.systemOptions.extraMediaButtonHandle == true) {
+                McuLogic.screenSwitchActions.add(MediaBtnHack())
             }
         }
+        else {
+            McuLogic.screenSwitchActions.add(NoOEMScreen(context))
+        }
+
+        //Is SoundRestorer active?
+        if (config.systemOptions.soundRestorer == true)
+            McuLogic.screenSwitchActions.add(SoundRestorer())
+
+        //Is NavBtnDecoupler on?
+        if (config.systemOptions.decoupleNAVBtn == true)
+            McuLogic.screenSwitchActions.add(NAVBtnDecoupler())
+
+        //Perform screen switch commands.
+        parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
+
+        //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
+        eventAction = if (config.systemOptions.logMcuEvent == true)
+            EventActionLogger(context)
+        else
+            EventAction(context)
+
+        //Initialize SerialReader
+        when {
+            config.systemOptions.mcuPath != "" -> {
+                McuLogic.mcuCommunicator?.mcuReader =
+                    SerialReader(config.systemOptions.mcuPath)
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHS1")
+            }
+            Build.DISPLAY.contains("8937") -> {
+                McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHSL1")
+            }
+            else -> {
+                McuLogic.mcuCommunicator?.mcuReader = SerialReader()
+            }
+        }
+        McuLogic.mcuCommunicator?.mcuReader?.startReading(onMcuEventAction)
+
+        //Should this service intercept what CenterService tries to send to Mcu? Replicated core CenterService commands.
+        if (config.systemOptions.interceptMcuCommand == true) {
+            sendingInterceptor.startReading(fun(cmdType: Int, data: ByteArray) {
+                McuLogic.mcuCommunicator?.sendCommand(cmdType, data, false)
+            })
+        } else {
+            McuLogic.mcuCommunicator?.startBeat()
+            //Commented out because even if the light is on, it is only momentarily turned to normal brightness
+            // when KSW-ToolKit is started
+            //No sign of being called even when the service is running
+            //brightnessObserver.startObservingBrightness()
+        }
+
+        //Toggle AdvancedBrightness
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
+
+        //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
+        if (config.systemOptions.autoTheme == true) {
+            parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = {
+                autoThemeManager.handleThemeChangeByLightEvent(it)
+            }
+            daytimeObserver.registerDaytimeListener {
+                autoThemeManager.handleThemeChangeByTime(it != DaytimeObserver.Daytime.Day)
+            }
+        } else {
+            parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = null
+        }
+
+        //Get current CarData
+        Thread{
+            McuLogic.hasInterceptedCarData = false
+            while (!McuLogic.hasInterceptedCarData) {
+                McuLogic.mcuCommunicator?.sendCommand(104, byteArrayOf(5, 0), false)
+                Thread.sleep(500)
+            }
+        }.start()
     }
 
     val onMcuEventAction = McuCommunicator.McuAction { cmdType, data ->
@@ -176,14 +168,14 @@ class McuReaderHandler(val context: Context) {
     fun startMcuReader() {
         eventAction = EventAction(context)
 
-        //Start CenterService-McuService. If CenterService has to be hijacked, I need to wait until it's ready.
-        AdbServiceConnection.startKsw(context)
+        //Start CenterService-McuService.
         McuLogic.mcuCommunicator?.mcuReader?.stopReading()
-        McuLogic.retainVolumes = config.systemOptions.retainVolume?: false
-        McuLogic.mcuCommunicator?.mcuReader = LogcatReader()
         if (config.systemOptions.hijackCS == true) {
-            McuLogic.mcuCommunicator?.mcuReader?.startReading(initialSerialStartAction)
+            AdbServiceConnection.stopKsw(context)
+            initialSerialStartAction()
         } else {
+            AdbServiceConnection.startKsw(context)
+            McuLogic.mcuCommunicator?.mcuReader = LogcatReader()
             McuLogic.mcuCommunicator?.mcuReader?.startReading(onMcuEventAction)
         }
 
@@ -195,7 +187,8 @@ class McuReaderHandler(val context: Context) {
 
     fun stopReader() {
         daytimeObserver.clearAllListeners()
-        parseMcuEvent.screenSwitchEvent.clearActions()
+        McuLogic.restoreScreenState()
+        McuLogic.screenSwitchActions.clear()
         //brightnessObserver.stopObservingBrightness()
         parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler?.destroy()
         backTapper.removeBackWindow()
@@ -206,7 +199,6 @@ class McuReaderHandler(val context: Context) {
         if (PowerManagerApp.getSettingsInt("Backlight_auto_set") == 0) {
             McuLogic.mcuCommunicator?.sendCommand(McuCommands.Set_Backlight_Control_Off)
         }
-        hasSerialInit = false
     }
 
     fun restartReader() {
