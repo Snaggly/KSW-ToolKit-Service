@@ -58,6 +58,7 @@ class McuReaderHandler(val context: Context) {
     }
 
     private fun initialSerialStartAction() {
+        McuLogic.initSysMode()
         McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
         McuLogic.advancedBrightnessActive = config.advancedBrightness.isTimeBasedEnabled == true || config.advancedBrightness.isUSBBasedEnabled == true
         McuLogic.retainVolumes = config.systemOptions.retainVolume?: false

@@ -117,4 +117,8 @@ object McuLogic {
             }
         }
     }
+
+    fun initSysMode() {
+        realSysMode = -1
+    }
 }
