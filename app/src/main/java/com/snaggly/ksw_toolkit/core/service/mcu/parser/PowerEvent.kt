@@ -46,27 +46,32 @@ class PowerEvent(private val backTapper: BackTapper) {
 
             WitsStatus.setAcc(McuLogic.systemStatus, data[1].toInt())
             WitsStatus.setScreenSwitch(McuLogic.systemStatus, McuLogic.realSysMode)
-        } else if (data[0] <= 3.toByte()) {
+        } else if (data[0] <= 3.toByte()) { //data[0]=1:Retrofit Cam, =2:Special/AVM360°, =3:OEM
+            McuLogic.isReversing = data[1] == 1.toByte()
             WitsStatus.setCcd(McuLogic.systemStatus, data[1].toInt())
-            if (data[0] == 1.toByte()) {
-                McuLogic.isReversing = data[1] == 1.toByte()
-                backTapper.drawBackWindow()
-                if (PowerManagerApp.getSettingsInt("RearCamType") == 1) {
-                    if (McuLogic.isReversing)
-                        McuLogic.setRealSysMode(2, backTapper)
-                    else
-                        McuLogic.setRealSysMode(1, backTapper)
-                }
-            } else if (data[0] == 2.toByte()) {
-                Log.d("CallBackServiceImpl", "start360");
-                val intent = Intent()
-                intent.component = ComponentName("com.baony.avm360", "com.baony.ui.service.AVMCanBusService")
-                backTapper.context.applicationContext.startService(intent)
-                try {
-                    Log.d("CallBackServiceImpl", "handleReverse  iCallBack :" + CallBackBinder.getServiceCallbackController().iCallBack + "   ccd = " + McuLogic.systemStatus.ccd)
-                    CallBackBinder.handleReverse(McuLogic.systemStatus.ccd)
-                } catch (e: Exception) {
-                    Log.e("CallBackServiceImpl", "handleReverse  NO iCALLBACK! ccd = ${McuLogic.systemStatus.ccd}")
+
+            if (data[0] < 3) { //Not handling OEM because MCU would have correctly switched by then
+                when (PowerManagerApp.getSettingsInt("RearCamType")) { //0:Aftermarket, 1:OEM, 2:360°
+                    1 -> {
+                        if (McuLogic.isReversing) {
+                            McuLogic.setRealSysMode(2, backTapper)
+                        }
+                        else {
+                            McuLogic.setRealSysMode(1, backTapper)
+                        }
+                    }
+                    2 -> {
+                        Log.d("CallBackServiceImpl", "start360");
+                        val intent = Intent()
+                        intent.component = ComponentName("com.baony.avm360", "com.baony.ui.service.AVMCanBusService")
+                        backTapper.context.applicationContext.startService(intent)
+                        try {
+                            Log.d("CallBackServiceImpl", "handleReverse  iCallBack :" + CallBackBinder.getServiceCallbackController().iCallBack + "   ccd = " + McuLogic.systemStatus.ccd)
+                            CallBackBinder.handleReverse(McuLogic.systemStatus.ccd)
+                        } catch (e: Exception) {
+                            Log.e("CallBackServiceImpl", "handleReverse  NO iCALLBACK! ccd = ${McuLogic.systemStatus.ccd}")
+                        }
+                    }
                 }
             }
         }

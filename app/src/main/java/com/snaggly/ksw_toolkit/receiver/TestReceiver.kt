@@ -47,6 +47,11 @@ class TestReceiver : BroadcastReceiver() {
                 "zlink_out_start" -> ZLinkHandler(context).setDarkTheme()
                 "power_off" -> service.coreReaderHandler.testPowerOff()
                 "power_on" -> service.coreReaderHandler.testPowerOn()
+                "reverse" -> {
+                    val isOn = intent?.getBooleanExtra("ison", false)?:false
+                    val type = intent?.getIntExtra("type", 0)?:0
+                    service.coreReaderHandler.testReverse(isOn, type)
+                }
             }
             context?.unbindService(this)
         }

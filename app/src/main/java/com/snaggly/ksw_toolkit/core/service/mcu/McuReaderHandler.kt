@@ -256,4 +256,11 @@ class McuReaderHandler(val context: Context) {
     fun testPowerOn() {
         onMcuEventAction.update(0x11, byteArrayOf(4, 1))
     }
+
+    fun testReverse(isOn: Boolean, type: Int) {
+        if (isOn)
+            onMcuEventAction.update(0x11, byteArrayOf(type.toByte(), 1))
+        else
+            onMcuEventAction.update(0x11, byteArrayOf(type.toByte(), 0))
+    }
 }
