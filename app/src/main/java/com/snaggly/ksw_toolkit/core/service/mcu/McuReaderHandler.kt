@@ -135,6 +135,7 @@ class McuReaderHandler(val context: Context) {
             daytimeObserver.registerDaytimeListener {
                 autoThemeManager.handleThemeChangeByTime(it != DaytimeObserver.Daytime.Day)
             }
+            autoThemeManager.handleThemeChangeByLightEvent(McuLogic.isAnyLightOn)
         } else {
             parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = null
         }
