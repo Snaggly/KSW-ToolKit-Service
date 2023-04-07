@@ -9,21 +9,16 @@ import com.wits.pms.bean.ZlinkMessage
 import com.wits.pms.handler.ZLinkHandler
 import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver.Connection
 
-class AutoThemeManager(val context: Context) {
+class AutoThemeManager(val context: Context, private val zLinkReceiver: ZLinkReceiver) {
     private val uiModeManager = context.getSystemService(UiModeManager::class.java)
     private val zLinkHandler = ZLinkHandler(context)
-    private val zLinkReceiver = ZLinkReceiver()
 
     private var isAnyLightOn = false
     private var isNightTime = false
 
-    init {
-        context.applicationContext.registerReceiver(zLinkReceiver, IntentFilter(ZlinkMessage.ZLINK_NORMAL_ACTION))
-    }
-
     private fun handleThemeChange() {
         if (isAnyLightOn || isNightTime) {
-            if (zLinkReceiver.dataSet.isShowing && zLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
+            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
                 zLinkHandler.setDarkTheme()
                 zLinkReceiver.setReceiverHandler {
                     if (!it.isShowing) {
@@ -43,7 +38,7 @@ class AutoThemeManager(val context: Context) {
             }
         }
         else {
-            if (zLinkReceiver.dataSet.isShowing && zLinkReceiver.dataSet.currentConnection != Connection.Disconnected) {
+            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
                 zLinkHandler.setLightTheme()
                 zLinkReceiver.setReceiverHandler {
                     if (!it.isShowing) {

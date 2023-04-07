@@ -13,6 +13,7 @@ import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.*
 import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
+import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
 import com.snaggly.ksw_toolkit.util.manager.AutoThemeManager
 import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
@@ -24,7 +25,7 @@ import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 import kotlin.collections.ArrayList
 
-class McuReaderHandler(val context: Context) {
+class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     val config = ConfigManager.getConfig(context)
 
     private val backTapper = BackTapper(context)
@@ -34,7 +35,7 @@ class McuReaderHandler(val context: Context) {
     private var eventAction : EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
     private val daytimeObserver = DaytimeObserver(context)
-    private val autoThemeManager = AutoThemeManager(context)
+    private val autoThemeManager = AutoThemeManager(context, zLinkReceiver)
 
     init {
         when {

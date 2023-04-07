@@ -22,8 +22,14 @@ public class ZLinkHandler {
                 || (Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_ANDROID_MIRROR_CONNECT), "1"));
     }
 
+    public static boolean isRinging() {
+        return Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CALL), "1")
+                || PowerManagerApp.getStatusInt("callStatus") == 6;
+    }
+
     public static boolean isCalling() {
-        return Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CALL), "1") || PowerManagerApp.getStatusInt("callStatus") == 6;
+        return Objects.equals(SystemProperties.get(ZlinkMessage.ZLINK_CALL), "2")
+                || PowerManagerApp.getStatusInt("callStatus") == 6;
     }
 
     private final Context mContext;

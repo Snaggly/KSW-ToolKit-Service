@@ -44,10 +44,10 @@ public class CallHandler {
     private static void zlinkHandleCall(Context context) {
         String callStatus = SystemProperties.get(ZlinkMessage.ZLINK_CALL);
         Log.d("CenterControl", "zlinkHandleCall  callStatus = " + callStatus);
-        if (callStatus.equals(ZlinkMessage.ZLINK_CALL_OFF)) {
-            zlinkCallOn(context);
-        } else if (callStatus.equals(ZlinkMessage.ZLINK_CALL_ON)) {
+        if (callStatus.equals("2")) {
             zlinkCallOff(context);
+        } else {
+            zlinkCallOn(context);
         }
     }
 

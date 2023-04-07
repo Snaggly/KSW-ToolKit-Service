@@ -3,6 +3,7 @@ package com.snaggly.ksw_toolkit.core.service
 import android.app.AlertDialog
 import android.app.Service
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import android.view.WindowManager
 import android.widget.Toast
@@ -13,6 +14,8 @@ import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.core.service.mcu.PreCheckLogcat
 import com.snaggly.ksw_toolkit.core.service.remote.KSWToolKitService
 import com.snaggly.ksw_toolkit.core.service.remote.ServiceValidation
+import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver
+import com.wits.pms.bean.ZlinkMessage
 import kotlin.random.Random
 
 class CoreService : Service() {
@@ -48,8 +51,12 @@ class CoreService : Service() {
 
     override fun onCreate() {
         PreCheckLogcat().getLightsStatus()
+
+        val zLinkReceiver = ZLinkReceiver()
+        registerReceiver(zLinkReceiver, IntentFilter(ZlinkMessage.ZLINK_NORMAL_ACTION))
+
         try {
-            val lMcuReaderHandler = McuReaderHandler(applicationContext)
+            val lMcuReaderHandler = McuReaderHandler(applicationContext, zLinkReceiver)
             lMcuReaderHandler.startMcuReader()
             mcuReaderHandler = lMcuReaderHandler
             kswToolKitService = KSWToolKitService(lMcuReaderHandler)
@@ -72,7 +79,7 @@ class CoreService : Service() {
     }
 
     private fun startTest() {
-        val lMcuReaderHandler = McuReaderHandler(applicationContext)
+        val lMcuReaderHandler = McuReaderHandler(applicationContext, ZLinkReceiver())
         mcuReaderHandler = lMcuReaderHandler
         kswToolKitService = KSWToolKitService(lMcuReaderHandler)
         McuLogic.mcuCommunicator = null
