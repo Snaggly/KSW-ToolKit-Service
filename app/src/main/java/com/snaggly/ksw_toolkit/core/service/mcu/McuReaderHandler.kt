@@ -9,21 +9,24 @@ import com.snaggly.ksw_toolkit.core.config.ConfigManager
 import com.snaggly.ksw_toolkit.core.service.adb.AdbServiceConnection
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventAction
 import com.snaggly.ksw_toolkit.core.service.mcu.action.EventActionLogger
-import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.*
-import com.snaggly.ksw_toolkit.core.service.mcu.parser.*
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.MediaBtnHack
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.NAVBtnDecoupler
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.NoOEMScreen
+import com.snaggly.ksw_toolkit.core.service.mcu.action.screen_switch.SoundRestorer
+import com.snaggly.ksw_toolkit.core.service.mcu.parser.McuEvent
+import com.snaggly.ksw_toolkit.core.service.mcu.parser.ScreenSwitchEvent
 import com.snaggly.ksw_toolkit.core.service.sys_observers.BrightnessObserver
 import com.snaggly.ksw_toolkit.core.service.view.BackTapper
 import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver
 import com.snaggly.ksw_toolkit.util.brightnesstools.AdvancedBrightnessHandler
-import com.snaggly.ksw_toolkit.util.manager.AutoThemeManager
 import com.snaggly.ksw_toolkit.util.brightnesstools.DaytimeObserver
+import com.snaggly.ksw_toolkit.util.manager.AutoThemeManager
 import com.wits.pms.statuscontrol.PowerManagerApp
 import projekt.auto.mcu.ksw.serial.McuCommunicator
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
-import kotlin.collections.ArrayList
 
 class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     val config = ConfigManager.getConfig(context)
@@ -32,7 +35,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     private var mcuEventListeners = ArrayList<IMcuListener>()
     private val brightnessObserver = BrightnessObserver(context)
     private val sendingInterceptor = McuSenderInterceptor(100)
-    private var eventAction : EventAction? = null
+    private var eventAction: EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
     private val daytimeObserver = DaytimeObserver(context)
     private val autoThemeManager = AutoThemeManager(context, zLinkReceiver)
@@ -40,29 +43,37 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     init {
         when {
             config.systemOptions.mcuPath != "" -> {
-                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper,
+                McuLogic.mcuCommunicator = CustomMcuCommunicator(
+                    backTapper,
                     SerialWriter(config.systemOptions.mcuPath),
-                    LogcatReader())
+                    LogcatReader()
+                )
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 McuLogic.mcuCommunicator =
                     CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHS1"), LogcatReader())
             }
+
             Build.DISPLAY.contains("8937") -> {
                 McuLogic.mcuCommunicator =
                     CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyHSL1"), LogcatReader())
             }
+
             else -> {
-                McuLogic.mcuCommunicator = CustomMcuCommunicator(backTapper, SerialWriter(), LogcatReader())
+                McuLogic.mcuCommunicator =
+                    CustomMcuCommunicator(backTapper, SerialWriter("/dev/ttyMSM1"), LogcatReader())
             }
         }
     }
 
     private fun initialSerialStartAction() {
         McuLogic.initSysMode()
-        McuLogic.hasNoOEMScreen = PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
-        McuLogic.advancedBrightnessActive = config.advancedBrightness.isTimeBasedEnabled == true || config.advancedBrightness.isUSBBasedEnabled == true
-        McuLogic.retainVolumes = config.systemOptions.retainVolume?: false
+        McuLogic.hasNoOEMScreen =
+            PowerManagerApp.getSettingsInt("CarDisplay") == 0 && PowerManagerApp.getSettingsInt("OEM_FM") == 0
+        McuLogic.advancedBrightnessActive =
+            config.advancedBrightness.isTimeBasedEnabled == true || config.advancedBrightness.isUSBBasedEnabled == true
+        McuLogic.retainVolumes = config.systemOptions.retainVolume ?: false
 
         //Create new ScreenSwitchEvent object to make sure old one dies.
         parseMcuEvent.screenSwitchEvent = ScreenSwitchEvent(backTapper)
@@ -72,8 +83,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
             if (config.systemOptions.extraMediaButtonHandle == true) {
                 McuLogic.screenSwitchActions.add(MediaBtnHack())
             }
-        }
-        else {
+        } else {
             McuLogic.screenSwitchActions.add(NoOEMScreen(context))
         }
 
@@ -86,7 +96,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
             McuLogic.screenSwitchActions.add(NAVBtnDecoupler())
 
         //Perform screen switch commands.
-        parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0,1))
+        parseMcuEvent.screenSwitchEvent.getScreenSwitch(byteArrayOf(0, 1))
 
         //Is McuLogging on? Useful for Tasker to get Mcu Data from Logcat. Replicates CenterService procedure.
         eventAction = if (config.systemOptions.logMcuEvent == true)
@@ -100,14 +110,17 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
                 McuLogic.mcuCommunicator?.mcuReader =
                     SerialReader(config.systemOptions.mcuPath)
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHS1")
             }
+
             Build.DISPLAY.contains("8937") -> {
                 McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyHSL1")
             }
+
             else -> {
-                McuLogic.mcuCommunicator?.mcuReader = SerialReader()
+                McuLogic.mcuCommunicator?.mcuReader = SerialReader("/dev/ttyMSM1")
             }
         }
         McuLogic.mcuCommunicator?.mcuReader?.startReading(onMcuEventAction)
@@ -126,7 +139,8 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
         }
 
         //Toggle AdvancedBrightness
-        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler = AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
+        parseMcuEvent.carDataEvent.lightEvent.advancedBrightnessHandler =
+            AdvancedBrightnessHandler.getHandler(context, daytimeObserver)
 
         //Is AutoTheme on? This service will be able to toggle global Android Dark/Light Theme
         if (config.systemOptions.autoTheme == true) {
@@ -142,7 +156,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
         }
 
         //Get current CarData
-        Thread{
+        Thread {
             McuLogic.hasInterceptedCarData = false
             while (!McuLogic.hasInterceptedCarData) {
                 McuLogic.mcuCommunicator?.sendCommand(104, byteArrayOf(5, 0), false)
@@ -218,7 +232,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     }
 
     fun unregisterMcuEventListener(listener: IMcuListener?) {
-        mcuEventListeners.removeAll{ it.asBinder() == listener?.asBinder() }
+        mcuEventListeners.removeAll { it.asBinder() == listener?.asBinder() }
     }
 
     fun unregisterAllMcuEventListeners() {

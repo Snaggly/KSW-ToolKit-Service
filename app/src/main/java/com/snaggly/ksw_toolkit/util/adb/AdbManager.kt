@@ -2,7 +2,6 @@ package com.snaggly.ksw_toolkit.util.adb
 
 import android.content.Context
 import android.net.TrafficStats
-import projekt.auto.mcu.adb.AdbManager
 import projekt.auto.mcu.adb.lib.AdbConnection
 import projekt.auto.mcu.adb.lib.AdbCrypto
 import projekt.auto.mcu.adb.lib.AdbStream
@@ -14,7 +13,7 @@ import java.security.NoSuchAlgorithmException
 
 object AdbManager {
     private var isConnected = false @Synchronized get @Synchronized set
-    private var socket : Socket? = null
+    private var socket: Socket? = null
     private var adbConnection: AdbConnection? = null
     private var shellStream: AdbStream? = null
 
@@ -61,8 +60,7 @@ object AdbManager {
         val writer = Thread {
             try {
                 shellStream?.write(" $command\n")
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 isConnected = false
             }
         }
@@ -89,12 +87,12 @@ object AdbManager {
         var c: AdbCrypto? = null
         if (publicKey.exists() && privateKey.exists()) {
             try {
-                c = AdbCrypto.loadAdbKeyPair(AdbManager.getBase64Impl(), privateKey, publicKey)
+                c = AdbCrypto.loadAdbKeyPair(privateKey, publicKey)
             } catch (ignored: Exception) {
             }
         }
         if (c == null) {
-            c = AdbCrypto.generateAdbKeyPair(AdbManager.getBase64Impl())
+            c = AdbCrypto.generateAdbKeyPair()
             c.saveAdbKeyPair(privateKey, publicKey)
         }
         return c
