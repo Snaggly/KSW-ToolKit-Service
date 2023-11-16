@@ -4,10 +4,12 @@
     package="com.snaggly.ksw_toolkit"
     android:sharedUserId="android.uid.system">
 
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"
+    <uses-permission
+        android:name="android.permission.INTERACT_ACROSS_USERS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SET_TIME"
+    <uses-permission
+        android:name="android.permission.SET_TIME"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission
@@ -54,7 +56,7 @@
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -62,13 +64,18 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.ZLinkReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".receiver.ZLinkReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.zjinnova.zlink"/>
+                <action android:name="com.zjinnova.zlink" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receiver.TestReceiver" android:exported="true" />
+        <receiver
+            android:name=".receiver.TestReceiver"
+            android:exported="true" />
     </application>
 
 </manifest>

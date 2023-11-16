@@ -89,7 +89,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
 
         //Is SoundRestorer active?
         if (config.systemOptions.soundRestorer == true)
-            McuLogic.screenSwitchActions.add(SoundRestorer())
+            McuLogic.screenSwitchActions.add(SoundRestorer(context))
 
         //Is NavBtnDecoupler on?
         if (config.systemOptions.decoupleNAVBtn == true)
