@@ -2,12 +2,10 @@ package com.snaggly.ksw_toolkit.util.manager
 
 import android.app.UiModeManager
 import android.content.Context
-import android.content.IntentFilter
 import android.os.Handler
 import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver
-import com.wits.pms.bean.ZlinkMessage
-import com.wits.pms.handler.ZLinkHandler
 import com.snaggly.ksw_toolkit.receiver.ZLinkReceiver.Connection
+import com.wits.pms.handler.ZLinkHandler
 
 class AutoThemeManager(val context: Context, private val zLinkReceiver: ZLinkReceiver) {
     private val uiModeManager = context.getSystemService(UiModeManager::class.java)
@@ -16,50 +14,39 @@ class AutoThemeManager(val context: Context, private val zLinkReceiver: ZLinkRec
     private var isAnyLightOn = false
     private var isNightTime = false
 
-    private fun handleThemeChange() {
-        if (isAnyLightOn || isNightTime) {
-            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
-                zLinkHandler.setDarkTheme()
-                zLinkReceiver.setReceiverHandler {
-                    if (!it.isShowing) {
-                        uiModeManager.nightMode = UiModeManager.MODE_NIGHT_YES
-                        zLinkReceiver.setReceiverHandler { }
-                    }
-                }
-            }
-            else {
-                uiModeManager.nightMode = UiModeManager.MODE_NIGHT_YES
-                zLinkReceiver.setReceiverHandler {
-                    if (it.isShowing && it.currentConnection != Connection.Disconnected) {
-                        Handler(context.mainLooper).postDelayed({ zLinkHandler.setDarkTheme() }, 1000)
-                        zLinkReceiver.setReceiverHandler { }
-                    }
-                }
-            }
-        }
-        else {
-            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
-                zLinkHandler.setLightTheme()
-                zLinkReceiver.setReceiverHandler {
-                    if (!it.isShowing) {
-                        uiModeManager.nightMode = UiModeManager.MODE_NIGHT_NO
-                        zLinkReceiver.setReceiverHandler { }
-                    }
-                }
-            }
-            else {
-                uiModeManager.nightMode = UiModeManager.MODE_NIGHT_NO
-                zLinkReceiver.setReceiverHandler {
-                    if (it.isShowing && it.currentConnection != Connection.Disconnected) {
-                        Handler(context.mainLooper).postDelayed({ zLinkHandler.setLightTheme() }, 1000)
-                        zLinkReceiver.setReceiverHandler { }
-                    }
+    init {
+        zLinkReceiver.setReceiverHandler {
+            if (it.isShowing && it.currentConnection != Connection.Disconnected) {
+                if (isAnyLightOn || isNightTime) {
+                    Handler(context.mainLooper).postDelayed(
+                        { zLinkHandler.setDarkTheme() },
+                        1000
+                    )
+                } else {
+                    Handler(context.mainLooper).postDelayed(
+                        { zLinkHandler.setLightTheme() },
+                        1000
+                    )
                 }
             }
         }
     }
 
-    fun handleThemeChangeByLightEvent(isAnyLightOn : Boolean) {
+    private fun handleThemeChange() {
+        if (isAnyLightOn || isNightTime) {
+            uiModeManager.nightMode = UiModeManager.MODE_NIGHT_YES
+            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
+                zLinkHandler.setDarkTheme()
+            }
+        } else {
+            uiModeManager.nightMode = UiModeManager.MODE_NIGHT_NO
+            if (ZLinkReceiver.CurrentDataSet.isShowing && ZLinkReceiver.CurrentDataSet.currentConnection != Connection.Disconnected) {
+                zLinkHandler.setLightTheme()
+            }
+        }
+    }
+
+    fun handleThemeChangeByLightEvent(isAnyLightOn: Boolean) {
         this.isAnyLightOn = isAnyLightOn
         handleThemeChange()
     }
