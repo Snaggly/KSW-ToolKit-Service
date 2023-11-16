@@ -2,6 +2,7 @@ package com.snaggly.ksw_toolkit.core.service
 
 import android.app.AlertDialog
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
@@ -68,7 +69,7 @@ class CoreService : Service() {
 
     override fun onDestroy() {
         kswToolKitService = null
-        showAlertMessage("KSW-ToolKit-Service stopped")
+        showAlertMessage(this, "KSW-ToolKit-Service stopped")
         AdbServiceConnection.startKsw(applicationContext)
         mcuReaderHandler?.stopReader()
         super.onDestroy()
@@ -86,22 +87,29 @@ class CoreService : Service() {
 
         Thread {
             while (kswToolKitService != null) {
-                lMcuReaderHandler.onMcuEventAction.update(Random.nextInt(128), Random.nextBytes(Random.nextInt(1, 22)))
+                lMcuReaderHandler.onMcuEventAction.update(
+                    Random.nextInt(128),
+                    Random.nextBytes(Random.nextInt(1, 22))
+                )
                 Thread.sleep(1500)
             }
         }.start()
     }
 
-    private fun showAlertMessage(message: String) {
-        val alert =
-            AlertDialog.Builder(this, R.style.alertDialogNight).setTitle("KSW-ToolKit-CoreService").setMessage(message)
-                .create()
-        alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-        alert.show()
+    private fun crashOut(message: String) {
+        showAlertMessage(this, message)
+        stopSelf()
     }
 
-    private fun crashOut(message: String) {
-        showAlertMessage(message)
-        stopSelf()
+    companion object {
+        fun showAlertMessage(context: Context, message: String) {
+            val alert =
+                AlertDialog.Builder(context, R.style.alertDialogNight)
+                    .setTitle("KSW-ToolKit-CoreService")
+                    .setMessage(message)
+                    .create()
+            alert.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            alert.show()
+        }
     }
 }

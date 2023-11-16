@@ -6,6 +6,7 @@ import com.snaggly.ksw_toolkit.IKSWToolKitService
 import com.snaggly.ksw_toolkit.IMcuListener
 import com.snaggly.ksw_toolkit.ISystemOptionsControl
 import com.snaggly.ksw_toolkit.core.config.beans.EventManager
+import com.snaggly.ksw_toolkit.core.service.CoreService
 import com.snaggly.ksw_toolkit.core.service.mcu.McuLogic
 import com.snaggly.ksw_toolkit.core.service.mcu.McuReaderHandler
 import com.snaggly.ksw_toolkit.util.list.eventtype.EventManagerTypes
@@ -45,6 +46,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
                     eventConfig.mcuCommandMode = -1
                     eventConfig.taskerTaskName = ""
                 }
+
                 EventMode.KeyEvent -> {
                     try {
                         val cmdValueInt = cmdValue!!.toInt()
@@ -57,6 +59,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
                         return false
                     }
                 }
+
                 EventMode.StartApp -> {
                     try {
                         eventConfig.appName = cmdValue!!
@@ -68,6 +71,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
                         return false
                     }
                 }
+
                 EventMode.McuCommand -> {
                     try {
                         val cmdValueInt = cmdValue!!.toInt()
@@ -80,6 +84,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
                         return false
                     }
                 }
+
                 EventMode.TaskerTask -> {
                     try {
                         eventConfig.appName = ""
@@ -91,6 +96,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
                         return false
                     }
                 }
+
                 else -> {}
             }
         }
@@ -113,7 +119,15 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
         if (configJson == null)
             return false
 
-        configManager.readConfig(configJson)
+        try {
+            configManager.readConfig(configJson)
+        } catch (error: Exception) {
+            CoreService.showAlertMessage(
+                coreReaderHandler.context,
+                "Error in parsing config file!\n${error.message}"
+            )
+            return false
+        }
         configManager.saveConfig()
 
         coreReaderHandler.restartReader()
@@ -144,7 +158,7 @@ class KSWToolKitService(val coreReaderHandler: McuReaderHandler) : IKSWToolKitSe
         return advancedBrightnessController
     }
 
-    private fun authenticate() : Boolean {
+    private fun authenticate(): Boolean {
         if (!ServiceValidation.hasAuthenticated) {
             return if (ServiceValidation.validate(coreReaderHandler.context)) {
                 true
