@@ -19,8 +19,9 @@ class BackTapper(val context: Context) {
     companion object {
         var timesInitialized = 0
     }
+
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    private val windowParam : WindowManager.LayoutParams = WindowManager.LayoutParams()
+    private val windowParam: WindowManager.LayoutParams = WindowManager.LayoutParams()
     private val view = View(context)
     private val handler = Handler(context.mainLooper)
     private var mLastEventTime: Long = 0
@@ -34,7 +35,9 @@ class BackTapper(val context: Context) {
     init {
         windowParam.apply {
             type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR
-            flags = windowParam.flags.or(1024).or(262144).or(524288)
+            flags = windowParam.flags.or(WindowManager.LayoutParams.FLAG_FULLSCREEN).or(
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+            ).or(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
             height = -1
             width = -1
             format = 1
@@ -53,7 +56,8 @@ class BackTapper(val context: Context) {
                     try {
                         if (SystemProperties.get("app.carMode.control") == "0")
                             mCurrentTouchY += 62
-                    } catch (ignored : Exception) {}
+                    } catch (ignored: Exception) {
+                    }
                     if (continuousSend) {
                         sendTouchA(motion, McuLogic.mcuCommunicator)
                     } else {
@@ -65,8 +69,7 @@ class BackTapper(val context: Context) {
                     if (motion.action == 1) {
                         mLastEventTime = 0L
                     }
-                }
-                else {
+                } else {
                     if (motion.action == MotionEvent.ACTION_DOWN) {
                         returnBackToArm()
                         removeBackWindow()
@@ -157,7 +160,8 @@ class BackTapper(val context: Context) {
         mcuCommunicator.sendCommand(107, touchData, false)
     }
 
-    @Synchronized fun drawBackWindow() {
+    @Synchronized
+    fun drawBackWindow() {
         val topApp = WitsStatus.getTopApp()
         if (getHasAlreadyDrawn() /*|| topApp == "com.wits.ksw" || topApp == "com.wits.ksw.launcher.view.lexus.OEMFMActivity"*/) {
             return
@@ -169,36 +173,39 @@ class BackTapper(val context: Context) {
 
         continuousSend = try {
             Settings.System.getInt(context.contentResolver, "touch_continuous_send", 0) == 1
-        } catch (ignored : Exception) {
+        } catch (ignored: Exception) {
             false
         }
 
         handler.post {
             try {
                 windowManager.addView(view, windowParam)
-            }
-            catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    @Synchronized fun removeBackWindow() {
+    @Synchronized
+    fun removeBackWindow() {
         handler.post {
             try {
                 if (getHasAlreadyDrawn()) {
                     windowManager.removeViewImmediate(view)
                 }
-            } catch (ignored : Exception) {}
+            } catch (ignored: Exception) {
+            }
         }
     }
 
-    @Synchronized private fun returnBackToArm() {
+    @Synchronized
+    private fun returnBackToArm() {
         McuLogic.mcuCommunicator?.sendCommand(McuCommands.SWITCH_TO_ANDROID)
         McuLogic.mcuCommunicator?.sendCommand(McuCommands.SYS_SCREEN_ON)
     }
 
-    @Synchronized fun getHasAlreadyDrawn() : Boolean {
+    @Synchronized
+    fun getHasAlreadyDrawn(): Boolean {
         return view.isShown
     }
 }
