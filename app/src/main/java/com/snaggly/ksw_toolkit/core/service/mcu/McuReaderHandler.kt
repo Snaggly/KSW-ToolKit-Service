@@ -28,7 +28,7 @@ import projekt.auto.mcu.ksw.serial.reader.LogcatReader
 import projekt.auto.mcu.ksw.serial.reader.SerialReader
 import projekt.auto.mcu.ksw.serial.writer.SerialWriter
 
-class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
+class McuReaderHandler(val context: Context, private val zLinkReceiver: ZLinkReceiver) {
     val config = ConfigManager.getConfig(context)
 
     private val backTapper = BackTapper(context)
@@ -38,7 +38,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     private var eventAction: EventAction? = null
     private var parseMcuEvent = McuEvent(context, backTapper)
     private val daytimeObserver = DaytimeObserver(context)
-    private val autoThemeManager = AutoThemeManager(context, zLinkReceiver)
+    private val autoThemeManager = AutoThemeManager(context)
 
     init {
         when {
@@ -151,6 +151,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
                 autoThemeManager.handleThemeChangeByTime(it != DaytimeObserver.Daytime.Day)
             }
             autoThemeManager.handleThemeChangeByLightEvent(McuLogic.isAnyLightOn)
+            zLinkReceiver.setReceiverHandler(autoThemeManager::zlinkHandler)
         } else {
             parseMcuEvent.carDataEvent.lightEvent.autoThemeManager = null
         }
@@ -203,6 +204,7 @@ class McuReaderHandler(val context: Context, zLinkReceiver: ZLinkReceiver) {
     }
 
     fun stopReader() {
+        zLinkReceiver.setReceiverHandler(null)
         daytimeObserver.clearAllListeners()
         McuLogic.restoreScreenState()
         McuLogic.screenSwitchActions.clear()
