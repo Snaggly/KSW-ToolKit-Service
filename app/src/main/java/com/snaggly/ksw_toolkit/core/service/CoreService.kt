@@ -49,13 +49,15 @@ class CoreService : Service() {
 
     private var kswToolKitService: KSWToolKitService? = null
     private var mcuReaderHandler: McuReaderHandler? = null
+    private val zLinkReceiver = ZLinkReceiver()
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate() {
         PreCheckLogcat().getLightsStatus()
-
-        val zLinkReceiver = ZLinkReceiver()
-        registerReceiver(zLinkReceiver, IntentFilter(ZlinkMessage.ZLINK_NORMAL_ACTION))
-
+        registerReceiver(
+            zLinkReceiver,
+            IntentFilter(ZlinkMessage.ZLINK_NORMAL_ACTION)
+        )
         try {
             val lMcuReaderHandler = McuReaderHandler(applicationContext, zLinkReceiver)
             lMcuReaderHandler.startMcuReader()
@@ -68,6 +70,7 @@ class CoreService : Service() {
     }
 
     override fun onDestroy() {
+        unregisterReceiver(zLinkReceiver)
         kswToolKitService = null
         showAlertMessage(this, "KSW-ToolKit-Service stopped")
         AdbServiceConnection.startKsw(applicationContext)
@@ -80,7 +83,7 @@ class CoreService : Service() {
     }
 
     private fun startTest() {
-        val lMcuReaderHandler = McuReaderHandler(applicationContext, ZLinkReceiver())
+        val lMcuReaderHandler = McuReaderHandler(applicationContext, zLinkReceiver)
         mcuReaderHandler = lMcuReaderHandler
         kswToolKitService = KSWToolKitService(lMcuReaderHandler)
         McuLogic.mcuCommunicator = null
