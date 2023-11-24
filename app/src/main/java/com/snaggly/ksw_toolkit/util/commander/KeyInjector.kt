@@ -7,7 +7,7 @@ object KeyInjector {
 
     fun sendKey(keyCode: Int?) {
         if (keyCode != null) {
-            instrumentation.sendKeyDownUpSync(keyCode)
+            Thread { instrumentation.sendKeyDownUpSync(keyCode) }.start()
         }
     }
 }
