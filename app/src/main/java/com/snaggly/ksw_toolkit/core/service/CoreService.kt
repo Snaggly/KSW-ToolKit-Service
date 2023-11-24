@@ -1,11 +1,13 @@
 package com.snaggly.ksw_toolkit.core.service
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import com.snaggly.ksw_toolkit.R
@@ -20,6 +22,13 @@ import com.wits.pms.bean.ZlinkMessage
 import kotlin.random.Random
 
 class CoreService : Service() {
+    init {
+        Thread.setDefaultUncaughtExceptionHandler { _, error ->
+            Log.e("KSW-ToolKit-Service", "Uncaught Exception found: '${error.message}'")
+            error.printStackTrace()
+        }
+    }
+
     override fun onBind(intent: Intent): IBinder? {
         try {
             ServiceValidation.signature = intent.getByteArrayExtra("Authentication")
@@ -65,7 +74,8 @@ class CoreService : Service() {
             kswToolKitService = KSWToolKitService(lMcuReaderHandler)
             lMcuReaderHandler.showStartMessage()
         } catch (e: Exception) {
-            crashOut("Could not start McuReader!\n\n${e.stackTrace}")
+            e.printStackTrace()
+            crashOut("Could not start McuReader!\n\n${e.message}")
         }
     }
 
