@@ -16,14 +16,8 @@ class SoundRestorer(val context: Context) : IScreenSwitchAction {
 
     override fun performOnOEMSwitch() {
         reEnableSound()
-    }
-
-    override fun restoreState() {
-
-    }
-
-    private fun reEnableSound() {
-        val am = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        
+        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (am.isMusicActive) {
             Handler(context.mainLooper).postDelayed({
                 am.dispatchMediaKeyEvent(
@@ -40,6 +34,13 @@ class SoundRestorer(val context: Context) : IScreenSwitchAction {
                 )
             }, 1500)
         }
+    }
+
+    override fun restoreState() {
+
+    }
+
+    private fun reEnableSound() {
         McuLogic.mcuCommunicator?.sendCommand(McuCommands.SetMusicSource(SOUND_SRC_TYPE.SRC_ATSL_AIRCONSOLE))
     }
 }
