@@ -9,8 +9,12 @@ import com.snaggly.ksw_toolkit.util.list.keyevent.KeyCode
 import projekt.auto.mcu.ksw.serial.collection.McuCommands
 
 class NoOEMScreen(private val context: Context) : IScreenSwitchAction {
+    private var isShowingClock = false
+
     override fun performOnAndroidSwitch() {
-        KeyInjector.sendKey(KeyCode.HOME.keycode)
+        if (!isShowingClock)
+            return
+        KeyInjector.sendKey(KeyCode.BACK.keycode)
     }
 
     override fun performOnOEMSwitch() {
@@ -18,6 +22,7 @@ class NoOEMScreen(private val context: Context) : IScreenSwitchAction {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.component = ComponentName("com.wits.pms", "com.wits.pms.ClockActivity")
         context.startActivity(intent)
+        isShowingClock = true
     }
 
     override fun restoreState() {
